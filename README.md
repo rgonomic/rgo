@@ -12,16 +12,22 @@ $ go get github.com/rgnonomic/rgo
 
 With the `rgo` executable installed, the general work-flow will then proceed something like this.
 
-Initialize the rgo package module.
+Initialize the go package module.
 
 ```
-$ rgo init example.org/path/to/module
+$ go mod init example.org/path/to/module
 ```
 
 Specify dependency versions using the go tool if needed.
 
 ```
 $ go get example.org/path/to/dependency@vX.Y.Z
+```
+
+Set up the rgo default configurations and files.
+
+```
+$ rgo init
 ```
 
 Edit the configuration if needed.
