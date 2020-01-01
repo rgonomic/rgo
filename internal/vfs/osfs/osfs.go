@@ -1,3 +1,7 @@
+// Copyright ©2019 The rgonomic Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 // Package osfs provides a basic write-only file system interface to the
 // underlying OS file system.
 package osfs

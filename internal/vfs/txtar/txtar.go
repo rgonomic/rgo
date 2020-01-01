@@ -1,3 +1,7 @@
+// Copyright ©2019 The rgonomic Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 // Package txtar provides a simple write-only filesystem based on the txtar archive format.
 package txtar
 
