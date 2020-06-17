@@ -8,6 +8,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -16,14 +17,17 @@ import (
 
 // Module returns module information for the given directory path.
 func Module(path string) (Info, error) {
-	cmd := exec.Command("go", "list", "-json")
+	cmd := exec.Command("go", "list", "-json", path)
 	var buf, errbuf bytes.Buffer
-	cmd.Dir = path
 	cmd.Stdout = &buf
 	cmd.Stderr = &errbuf
 	err := cmd.Run()
 	if err != nil {
-		return Info{}, errors.New(strings.TrimSpace(errbuf.String()))
+		stderr := strings.TrimSpace(errbuf.String())
+		if stderr == "" {
+			return Info{}, err
+		}
+		return Info{}, fmt.Errorf("%s: %w", stderr, err)
 	}
 	var m struct{ Module Info }
 	err = json.Unmarshal(buf.Bytes(), &m)

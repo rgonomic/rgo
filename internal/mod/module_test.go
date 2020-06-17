@@ -13,6 +13,17 @@ import (
 )
 
 func TestModule(t *testing.T) {
+	oldwd, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("failed to get cwd: %v", err)
+	}
+	defer func() {
+		err := os.Chdir(oldwd)
+		if err != nil {
+			t.Errorf("failed to restore working directory: %v", err)
+		}
+	}()
+
 	mod, err := ioutil.TempDir("", "rgotest")
 	if err != nil {
 		t.Fatalf("unexpected error creating mod test directory: %v", err)
@@ -44,7 +55,12 @@ func TestModule(t *testing.T) {
 	for _, path := range []string{mod, nomod} {
 		for _, mode := range []string{"on", "off"} {
 			os.Setenv("GO111MODULE", mode)
-			got, err := Module(path)
+			err := os.Chdir(path)
+			if err != nil {
+				t.Errorf("failed to change directory: %v", err)
+				continue
+			}
+			got, err := Module("rgotest")
 			if path == mod && mode == "on" {
 				want := Info{
 					Path:  "rgotest",
@@ -67,7 +83,7 @@ func TestModule(t *testing.T) {
 				}
 
 			}
-			if err != nil {
+			if err != nil && mode == "on" {
 				t.Errorf("unexpected error getting module information: %v", err)
 			}
 		}
