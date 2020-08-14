@@ -5,17 +5,47 @@
 package pkg
 
 import (
+	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"go/ast"
 	"go/types"
 	"log"
+	"os/exec"
 	"sort"
 	"strings"
 	"unicode"
 
 	"golang.org/x/tools/go/packages"
 )
+
+// Module returns module information for the module containing the given path.
+func Module(path string) (ModInfo, error) {
+	args := []string{"list", "-json", "-m"}
+	if path != "" && path != "." {
+		args = append(args, path)
+	}
+	var m ModInfo
+	cmd := exec.Command("go", args...)
+	var buf bytes.Buffer
+	cmd.Stdout = &buf
+	err := cmd.Run()
+	if err != nil {
+		return m, err
+	}
+	err = json.Unmarshal(buf.Bytes(), &m)
+	return m, err
+}
+
+// ModInfo is information about a module. The values held by this struct
+// are described in the output from `go help list`.
+type ModInfo struct {
+	Path    string // module path
+	Version string // module version
+	Dir     string // directory holding files for this module, if any
+	GoMod   string // path to go.mod file used when loading this module, if any
+}
 
 // Info holds information about the functions in a package.
 type Info struct {
