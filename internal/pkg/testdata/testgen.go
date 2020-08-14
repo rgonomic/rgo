@@ -64,38 +64,46 @@ func builtins() []pkg {
 		if skip[t] {
 			continue
 		}
-		typ := types.Typ[t].String()
-		mapHelpIn := []string{"string", typ}
-		mapHelpOut := []string{"string", typ}
-		var cmplxHelp []string
-		if t == types.Complex64 {
-			cmplxHelp = []string{"complex128"}
-			mapHelpIn = append(mapHelpIn, "complex128")
-		}
-		pkgs = append(pkgs,
-			pkg{Name: fmt.Sprintf("%s_in", typ), Funcs: []fn{
-				{In: []string{typ}, HelpIn: cmplxHelp}}},
-			pkg{Name: fmt.Sprintf("%s_out", typ), Funcs: []fn{
-				{Out: []string{typ}}}},
-			pkg{Name: fmt.Sprintf("%s_out_named", typ), Funcs: []fn{
-				{Out: []string{typ}, Named: true}}},
-
-			pkg{Name: fmt.Sprintf("%s_slice_in", typ), Funcs: []fn{
-				{In: []string{"[]" + typ}}}},
-			pkg{Name: fmt.Sprintf("%s_slice_out", typ), Funcs: []fn{
-				{Out: []string{"[]" + typ}}}},
-			pkg{Name: fmt.Sprintf("%s_slice_out_named", typ), Funcs: []fn{
-				{Out: []string{"[]" + typ}, Named: true}}},
-
-			pkg{Name: fmt.Sprintf("string_%s_map_in", typ), Funcs: []fn{
-				{In: []string{fmt.Sprintf("map[string]%s", typ)}, HelpIn: mapHelpIn}}},
-			pkg{Name: fmt.Sprintf("string_%s_map_out", typ), Funcs: []fn{
-				{Out: []string{fmt.Sprintf("map[string]%s", typ)}, HelpOut: mapHelpOut}}},
-			pkg{Name: fmt.Sprintf("string_%s_map_out_named", typ), Funcs: []fn{
-				{Out: []string{fmt.Sprintf("map[string]%s", typ)}, HelpOut: mapHelpOut, Named: true}}},
-		)
+		pkgs = addTypeTest(pkgs, types.Typ[t])
 	}
+	pkgs = addTypeTest(pkgs, types.Universe.Lookup("byte").Type().(*types.Basic))
+	pkgs = addTypeTest(pkgs, types.Universe.Lookup("rune").Type().(*types.Basic))
+
 	return pkgs
+}
+
+func addTypeTest(dst []pkg, typ *types.Basic) []pkg {
+	name := typ.String()
+	mapHelpIn := []string{"string", name}
+	mapHelpOut := []string{"string", name}
+	var cmplxHelp []string
+	if typ.Kind() == types.Complex64 {
+		cmplxHelp = []string{"complex128"}
+		mapHelpIn = append(mapHelpIn, "complex128")
+	}
+	return append(dst,
+		pkg{Name: fmt.Sprintf("%s_in", name), Funcs: []fn{
+			{In: []string{name}, HelpIn: cmplxHelp}}},
+		pkg{Name: fmt.Sprintf("%s_out", name), Funcs: []fn{
+			{Out: []string{name}}}},
+		pkg{Name: fmt.Sprintf("%s_out_named", name), Funcs: []fn{
+			{Out: []string{name}, Named: true}}},
+
+		pkg{Name: fmt.Sprintf("%s_slice_in", name), Funcs: []fn{
+			{In: []string{"[]" + name}}}},
+		pkg{Name: fmt.Sprintf("%s_slice_out", name), Funcs: []fn{
+			{Out: []string{"[]" + name}}}},
+		pkg{Name: fmt.Sprintf("%s_slice_out_named", name), Funcs: []fn{
+			{Out: []string{"[]" + name}, Named: true}}},
+
+		pkg{Name: fmt.Sprintf("string_%s_map_in", name), Funcs: []fn{
+			{In: []string{fmt.Sprintf("map[string]%s", name)}, HelpIn: mapHelpIn}}},
+		pkg{Name: fmt.Sprintf("string_%s_map_out", name), Funcs: []fn{
+			{Out: []string{fmt.Sprintf("map[string]%s", name)}, HelpOut: mapHelpOut}}},
+		pkg{Name: fmt.Sprintf("string_%s_map_out_named", name), Funcs: []fn{
+			{Out: []string{fmt.Sprintf("map[string]%s", name)}, HelpOut: mapHelpOut, Named: true}}},
+	)
+
 }
 
 func main() {
