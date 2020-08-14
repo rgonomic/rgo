@@ -2,6 +2,6 @@
 
 package string_rune_map_in_0
 
-//{"in":["map[string]rune","rune","string"]}
+//{"in":["int32","map[string]rune","string"]}
 func Test0(par0 map[string]rune) {
 }

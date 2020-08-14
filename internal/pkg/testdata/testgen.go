@@ -177,6 +177,19 @@ func uniq(s []string, extra ...string) []string {
 	t := make([]string, len(s), len(s)+len(extra))
 	copy(t, s)
 	t = append(t, extra...)
+
+	// Convert basic types to their kind.
+	for i, v := range t {
+		typ := types.Universe.Lookup(v)
+		if typ == nil {
+			continue
+		}
+		switch typ := typ.Type().(type) {
+		case *types.Basic:
+			t[i] = types.Typ[typ.Kind()].String()
+		}
+	}
+
 	sort.Strings(t)
 	i := 0
 	for _, v := range t {

@@ -340,7 +340,7 @@ func walk(v visitor, typ, named types.Type) {
 			}
 			panic(fmt.Sprintf("unhandled integer type %s (%s)", named, typ))
 		}
-		v.visit(typ)
+		v.visit(types.Typ[typ.Kind()])
 
 	case *types.Chan:
 		if typ == named {
@@ -362,8 +362,10 @@ func walk(v visitor, typ, named types.Type) {
 			}
 			panic(fmt.Sprintf("unhandled non-string keyed map type %s (%s)", named, typ))
 		}
-		v.visit(typ.Key())
+		// TODO(kortschak): De-alias the key and elem type in the map as well.
 		v.visit(typ)
+		key := typ.Key()
+		walk(v, key, key)
 		elem := typ.Elem()
 		walk(v, elem, elem)
 

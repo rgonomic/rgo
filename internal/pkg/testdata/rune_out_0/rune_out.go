@@ -2,7 +2,7 @@
 
 package rune_out_0
 
-//{"out":["rune"]}
+//{"out":["int32"]}
 func Test0() rune {
 	var res0 rune
 	return res0

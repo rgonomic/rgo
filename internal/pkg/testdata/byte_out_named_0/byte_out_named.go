@@ -2,7 +2,7 @@
 
 package byte_out_named_0
 
-//{"out":["byte"]}
+//{"out":["uint8"]}
 func Test0() (res0 byte) {
 	return res0
 }

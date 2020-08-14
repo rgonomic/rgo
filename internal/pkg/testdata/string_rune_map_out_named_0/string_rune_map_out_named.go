@@ -2,7 +2,7 @@
 
 package string_rune_map_out_named_0
 
-//{"out":["map[string]rune","rune","string"]}
+//{"out":["int32","map[string]rune","string"]}
 func Test0() (res0 map[string]rune) {
 	return res0
 }
