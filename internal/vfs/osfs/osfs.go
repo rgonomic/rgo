@@ -9,15 +9,22 @@ package osfs
 import (
 	"io"
 	"os"
+	"path/filepath"
 )
 
 // FileSystem is a handle to the OS file system.
 type FileSystem struct{}
 
-// Open returns a file for writing. The file must be closed after use.
+// Open returns a file for writing, creating any necessary directories.
+// The file must be closed after use.
 func (FileSystem) Open(path string) (io.WriteCloser, error) {
-	return os.Open(path)
+	dir := filepath.Dir(path)
+	err := os.MkdirAll(dir, 0o775)
+	if err != nil {
+		return nil, err
+	}
+	return os.Create(path)
 }
 
 // Flush is a no-op.
-func (fs *FileSystem) Flush() error { return nil }
+func (fs FileSystem) Flush() error { return nil }
