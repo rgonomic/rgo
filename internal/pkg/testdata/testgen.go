@@ -81,6 +81,8 @@ func addTypeTest(dst []pkg, typ *types.Basic) []pkg {
 		cmplxHelp = []string{"complex128"}
 		mapHelpIn = append(mapHelpIn, "complex128")
 	}
+	mt := fmt.Sprintf("map[string]%s", name)
+	st := fmt.Sprintf(`struct{F1 %[1]s; F2 %[1]s "rgo:\"Rname\""}`, name)
 	return append(dst,
 		pkg{Name: fmt.Sprintf("%s_in", name), Funcs: []fn{
 			{In: []string{name}, HelpIn: cmplxHelp}}},
@@ -97,11 +99,18 @@ func addTypeTest(dst []pkg, typ *types.Basic) []pkg {
 			{Out: []string{"[]" + name}, Named: true}}},
 
 		pkg{Name: fmt.Sprintf("string_%s_map_in", name), Funcs: []fn{
-			{In: []string{fmt.Sprintf("map[string]%s", name)}, HelpIn: mapHelpIn}}},
+			{In: []string{mt}, HelpIn: mapHelpIn}}},
 		pkg{Name: fmt.Sprintf("string_%s_map_out", name), Funcs: []fn{
-			{Out: []string{fmt.Sprintf("map[string]%s", name)}, HelpOut: mapHelpOut}}},
+			{Out: []string{mt}, HelpOut: mapHelpOut}}},
 		pkg{Name: fmt.Sprintf("string_%s_map_out_named", name), Funcs: []fn{
-			{Out: []string{fmt.Sprintf("map[string]%s", name)}, HelpOut: mapHelpOut, Named: true}}},
+			{Out: []string{mt}, HelpOut: mapHelpOut, Named: true}}},
+
+		pkg{Name: fmt.Sprintf("struct_%s_in", name), Funcs: []fn{
+			{In: []string{st}, HelpIn: mapHelpIn[1:]}}},
+		pkg{Name: fmt.Sprintf("struct_%s_out", name), Funcs: []fn{
+			{Out: []string{st}, HelpOut: mapHelpOut[1:]}}},
+		pkg{Name: fmt.Sprintf("struct_%s_out_named", name), Funcs: []fn{
+			{Out: []string{st}, HelpOut: mapHelpOut[1:], Named: true}}},
 	)
 
 }

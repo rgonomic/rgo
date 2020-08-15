@@ -420,7 +420,6 @@ func walk(v visitor, typ, named types.Type) {
 	case *types.Struct:
 		v.visit(typ)
 		for i := 0; i < typ.NumFields(); i++ {
-			v.visit(types.Typ[types.String])
 			f := typ.Field(i).Type()
 			walk(v, f, f)
 		}
