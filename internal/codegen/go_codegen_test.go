@@ -522,7 +522,7 @@ var sexpFuncGoTests = []struct {
 	return pkg.T(unpackSEXP_types_Slice___int32(p))
 }`,
 		wantPack: `func packSEXP_types_Slice___int32(p []int32) C.SEXP {
-	r := C.Rf_allocVector(C.VECSXP, C.R_xlen_t(len(p)))
+	r := C.Rf_allocVector(C.INTSXP, C.R_xlen_t(len(p)))
 	C.Rf_protect(r)
 	for i, v := range p {
 		C.SET_VEC_ELT(r, C.R_xlen_t(i), packSEXP_types_Basic_int32(v))
@@ -546,7 +546,7 @@ var sexpFuncGoTests = []struct {
 	return pkg.T(unpackSEXP_types_Slice___rune(p))
 }`,
 		wantPack: `func packSEXP_types_Slice___rune(p []rune) C.SEXP {
-	r := C.Rf_allocVector(C.VECSXP, C.R_xlen_t(len(p)))
+	r := C.Rf_allocVector(C.INTSXP, C.R_xlen_t(len(p)))
 	C.Rf_protect(r)
 	for i, v := range p {
 		C.SET_VEC_ELT(r, C.R_xlen_t(i), packSEXP_types_Basic_rune(v))
@@ -571,7 +571,7 @@ var sexpFuncGoTests = []struct {
 	return pkg.T(unpackSEXP_types_Slice___uint8(p))
 }`,
 		wantPack: `func packSEXP_types_Slice___uint8(p []uint8) C.SEXP {
-	r := C.Rf_allocVector(C.VECSXP, C.R_xlen_t(len(p)))
+	r := C.Rf_allocVector(C.RAWSXP, C.R_xlen_t(len(p)))
 	C.Rf_protect(r)
 	for i, v := range p {
 		C.SET_VEC_ELT(r, C.R_xlen_t(i), packSEXP_types_Basic_uint8(v))

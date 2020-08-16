@@ -397,7 +397,7 @@ func packSEXPFuncBodyGo(buf *bytes.Buffer, typ types.Type) {
 		C.%s(r, C.R_xlen_t(i), packSEXP%s(v))
 	}
 	C.Rf_unprotect(1)
-`, rTypeLabelFor(elem), setter, pkg.Mangle(elem))
+`, rTypeLabelFor(typ), setter, pkg.Mangle(elem))
 
 	case *types.Struct:
 		n := typ.NumFields()

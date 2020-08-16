@@ -104,7 +104,7 @@ func rDocFor(typ types.Type) string {
 		case length <= 0:
 			return fmt.Sprintf("%s vector", rtyp)
 		case length == 1:
-			return fmt.Sprintf("%s", rtyp)
+			return rtyp
 		default:
 			return fmt.Sprintf("%s vector with %d elements", rtyp, length)
 		}
