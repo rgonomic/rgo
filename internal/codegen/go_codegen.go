@@ -435,24 +435,20 @@ func targetFieldName(s *types.Struct, i int) string {
 }
 
 var typeLabelTable = map[string]string{
-	"bool":       "LGLSXP",
-	"int":        "INTSXP",
-	"float64":    "REALSXP",
-	"complex128": "CPLXSXP",
-	"string":     "STRSXP",
-	"byte":       "RAWSXP",
-	"error":      "STRSXP",
+	"logical":   "LGLSXP",
+	"integer":   "INTSXP",
+	"double":    "REALSXP",
+	"complex":   "CPLXSXP",
+	"character": "STRSXP",
+	"raw":       "RAWSXP",
+	"list":      "VECSXP",
 }
 
-func rTypeLabelFor(t types.Type) string {
-	s := t.String()
-	r, ok := typeLabelTable[s]
+func rTypeLabelFor(typ types.Type) string {
+	name, _ := rTypeOf(typ)
+	label, ok := typeLabelTable[name]
 	if !ok {
-		u := t.Underlying()
-		if t == u {
-			return "VECSXP"
-		}
-		return rTypeFor(u)
+		return fmt.Sprintf("<%s>", typ)
 	}
-	return r
+	return label
 }
