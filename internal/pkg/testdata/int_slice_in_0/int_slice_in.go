@@ -2,6 +2,6 @@
 
 package int_slice_in_0
 
-//{"in":["[]int"]}
+//{"in":["[]int","int"]}
 func Test0(par0 []int) {
 }

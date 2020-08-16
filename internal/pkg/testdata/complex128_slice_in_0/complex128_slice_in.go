@@ -2,6 +2,6 @@
 
 package complex128_slice_in_0
 
-//{"in":["[]complex128"]}
+//{"in":["[]complex128","complex128"]}
 func Test0(par0 []complex128) {
 }

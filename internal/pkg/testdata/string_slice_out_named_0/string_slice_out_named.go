@@ -2,7 +2,7 @@
 
 package string_slice_out_named_0
 
-//{"out":["[]string"]}
+//{"out":["[]string","string"]}
 func Test0() (res0 []string) {
 	return res0
 }

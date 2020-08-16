@@ -2,7 +2,7 @@
 
 package uint16_slice_out_named_0
 
-//{"out":["[]uint16"]}
+//{"out":["[]uint16","uint16"]}
 func Test0() (res0 []uint16) {
 	return res0
 }

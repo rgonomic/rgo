@@ -2,7 +2,7 @@
 
 package float32_slice_out_named_0
 
-//{"out":["[]float32"]}
+//{"out":["[]float32","float32"]}
 func Test0() (res0 []float32) {
 	return res0
 }

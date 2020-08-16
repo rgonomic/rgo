@@ -2,6 +2,6 @@
 
 package uint16_slice_in_0
 
-//{"in":["[]uint16"]}
+//{"in":["[]uint16","uint16"]}
 func Test0(par0 []uint16) {
 }

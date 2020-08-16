@@ -2,6 +2,6 @@
 
 package byte_slice_in_0
 
-//{"in":["[]byte"]}
+//{"in":["[]byte","uint8"]}
 func Test0(par0 []byte) {
 }

@@ -2,6 +2,6 @@
 
 package bool_slice_in_0
 
-//{"in":["[]bool"]}
+//{"in":["[]bool","bool"]}
 func Test0(par0 []bool) {
 }

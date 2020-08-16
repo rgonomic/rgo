@@ -2,6 +2,6 @@
 
 package string_slice_in_0
 
-//{"in":["[]string"]}
+//{"in":["[]string","string"]}
 func Test0(par0 []string) {
 }

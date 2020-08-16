@@ -357,10 +357,7 @@ func walk(v visitor, typ, named types.Type) {
 	case *types.Array:
 		v.visit(typ)
 		elem := typ.Elem()
-		v.visit(types.NewSlice(elem))
-		if _, ok := elem.Underlying().(*types.Basic); !ok {
-			walk(v, elem, elem)
-		}
+		v.visit(types.NewSlice(elem)) // This will visit the element in the slice walk.
 
 	case *types.Basic:
 		switch typ.Kind() {
@@ -413,9 +410,7 @@ func walk(v visitor, typ, named types.Type) {
 	case *types.Slice:
 		v.visit(typ)
 		elem := typ.Elem()
-		if _, ok := elem.Underlying().(*types.Basic); !ok {
-			walk(v, elem, elem)
-		}
+		walk(v, elem, elem)
 
 	case *types.Struct:
 		v.visit(typ)

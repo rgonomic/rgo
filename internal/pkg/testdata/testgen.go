@@ -92,11 +92,11 @@ func addTypeTest(dst []pkg, typ *types.Basic) []pkg {
 			{Out: []string{name}, Named: true}}},
 
 		pkg{Name: fmt.Sprintf("%s_slice_in", name), Funcs: []fn{
-			{In: []string{"[]" + name}}}},
+			{In: []string{"[]" + name}, HelpIn: mapHelpIn[1:]}}},
 		pkg{Name: fmt.Sprintf("%s_slice_out", name), Funcs: []fn{
-			{Out: []string{"[]" + name}}}},
+			{Out: []string{"[]" + name}, HelpOut: mapHelpOut[1:]}}},
 		pkg{Name: fmt.Sprintf("%s_slice_out_named", name), Funcs: []fn{
-			{Out: []string{"[]" + name}, Named: true}}},
+			{Out: []string{"[]" + name}, HelpOut: mapHelpOut[1:], Named: true}}},
 
 		pkg{Name: fmt.Sprintf("string_%s_map_in", name), Funcs: []fn{
 			{In: []string{mt}, HelpIn: mapHelpIn}}},

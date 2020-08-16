@@ -2,7 +2,7 @@
 
 package uint_slice_out_0
 
-//{"out":["[]uint"]}
+//{"out":["[]uint","uint"]}
 func Test0() []uint {
 	var res0 []uint
 	return res0

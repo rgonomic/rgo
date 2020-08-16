@@ -2,7 +2,7 @@
 
 package uintptr_slice_out_0
 
-//{"out":["[]uintptr"]}
+//{"out":["[]uintptr","uintptr"]}
 func Test0() []uintptr {
 	var res0 []uintptr
 	return res0

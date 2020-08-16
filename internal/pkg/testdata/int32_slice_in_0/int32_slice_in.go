@@ -2,6 +2,6 @@
 
 package int32_slice_in_0
 
-//{"in":["[]int32"]}
+//{"in":["[]int32","int32"]}
 func Test0(par0 []int32) {
 }

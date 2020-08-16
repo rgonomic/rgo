@@ -2,6 +2,6 @@
 
 package uintptr_slice_in_0
 
-//{"in":["[]uintptr"]}
+//{"in":["[]uintptr","uintptr"]}
 func Test0(par0 []uintptr) {
 }

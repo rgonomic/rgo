@@ -2,7 +2,7 @@
 
 package int_slice_out_named_0
 
-//{"out":["[]int"]}
+//{"out":["[]int","int"]}
 func Test0() (res0 []int) {
 	return res0
 }
