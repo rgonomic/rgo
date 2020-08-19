@@ -42,7 +42,7 @@ int getListElementIndex(SEXP list, const char *str) {
 	int index = -1;
 	SEXP names = getAttrib(list, R_NamesSymbol);
 	for (int i = 0; i < length(list); i++) {
-		if(strcmp(CHAR(STRING_ELT(names, i)), str) == 0) {
+		if (strcmp(CHAR(STRING_ELT(names, i)), str) == 0) {
 			index = i;
 			break;
 		}

@@ -72,7 +72,7 @@ func returns(t *types.Tuple) string {
 		if name != "" {
 			name = ", " + name
 		}
-		fmt.Fprintf(&buf, "#' @return %s value%s\n", article(doc, true), name)
+		fmt.Fprintf(&buf, "#' @return %s%s\n", article(doc, true), name)
 	default:
 		fmt.Fprintf(&buf, "#' @return A structured value containing:\n")
 		for i := 0; i < t.Len(); i++ {
@@ -104,7 +104,7 @@ func rDocFor(typ types.Type) string {
 		case length <= 0:
 			return fmt.Sprintf("%s vector", rtyp)
 		case length == 1:
-			return rtyp
+			return fmt.Sprintf("%s value", rtyp)
 		default:
 			return fmt.Sprintf("%s vector with %d elements", rtyp, length)
 		}
