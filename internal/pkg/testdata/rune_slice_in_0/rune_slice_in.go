@@ -2,6 +2,6 @@
 
 package rune_slice_in_0
 
-//{"in":["[]rune","int32"]}
+//{"in":["[]rune"]}
 func Test0(par0 []rune) {
 }

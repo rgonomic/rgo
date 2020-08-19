@@ -2,6 +2,6 @@
 
 package float64_slice_in_0
 
-//{"in":["[]float64","float64"]}
+//{"in":["[]float64"]}
 func Test0(par0 []float64) {
 }

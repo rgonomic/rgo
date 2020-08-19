@@ -74,45 +74,91 @@ func builtins() []pkg {
 
 func addTypeTest(dst []pkg, typ *types.Basic) []pkg {
 	name := typ.String()
-	mapHelpIn := []string{"string", name}
-	mapHelpOut := []string{"string", name}
-	var cmplxHelp []string
+
+	// Set up the helpers we will need for non-R native types.
+	helpIn := []string{name}
+	helpOut := []string{name}
+	var cmplxHelpIn []string
 	if typ.Kind() == types.Complex64 {
-		cmplxHelp = []string{"complex128"}
-		mapHelpIn = append(mapHelpIn, "complex128")
+		// complex64 is not handled by R, so we need to convert via complex128.
+		helpIn = append(helpIn, "complex128")
+		cmplxHelpIn = helpIn
 	}
-	mt := fmt.Sprintf("map[string]%s", name)
-	st := fmt.Sprintf(`struct{F1 %[1]s; F2 %[1]s "rgo:\"Rname\""}`, name)
-	return append(dst,
+
+	// Generate scalar value test functions.
+	dst = append(dst,
 		pkg{Name: fmt.Sprintf("%s_in", name), Funcs: []fn{
-			{In: []string{name}, HelpIn: cmplxHelp}}},
+			{In: []string{name}, HelpIn: helpIn}}},
 		pkg{Name: fmt.Sprintf("%s_out", name), Funcs: []fn{
 			{Out: []string{name}}}},
 		pkg{Name: fmt.Sprintf("%s_out_named", name), Funcs: []fn{
 			{Out: []string{name}, Named: true}}},
+	)
 
+	// Generate slice value test functions.
+	var sliceHelpIn []string
+	switch typ.Kind() {
+	case types.Bool, types.Uint8, types.Uint32, types.Int32, types.Float64, types.Complex128:
+		// Do nothing, already handled.
+	default:
+		// Add element helper.
+		sliceHelpIn = append(cmplxHelpIn[:len(cmplxHelpIn):len(cmplxHelpIn)], name)
+	}
+	dst = append(dst,
 		pkg{Name: fmt.Sprintf("%s_slice_in", name), Funcs: []fn{
-			{In: []string{"[]" + name}, HelpIn: mapHelpIn[1:]}}},
+			{In: []string{"[]" + name}, HelpIn: sliceHelpIn}}},
 		pkg{Name: fmt.Sprintf("%s_slice_out", name), Funcs: []fn{
-			{Out: []string{"[]" + name}, HelpOut: mapHelpOut[1:]}}},
+			{Out: []string{"[]" + name}, HelpOut: helpOut}}},
 		pkg{Name: fmt.Sprintf("%s_slice_out_named", name), Funcs: []fn{
-			{Out: []string{"[]" + name}, HelpOut: mapHelpOut[1:], Named: true}}},
+			{Out: []string{"[]" + name}, HelpOut: helpOut, Named: true}}},
+	)
 
+	// Generate array value test functions.
+	arrayHelpIn := append(cmplxHelpIn[:len(cmplxHelpIn):len(cmplxHelpIn)], "[]"+name)
+	switch typ.Kind() {
+	case types.Bool, types.Uint8, types.Uint32, types.Int32, types.Float64, types.Complex128:
+		// Do nothing, already handled.
+	default:
+		// Add element helper.
+		arrayHelpIn = append(arrayHelpIn, name)
+	}
+	arrayHelpOut := append(helpOut[:len(helpOut):len(helpOut)], "[]"+name)
+	dst = append(dst,
+		pkg{Name: fmt.Sprintf("%s_array_in", name), Funcs: []fn{
+			{In: []string{"[4]" + name}, HelpIn: arrayHelpIn}}},
+		pkg{Name: fmt.Sprintf("%s_array_out", name), Funcs: []fn{
+			{Out: []string{"[4]" + name}, HelpOut: arrayHelpOut}}},
+		pkg{Name: fmt.Sprintf("%s_array_out_named", name), Funcs: []fn{
+			{Out: []string{"[4]" + name}, HelpOut: arrayHelpOut, Named: true}}},
+	)
+
+	// Generate struct value test functions.
+	st := fmt.Sprintf(`struct{F1 %[1]s; F2 %[1]s "rgo:\"Rname\""}`, name)
+	dst = append(dst,
+		pkg{Name: fmt.Sprintf("struct_%s_in", name), Funcs: []fn{
+			{In: []string{st}, HelpIn: helpIn}}},
+		pkg{Name: fmt.Sprintf("struct_%s_out", name), Funcs: []fn{
+			{Out: []string{st}, HelpOut: helpOut}}},
+		pkg{Name: fmt.Sprintf("struct_%s_out_named", name), Funcs: []fn{
+			{Out: []string{st}, HelpOut: helpOut, Named: true}}},
+	)
+
+	// Generate map[string]T value test functions.
+	//
+	// Maps also require that we can obtain strings for keys.
+	mt := fmt.Sprintf("map[string]%s", name)
+	mapHelpIn := append(helpIn[:len(helpIn):len(helpIn)], "string")
+	mapHelpOut := append(helpOut[:len(helpOut):len(helpOut)], "string")
+	dst = append(dst,
 		pkg{Name: fmt.Sprintf("string_%s_map_in", name), Funcs: []fn{
 			{In: []string{mt}, HelpIn: mapHelpIn}}},
 		pkg{Name: fmt.Sprintf("string_%s_map_out", name), Funcs: []fn{
 			{Out: []string{mt}, HelpOut: mapHelpOut}}},
 		pkg{Name: fmt.Sprintf("string_%s_map_out_named", name), Funcs: []fn{
 			{Out: []string{mt}, HelpOut: mapHelpOut, Named: true}}},
-
-		pkg{Name: fmt.Sprintf("struct_%s_in", name), Funcs: []fn{
-			{In: []string{st}, HelpIn: mapHelpIn[1:]}}},
-		pkg{Name: fmt.Sprintf("struct_%s_out", name), Funcs: []fn{
-			{Out: []string{st}, HelpOut: mapHelpOut[1:]}}},
-		pkg{Name: fmt.Sprintf("struct_%s_out_named", name), Funcs: []fn{
-			{Out: []string{st}, HelpOut: mapHelpOut[1:], Named: true}}},
 	)
 
+	return dst
 }
 
 func main() {

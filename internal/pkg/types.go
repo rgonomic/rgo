@@ -290,13 +290,23 @@ func (v unpackers) visit(typ types.Type) {
 }
 
 func (v unpackers) also(typ types.Type) types.BasicKind {
-	basic, ok := typ.(*types.Basic)
-	if !ok {
-		return types.Invalid
-	}
-	// Make sure we have a complex128 value we can convert to complex64.
-	if basic.Kind() == types.Complex64 {
-		return types.Complex128
+	switch typ := typ.(type) {
+	case *types.Basic:
+		// Make sure we have a complex128 value we can convert to complex64.
+		if typ.Kind() == types.Complex64 {
+			return types.Complex128
+		}
+	case *types.Slice:
+		elem, ok := typ.Elem().(*types.Basic)
+		if !ok {
+			return types.Invalid
+		}
+		switch kind := elem.Kind(); kind {
+		case types.Bool, types.Uint8, types.Int32, types.Uint32, types.Float64, types.Complex128:
+			// Do nothing since we can directly reference the R type's value.
+		default:
+			return kind
+		}
 	}
 	return types.Invalid
 }
@@ -317,6 +327,23 @@ func (v packers) visit(typ types.Type) {
 	if _, ok := v[s]; !ok {
 		v[s] = typ
 	}
+	if also := v.also(typ); also != types.Invalid {
+		v.visit(types.Typ[also])
+	}
+}
+
+func (v packers) also(typ types.Type) types.BasicKind {
+	if typ, ok := typ.(*types.Slice); ok {
+		// Make sure we have a element value we can pack into the slice.
+		elem, ok := typ.Elem().(*types.Basic)
+		if !ok {
+			return types.Invalid
+		}
+		if elem.Info()&(types.IsBoolean|types.IsNumeric|types.IsString) != 0 {
+			return elem.Kind()
+		}
+	}
+	return types.Invalid
 }
 
 func (v packers) NeedList() bool {
@@ -410,7 +437,9 @@ func walk(v visitor, typ, named types.Type) {
 	case *types.Slice:
 		v.visit(typ)
 		elem := typ.Elem()
-		walk(v, elem, elem)
+		if _, ok := elem.Underlying().(*types.Basic); !ok {
+			walk(v, elem, elem)
+		}
 
 	case *types.Struct:
 		v.visit(typ)
