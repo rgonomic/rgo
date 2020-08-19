@@ -1,0 +1,5 @@
+{
+	"PkgPath": "string_int32_map_in_0",
+	"LicenseDir": "LICENSE",
+	"LicensePattern": "(LICEN[SC]E|COPYING)(\\.(txt|md))?$"
+}
