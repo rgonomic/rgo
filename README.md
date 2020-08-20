@@ -2,7 +2,7 @@
 
 ![[Paper nautilus](https://archive.org/details/icefalopodiviven00jatt)](Argonauta_argo.png)
 
-`rgo` will be an R/Go integration tool
+`rgo` is an R/Go integration tool — it is only lightly tested so far and should not be used in production.
 
 Install the `rgo` executable.
 
