@@ -67,37 +67,27 @@ $ R CMD INSTALL .
 
 `rgo` has builtin type mappings between Go and R types. These are described here.
 
-| Go                          | R           |
-|-----------------------------|-------------|
-| `int`                       | `integer`   |
-| `int8`                      | `integer`   |
-| `int16`                     | `integer`   |
-| `int32`/`rune`              | `integer`   |
-| `uint`                      | `integer`   |
-| `uint8`/`byte`              | `integer`   |
-| `uint16`                    | `integer`   |
-| `uint32`                    | `integer`   |
-| `float32`                   | `double`    |
-| `float64`                   | `double`    |
-| `complex64`                 | `complex`   |
-| `complex128`                | `complex`   |
-| `string`                    | `character` |
-| `[]int` or array            | `integer`   |
-| `[]int8` or array           | `integer`   |
-| `[]int16` or array          | `integer`   |
-| `[]int32`/`[]rune` or array | `integer`   |
-| `[]uint` or array           | `integer`   |
-| `[]uint16` or array         | `integer`   |
-| `[]uint32` or array         | `integer`   |
-| `[]float32` or array        | `double`    |
-| `[]float64` or array        | `double`    |
-| `[]complex64` or array      | `complex`   |
-| `[]complex128` or array     | `complex`   |
-| `[]string` or array         | `character` |
-| `[]byte`/`[]uint8` or array | `raw`       |
-| `map[string]T`              | `list`      |
-| `struct{...}`               | `list`      |
-| `error` (return value only) | `character` |
+| R                               | Go                                                                                         |
+|---------------------------------|--------------------------------------------------------------------------------------------|
+| single  element `integer`       | `int`, `int8`, `int16`, `int32`/`rune`, `uint`, `uint8`/`byte`, `uint16`, `uint32`         |
+| `integer` vector                | `[]int`, `[]int8`, `[]int16`, `[]int32`/`[]rune`, `[]uint`, `[]uint16`, `[]uint32`         |
+| fixed length `integer` vector   | `[n]int`, `[n]int8`, `[n]int16`, `[n]int32`/`[n]rune`, `[n]uint`, `[n]uint16`, `[n]uint32` |
+| single  element `double`        | `float32`, `float64`                                                                       |
+| `double` vector                 | `[]float32`, `[]float64`                                                                   |
+| fixed length `double` vector    | `[n]float32`, `[n]float64`                                                                 |
+| single  element `complex`       | `complex64`, `complex128`                                                                  |
+| `complex` vector                | `[]complex64`, `[]complex128`                                                              |
+| fixed length `complex` vector   | `[n]complex64`, `[n]complex128`                                                            |
+| single  element `logical`       | `bool`                                                                                     |
+| `logical` vector                | `[]bool`                                                                                   |
+| fixed length `logical` vector   | `[n]bool`                                                                                  |
+| single  element `character`     | `string` (and `error` in returned values)                                                  |
+| `character` vector              | `[]string` (and `[]error` in returned values)                                              |
+| fixed length `character` vector | `[n]string` (and `[n]error` in returned values)                                            |
+| `list`                          | `map[string]T`, `struct{...}`                                                              |
+| `raw`                           | `[]uint8`/`[]byte`                                                                         |
+| fixed length `raw`              | `[n]uint8`/`[n]byte`                                                                       |
+
 
 Pointer types are also handled. Currently pointers are indirected so that mutations to pointees do not propagate between the Go and R environments. This behaviour may change for pointers being passed to Go from R.
 
@@ -118,6 +108,11 @@ will correspond to an R `list` with a single named element `number`.
 ### Multiple return values
 
 Go functions returning multiple values will have these values packaged into a list with elements named for the return values in the case of Go functions named returns, or `r<n>` for unnamed returns where `<n>` is the index of the return value.
+
+
+## Panics
+
+Go panics are recovered and result in an R error call.
 
 
 ## Limitations
