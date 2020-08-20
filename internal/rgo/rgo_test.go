@@ -52,7 +52,7 @@ func TestRgo(t *testing.T) {
 		}
 		pkg := fi.Name()
 		t.Run("init:"+pkg, func(t *testing.T) {
-			cmd := exec.Command(rgo, "init", fmt.Sprintf("-dry-run=%t", !*regenerate), ".")
+			cmd := exec.Command(rgo, "init", fmt.Sprintf("-dry-run=%t", !*regenerate))
 			cmd.Dir = filepath.Join("testdata", pkg)
 			var buf bytes.Buffer
 			cmd.Stdout = &buf

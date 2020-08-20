@@ -28,7 +28,7 @@ type setup struct {
 }
 
 func (s *setup) Name() string      { return "init" }
-func (s *setup) Usage() string     { return "" }
+func (s *setup) Usage() string     { return "<package path> (defaults to current directory)" }
 func (s *setup) ShortHelp() string { return "runs the rgo init command" }
 func (s *setup) DetailedHelp(f *flag.FlagSet) {
 	fmt.Fprint(f.Output(), ``)
@@ -41,7 +41,7 @@ func (s *setup) Run(ctx context.Context, args ...string) error {
 	var path string
 	switch len(args) {
 	case 0:
-		return fmt.Errorf("missing package path argument")
+		path = "."
 	case 1:
 		path = args[0]
 	case 2:
