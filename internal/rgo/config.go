@@ -11,6 +11,11 @@ type Config struct {
 	// at the root of the destination rgo package.
 	PkgPath string
 
+	// AllowedFuncs is a pattern matching names of
+	// functions that may be wrapped. If AllowedFuncs
+	// is empty all wrappable functions are wrapped.
+	AllowedFuncs string
+
 	// LicenseDir is the directory to put license files
 	// when more than one license exists.
 	LicenseDir string

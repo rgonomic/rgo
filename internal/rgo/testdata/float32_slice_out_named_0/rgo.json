@@ -1,5 +1,6 @@
 {
 	"PkgPath": "float32_slice_out_named_0",
+	"AllowedFuncs": "",
 	"LicenseDir": "LICENSE",
 	"LicensePattern": "(LICEN[SC]E|COPYING)(\\.(txt|md))?$"
 }

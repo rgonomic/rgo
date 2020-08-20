@@ -72,7 +72,7 @@ func TestRgo(t *testing.T) {
 			}
 
 			if !bytes.Equal(got, want) {
-				t.Errorf("unexpected rgo.json:\ngot:\n:%s\nwant:\n%s", got, want)
+				t.Errorf("unexpected rgo.json:\ngot:\n%s\nwant:\n%s", got, want)
 			}
 		})
 

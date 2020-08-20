@@ -1,5 +1,6 @@
 {
 	"PkgPath": "int8_array_in_0",
+	"AllowedFuncs": "",
 	"LicenseDir": "LICENSE",
 	"LicensePattern": "(LICEN[SC]E|COPYING)(\\.(txt|md))?$"
 }

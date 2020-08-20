@@ -69,7 +69,7 @@ func (b *build) Run(ctx context.Context, args ...string) error {
 		return fmt.Errorf("failed to parse license name pattern: %w", err)
 	}
 
-	info, err := pkg.Analyse(b.PkgPath, b.app.Verbose)
+	info, err := pkg.Analyse(b.PkgPath, b.AllowedFuncs, b.app.Verbose)
 	if err != nil {
 		return fmt.Errorf("load error: %w", err)
 	}

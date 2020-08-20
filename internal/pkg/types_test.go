@@ -33,7 +33,7 @@ func TestAnalyse(t *testing.T) {
 			continue
 		}
 
-		info, err := Analyse(filepath.Join("github.com/rgonomic/rgo/internal/pkg", path), false)
+		info, err := Analyse(filepath.Join("github.com/rgonomic/rgo/internal/pkg", path), "", false)
 		if err != nil {
 			t.Errorf("unexpected error during analysis of %q: %v", path, err)
 			continue

@@ -13,6 +13,7 @@ import (
 	"go/types"
 	"log"
 	"os/exec"
+	"regexp"
 	"sort"
 	"strings"
 	"unicode"
@@ -72,7 +73,7 @@ func (f FuncInfo) Signature() *types.Signature {
 	return f.Func.Type().(*types.Signature)
 }
 
-func Analyse(path string, verbose bool) (*Info, error) {
+func Analyse(path, allowed string, verbose bool) (*Info, error) {
 	if strings.HasSuffix(path, "...") {
 		return nil, errors.New("pkg: invalid use of ... suffix")
 	}
@@ -101,6 +102,11 @@ func Analyse(path string, verbose bool) (*Info, error) {
 		return nil, errors.New("pkg: more than one package analysed")
 	}
 
+	allow, err := regexp.Compile(allowed)
+	if err != nil {
+		return nil, err
+	}
+
 	log.Printf("wrapping: %s", pkg.ID)
 	if verbose {
 		log.Println("files:", pkg.GoFiles)
@@ -119,6 +125,12 @@ func Analyse(path string, verbose bool) (*Info, error) {
 			if !fn.Exported() {
 				if verbose {
 					log.Printf("skipping %s: unexported function", fn.Name())
+				}
+				continue
+			}
+			if !allow.MatchString(fn.Name()) {
+				if verbose {
+					log.Printf("skipping %s: not allowed name", fn.Name())
 				}
 				continue
 			}
