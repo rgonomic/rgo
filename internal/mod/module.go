@@ -17,7 +17,13 @@ import (
 
 // Module returns module information for the given directory path.
 func Module(path string) (Info, error) {
-	cmd := exec.Command("go", "list", "-json", path)
+	args := []string{"list", "-json"}
+	if path == "." {
+		args = append(args, "-m")
+	} else {
+		args = append(args, path)
+	}
+	cmd := exec.Command("go", args...)
 	var buf, errbuf bytes.Buffer
 	cmd.Stdout = &buf
 	cmd.Stderr = &errbuf
