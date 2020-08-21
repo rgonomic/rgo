@@ -157,7 +157,7 @@ var sexpFuncGoTests = []struct {
 	{
 		typs: []types.Type{types.NewPointer(types.Typ[types.String])},
 		wantUnpack: `func unpackSEXP_types_Pointer__string(p C.SEXP) *string {
-	if C.Rf_isNull(p) {
+	if C.Rf_isNull(p) != 0 {
 		return nil
 	}
 	r := unpackSEXP_types_Basic_string(p)
@@ -180,7 +180,7 @@ var sexpFuncGoTests = []struct {
 	{
 		typs: []types.Type{types.NewPointer(types.Typ[types.Int32])},
 		wantUnpack: `func unpackSEXP_types_Pointer__int32(p C.SEXP) *int32 {
-	if C.Rf_isNull(p) {
+	if C.Rf_isNull(p) != 0 {
 		return nil
 	}
 	r := unpackSEXP_types_Basic_int32(p)
@@ -202,7 +202,7 @@ var sexpFuncGoTests = []struct {
 	{
 		typs: []types.Type{types.NewPointer(types.Universe.Lookup("rune").Type())},
 		wantUnpack: `func unpackSEXP_types_Pointer__rune(p C.SEXP) *rune {
-	if C.Rf_isNull(p) {
+	if C.Rf_isNull(p) != 0 {
 		return nil
 	}
 	r := unpackSEXP_types_Basic_rune(p)
@@ -225,7 +225,7 @@ var sexpFuncGoTests = []struct {
 	{
 		typs: []types.Type{types.NewPointer(types.Typ[types.Uint8])},
 		wantUnpack: `func unpackSEXP_types_Pointer__uint8(p C.SEXP) *uint8 {
-	if C.Rf_isNull(p) {
+	if C.Rf_isNull(p) != 0 {
 		return nil
 	}
 	r := unpackSEXP_types_Basic_uint8(p)
@@ -247,7 +247,7 @@ var sexpFuncGoTests = []struct {
 	{
 		typs: []types.Type{types.NewPointer(types.Universe.Lookup("byte").Type())},
 		wantUnpack: `func unpackSEXP_types_Pointer__byte(p C.SEXP) *byte {
-	if C.Rf_isNull(p) {
+	if C.Rf_isNull(p) != 0 {
 		return nil
 	}
 	r := unpackSEXP_types_Basic_byte(p)
@@ -270,7 +270,7 @@ var sexpFuncGoTests = []struct {
 	{
 		typs: []types.Type{types.NewPointer(types.Typ[types.Float64])},
 		wantUnpack: `func unpackSEXP_types_Pointer__float64(p C.SEXP) *float64 {
-	if C.Rf_isNull(p) {
+	if C.Rf_isNull(p) != 0 {
 		return nil
 	}
 	r := unpackSEXP_types_Basic_float64(p)
@@ -293,7 +293,7 @@ var sexpFuncGoTests = []struct {
 	{
 		typs: []types.Type{types.NewPointer(types.Typ[types.Complex128])},
 		wantUnpack: `func unpackSEXP_types_Pointer__complex128(p C.SEXP) *complex128 {
-	if C.Rf_isNull(p) {
+	if C.Rf_isNull(p) != 0 {
 		return nil
 	}
 	r := unpackSEXP_types_Basic_complex128(p)
@@ -316,7 +316,7 @@ var sexpFuncGoTests = []struct {
 	{
 		typs: []types.Type{types.NewPointer(types.Typ[types.Bool])},
 		wantUnpack: `func unpackSEXP_types_Pointer__bool(p C.SEXP) *bool {
-	if C.Rf_isNull(p) {
+	if C.Rf_isNull(p) != 0 {
 		return nil
 	}
 	r := unpackSEXP_types_Basic_bool(p)
@@ -483,7 +483,7 @@ var sexpFuncGoTests = []struct {
 	{
 		typs: []types.Type{types.NewSlice(types.Typ[types.String])},
 		wantUnpack: `func unpackSEXP_types_Slice___string(p C.SEXP) []string {
-	if C.Rf_isNull(p) {
+	if C.Rf_isNull(p) != 0 {
 		return nil
 	}
 	n := C.Rf_xlength(p)
@@ -503,6 +503,7 @@ var sexpFuncGoTests = []struct {
 		C.SET_STRING_ELT(r, C.R_xlen_t(i), packSEXP_types_Basic_string(v))
 	}
 	C.Rf_unprotect(1)
+	return r
 }`,
 		wantPackNamed: `func packSEXP_types_Named_path_to_pkg_T(p pkg.T) C.SEXP {
 	return packSEXP_types_Slice___string([]string(p))
@@ -512,7 +513,7 @@ var sexpFuncGoTests = []struct {
 	{
 		typs: []types.Type{types.NewSlice(types.Typ[types.Int32])},
 		wantUnpack: `func unpackSEXP_types_Slice___int32(p C.SEXP) []int32 {
-	if C.Rf_isNull(p) {
+	if C.Rf_isNull(p) != 0 {
 		return nil
 	}
 	n := C.Rf_xlength(p)
@@ -525,9 +526,10 @@ var sexpFuncGoTests = []struct {
 	r := C.Rf_allocVector(C.INTSXP, C.R_xlen_t(len(p)))
 	C.Rf_protect(r)
 	for i, v := range p {
-		C.SET_VEC_ELT(r, C.R_xlen_t(i), packSEXP_types_Basic_int32(v))
+		C.SET_VECTOR_ELT(r, C.R_xlen_t(i), packSEXP_types_Basic_int32(v))
 	}
 	C.Rf_unprotect(1)
+	return r
 }`,
 		wantPackNamed: `func packSEXP_types_Named_path_to_pkg_T(p pkg.T) C.SEXP {
 	return packSEXP_types_Slice___int32([]int32(p))
@@ -536,7 +538,7 @@ var sexpFuncGoTests = []struct {
 	{
 		typs: []types.Type{types.NewSlice(types.Universe.Lookup("rune").Type())},
 		wantUnpack: `func unpackSEXP_types_Slice___rune(p C.SEXP) []rune {
-	if C.Rf_isNull(p) {
+	if C.Rf_isNull(p) != 0 {
 		return nil
 	}
 	n := C.Rf_xlength(p)
@@ -549,9 +551,10 @@ var sexpFuncGoTests = []struct {
 	r := C.Rf_allocVector(C.INTSXP, C.R_xlen_t(len(p)))
 	C.Rf_protect(r)
 	for i, v := range p {
-		C.SET_VEC_ELT(r, C.R_xlen_t(i), packSEXP_types_Basic_rune(v))
+		C.SET_VECTOR_ELT(r, C.R_xlen_t(i), packSEXP_types_Basic_rune(v))
 	}
 	C.Rf_unprotect(1)
+	return r
 }`,
 		wantPackNamed: `func packSEXP_types_Named_path_to_pkg_T(p pkg.T) C.SEXP {
 	return packSEXP_types_Slice___rune([]rune(p))
@@ -561,7 +564,7 @@ var sexpFuncGoTests = []struct {
 	{
 		typs: []types.Type{types.NewSlice(types.Typ[types.Uint8])},
 		wantUnpack: `func unpackSEXP_types_Slice___uint8(p C.SEXP) []uint8 {
-	if C.Rf_isNull(p) {
+	if C.Rf_isNull(p) != 0 {
 		return nil
 	}
 	n := C.Rf_xlength(p)
@@ -574,9 +577,10 @@ var sexpFuncGoTests = []struct {
 	r := C.Rf_allocVector(C.RAWSXP, C.R_xlen_t(len(p)))
 	C.Rf_protect(r)
 	for i, v := range p {
-		C.SET_VEC_ELT(r, C.R_xlen_t(i), packSEXP_types_Basic_uint8(v))
+		C.SET_VECTOR_ELT(r, C.R_xlen_t(i), packSEXP_types_Basic_uint8(v))
 	}
 	C.Rf_unprotect(1)
+	return r
 }`,
 		wantPackNamed: `func packSEXP_types_Named_path_to_pkg_T(p pkg.T) C.SEXP {
 	return packSEXP_types_Slice___uint8([]uint8(p))
@@ -585,7 +589,7 @@ var sexpFuncGoTests = []struct {
 	{
 		typs: []types.Type{types.NewSlice(types.Universe.Lookup("byte").Type())},
 		wantUnpack: `func unpackSEXP_types_Slice___byte(p C.SEXP) []byte {
-	if C.Rf_isNull(p) {
+	if C.Rf_isNull(p) != 0 {
 		return nil
 	}
 	n := C.Rf_xlength(p)
@@ -598,9 +602,10 @@ var sexpFuncGoTests = []struct {
 	r := C.Rf_allocVector(C.RAWSXP, C.R_xlen_t(len(p)))
 	C.Rf_protect(r)
 	for i, v := range p {
-		C.SET_VEC_ELT(r, C.R_xlen_t(i), packSEXP_types_Basic_byte(v))
+		C.SET_VECTOR_ELT(r, C.R_xlen_t(i), packSEXP_types_Basic_byte(v))
 	}
 	C.Rf_unprotect(1)
+	return r
 }`,
 		wantPackNamed: `func packSEXP_types_Named_path_to_pkg_T(p pkg.T) C.SEXP {
 	return packSEXP_types_Slice___byte([]byte(p))
@@ -610,7 +615,7 @@ var sexpFuncGoTests = []struct {
 	{
 		typs: []types.Type{types.NewSlice(types.Typ[types.Float64])},
 		wantUnpack: `func unpackSEXP_types_Slice___float64(p C.SEXP) []float64 {
-	if C.Rf_isNull(p) {
+	if C.Rf_isNull(p) != 0 {
 		return nil
 	}
 	n := C.Rf_xlength(p)
@@ -623,9 +628,10 @@ var sexpFuncGoTests = []struct {
 	r := C.Rf_allocVector(C.REALSXP, C.R_xlen_t(len(p)))
 	C.Rf_protect(r)
 	for i, v := range p {
-		C.SET_VEC_ELT(r, C.R_xlen_t(i), packSEXP_types_Basic_float64(v))
+		C.SET_VECTOR_ELT(r, C.R_xlen_t(i), packSEXP_types_Basic_float64(v))
 	}
 	C.Rf_unprotect(1)
+	return r
 }`,
 		wantPackNamed: `func packSEXP_types_Named_path_to_pkg_T(p pkg.T) C.SEXP {
 	return packSEXP_types_Slice___float64([]float64(p))
@@ -635,7 +641,7 @@ var sexpFuncGoTests = []struct {
 	{
 		typs: []types.Type{types.NewSlice(types.Typ[types.Complex128])},
 		wantUnpack: `func unpackSEXP_types_Slice___complex128(p C.SEXP) []complex128 {
-	if C.Rf_isNull(p) {
+	if C.Rf_isNull(p) != 0 {
 		return nil
 	}
 	n := C.Rf_xlength(p)
@@ -648,9 +654,10 @@ var sexpFuncGoTests = []struct {
 	r := C.Rf_allocVector(C.CPLXSXP, C.R_xlen_t(len(p)))
 	C.Rf_protect(r)
 	for i, v := range p {
-		C.SET_VEC_ELT(r, C.R_xlen_t(i), packSEXP_types_Basic_complex128(v))
+		C.SET_VECTOR_ELT(r, C.R_xlen_t(i), packSEXP_types_Basic_complex128(v))
 	}
 	C.Rf_unprotect(1)
+	return r
 }`,
 		wantPackNamed: `func packSEXP_types_Named_path_to_pkg_T(p pkg.T) C.SEXP {
 	return packSEXP_types_Slice___complex128([]complex128(p))
@@ -660,7 +667,7 @@ var sexpFuncGoTests = []struct {
 	{
 		typs: []types.Type{types.NewSlice(types.Typ[types.Bool])},
 		wantUnpack: `func unpackSEXP_types_Slice___bool(p C.SEXP) []bool {
-	if C.Rf_isNull(p) {
+	if C.Rf_isNull(p) != 0 {
 		return nil
 	}
 	n := C.Rf_xlength(p)
@@ -677,9 +684,10 @@ var sexpFuncGoTests = []struct {
 	r := C.Rf_allocVector(C.LGLSXP, C.R_xlen_t(len(p)))
 	C.Rf_protect(r)
 	for i, v := range p {
-		C.SET_VEC_ELT(r, C.R_xlen_t(i), packSEXP_types_Basic_bool(v))
+		C.SET_VECTOR_ELT(r, C.R_xlen_t(i), packSEXP_types_Basic_bool(v))
 	}
 	C.Rf_unprotect(1)
+	return r
 }`,
 		wantPackNamed: `func packSEXP_types_Named_path_to_pkg_T(p pkg.T) C.SEXP {
 	return packSEXP_types_Slice___bool([]bool(p))

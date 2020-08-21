@@ -35,8 +35,10 @@ package main
 #define USE_RINTERNALS
 #include <R.h>
 #include <Rinternals.h>
+extern void R_error(char *s);
 
 // TODO(kortschak): Only emit these when needed.
+extern Rboolean Rf_isNull(SEXP s);
 extern _GoString_ R_gostring(SEXP x);
 */
 import "C"
@@ -207,7 +209,7 @@ func unpackSEXPFuncBodyGo(buf *bytes.Buffer, typ types.Type) {
 `, nameOf(elem), pkg.Mangle(types.Typ[types.String]), pkg.Mangle(elem))
 
 	case *types.Pointer:
-		fmt.Fprintf(buf, `	if C.Rf_isNull(p) {
+		fmt.Fprintf(buf, `	if C.Rf_isNull(p) != 0 {
 		return nil
 	}
 	r := unpackSEXP%s(p)
@@ -217,7 +219,7 @@ func unpackSEXPFuncBodyGo(buf *bytes.Buffer, typ types.Type) {
 	case *types.Slice:
 		// TODO(kortschak): Use unsafe.Slice when it exists.
 
-		fmt.Fprintf(buf, `	if C.Rf_isNull(p) {
+		fmt.Fprintf(buf, `	if C.Rf_isNull(p) != 0 {
 		return nil
 	}
 `)
@@ -387,7 +389,7 @@ func packSEXPFuncBodyGo(buf *bytes.Buffer, typ types.Type) {
 
 	case *types.Slice:
 		elem := typ.Elem()
-		setter := "SET_VEC_ELT"
+		setter := "SET_VECTOR_ELT"
 		if elem.String() == "string" || elem.String() == "error" {
 			setter = "SET_STRING_ELT"
 		}
@@ -397,6 +399,7 @@ func packSEXPFuncBodyGo(buf *bytes.Buffer, typ types.Type) {
 		C.%s(r, C.R_xlen_t(i), packSEXP%s(v))
 	}
 	C.Rf_unprotect(1)
+	return r
 `, rTypeLabelFor(typ), setter, pkg.Mangle(elem))
 
 	case *types.Struct:

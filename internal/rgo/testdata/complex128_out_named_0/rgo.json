@@ -1,5 +1,5 @@
 {
-	"PkgPath": "complex128_out_named_0",
+	"PkgPath": ".",
 	"AllowedFuncs": "",
 	"LicenseDir": "LICENSE",
 	"LicensePattern": "(LICEN[SC]E|COPYING)(\\.(txt|md))?$"
