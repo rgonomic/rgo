@@ -16,6 +16,8 @@ import (
 )
 
 // Module returns module information for the given directory path.
+// If the path is in the standard library, the Info Path field will
+// be GOROOT and Version will be the Go version.
 func Module(path string) (Info, error) {
 	args := []string{"list", "-json"}
 	if path == "." {
@@ -35,9 +37,54 @@ func Module(path string) (Info, error) {
 		}
 		return Info{}, fmt.Errorf("%s: %w", stderr, err)
 	}
-	var m struct{ Module Info }
+	var m struct {
+		Module   Info
+		Standard bool
+	}
 	err = json.Unmarshal(buf.Bytes(), &m)
-	return m.Module, err
+	if err != nil {
+		return Info{}, err
+	}
+	if !m.Standard {
+		return m.Module, nil
+	}
+
+	buf.Reset()
+	errbuf.Reset()
+	cmd = exec.Command("go", "env", "GOROOT")
+	cmd.Stdout = &buf
+	cmd.Stderr = &errbuf
+	err = cmd.Run()
+	if err != nil {
+		stderr := strings.TrimSpace(errbuf.String())
+		if stderr == "" {
+			return Info{}, err
+		}
+		return Info{}, fmt.Errorf("%s: %w", stderr, err)
+	}
+	root := strings.TrimSpace(buf.String())
+	info := Info{
+		Path: filepath.Join(root, "src", path),
+		Dir:  root,
+	}
+
+	buf.Reset()
+	errbuf.Reset()
+	cmd = exec.Command("go", "version")
+	cmd.Stdout = &buf
+	cmd.Stderr = &errbuf
+	err = cmd.Run()
+	if err != nil {
+		stderr := strings.TrimSpace(errbuf.String())
+		if stderr == "" {
+			return Info{}, err
+		}
+		return Info{}, fmt.Errorf("%s: %w", stderr, err)
+	}
+	version := strings.Fields(strings.TrimPrefix(buf.String(), "go version go"))[0]
+	info.Version = "v" + version
+
+	return info, nil
 }
 
 // Info holds module information. It is a subset of the information
