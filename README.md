@@ -69,19 +69,19 @@ $ R CMD INSTALL .
 
 | R                               | Go                                                                                         |
 |---------------------------------|--------------------------------------------------------------------------------------------|
-| single  element `integer`       | `int`, `int8`, `int16`, `int32`/`rune`, `uint`, `uint8`/`byte`, `uint16`, `uint32`         |
+| scalar `integer`                | `int`, `int8`, `int16`, `int32`/`rune`, `uint`, `uint8`/`byte`, `uint16`, `uint32`         |
 | `integer` vector                | `[]int`, `[]int8`, `[]int16`, `[]int32`/`[]rune`, `[]uint`, `[]uint16`, `[]uint32`         |
 | fixed length `integer` vector   | `[n]int`, `[n]int8`, `[n]int16`, `[n]int32`/`[n]rune`, `[n]uint`, `[n]uint16`, `[n]uint32` |
-| single  element `double`        | `float32`, `float64`                                                                       |
+| scalar `double`                 | `float32`, `float64`                                                                       |
 | `double` vector                 | `[]float32`, `[]float64`                                                                   |
 | fixed length `double` vector    | `[n]float32`, `[n]float64`                                                                 |
-| single  element `complex`       | `complex64`, `complex128`                                                                  |
+| scalar `complex`                | `complex64`, `complex128`                                                                  |
 | `complex` vector                | `[]complex64`, `[]complex128`                                                              |
 | fixed length `complex` vector   | `[n]complex64`, `[n]complex128`                                                            |
-| single  element `logical`       | `bool`                                                                                     |
+| scalar `logical`                | `bool`                                                                                     |
 | `logical` vector                | `[]bool`                                                                                   |
 | fixed length `logical` vector   | `[n]bool`                                                                                  |
-| single  element `character`     | `string` (and `error` in returned values)                                                  |
+| scalar `character`              | `string` (and `error` in returned values)                                                  |
 | `character` vector              | `[]string` (and `[]error` in returned values)                                              |
 | fixed length `character` vector | `[n]string` (and `[n]error` in returned values)                                            |
 | `list`                          | `map[string]T`, `struct{...}`                                                              |
