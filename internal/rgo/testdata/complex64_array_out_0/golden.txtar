@@ -1,7 +1,7 @@
 -- DESCRIPTION --
 Package: complex64_array_out_0
 Title: What the Package Does (One Line, Title Case)
-Version: 
+Version: 0.0.0
 Authors@R:
     person(given   = "First",
            family  = "Last",

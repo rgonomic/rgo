@@ -46,6 +46,9 @@ LazyData: true
 }
 
 func version(v string) string {
+	if v == "" {
+		return "0.0.0"
+	}
 	if semver.IsValid(v) {
 		return v[1:]
 	}
