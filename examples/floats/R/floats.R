@@ -2,7 +2,7 @@
 
 #' @useDynLib floats
 
-#' CumProd
+#' cum_prod
 #'
 #' CumProd finds the cumulative product of the first i elements in
 #' s and puts them in place into the ith element of the
@@ -26,7 +26,7 @@ cum_prod <- function(dst, s) {
 	.Call("cum_prod", dst, s, PACKAGE = "floats")
 }
 
-#' CumSum
+#' cum_sum
 #'
 #' CumSum finds the cumulative sum of the first i elements in
 #' s and puts them in place into the ith element of the

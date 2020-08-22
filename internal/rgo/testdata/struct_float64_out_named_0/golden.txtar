@@ -22,7 +22,7 @@ export(test_0)
 
 #' @useDynLib struct_float64_out_named_0
 
-#' Test0
+#' test_0
 #'
 #' Test0 does things with [] and returns [struct{F1 float64; F2 float64 "rgo:\"Rname\""}].
 #' 

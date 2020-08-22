@@ -2,7 +2,7 @@
 
 #' @useDynLib sort
 
-#' SearchFloat64s
+#' search_float64s
 #'
 #' SearchFloat64s searches for x in a sorted slice of float64s and returns the index
 #' as specified by Search. The return value is the index to insert x if x is not
@@ -27,7 +27,7 @@ search_float64s <- function(a, x) {
 	.Call("search_float64s", a, x, PACKAGE = "sort")
 }
 
-#' Float64s
+#' float64s
 #'
 #' Float64s sorts a slice of float64s in increasing order
 #' (not-a-number values are treated as less than other values).
@@ -42,7 +42,7 @@ float64s <- function(a) {
 	.Call("float64s", a, PACKAGE = "sort")
 }
 
-#' Float64sAreSorted
+#' float64s_are_sorted
 #'
 #' Float64sAreSorted tests whether a slice of float64s is sorted in increasing order
 #' (not-a-number values are treated as less than other values).

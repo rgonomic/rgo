@@ -22,7 +22,7 @@ export(test_0)
 
 #' @useDynLib struct_byte_in_0
 
-#' Test0
+#' test_0
 #'
 #' Test0 does things with [struct{F1 byte; F2 byte "rgo:\"Rname\""}] and returns [].
 #' 

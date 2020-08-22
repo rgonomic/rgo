@@ -22,7 +22,7 @@ export(test_0)
 
 #' @useDynLib float32_array_in_0
 
-#' Test0
+#' test_0
 #'
 #' Test0 does things with [[4]float32] and returns [].
 #' 

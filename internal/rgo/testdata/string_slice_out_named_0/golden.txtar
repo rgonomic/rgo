@@ -22,7 +22,7 @@ export(test_0)
 
 #' @useDynLib string_slice_out_named_0
 
-#' Test0
+#' test_0
 #'
 #' Test0 does things with [] and returns [[]string].
 #' 

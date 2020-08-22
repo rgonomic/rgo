@@ -22,7 +22,7 @@ export(test_0)
 
 #' @useDynLib string_float64_map_in_0
 
-#' Test0
+#' test_0
 #'
 #' Test0 does things with [map[string]float64] and returns [].
 #' 

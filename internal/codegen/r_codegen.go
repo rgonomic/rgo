@@ -33,7 +33,7 @@ func RCallTemplate(words []string) *template.Template {
 
 #' @useDynLib {{base $pkg.Path}}{{range $func := .Funcs}}
 {{$params := varsOf $func.Signature.Params}}
-#' {{$func.Func.Name}}
+#' {{snake $func.Func.Name}}
 #'
 #' {{replace $func.FuncDecl.Doc.Text "\n" "\n#' "}}
 {{range $p := $params}}{{doc $p}}

@@ -22,7 +22,7 @@ export(test_0)
 
 #' @useDynLib struct_int32_out_named_0
 
-#' Test0
+#' test_0
 #'
 #' Test0 does things with [] and returns [struct{F1 int32; F2 int32 "rgo:\"Rname\""}].
 #' 

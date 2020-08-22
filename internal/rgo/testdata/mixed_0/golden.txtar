@@ -25,7 +25,7 @@ export(test_3)
 
 #' @useDynLib mixed_0
 
-#' Test0
+#' test_0
 #'
 #' Test0 does things with [int] and returns [int int].
 #' 
@@ -45,7 +45,7 @@ test_0 <- function(par0) {
 	.Call("test_0", par0, PACKAGE = "mixed_0")
 }
 
-#' Test1
+#' test_1
 #'
 #' Test1 does things with [int] and returns [float64 int].
 #' 
@@ -65,7 +65,7 @@ test_1 <- function(par0) {
 	.Call("test_1", par0, PACKAGE = "mixed_0")
 }
 
-#' Test2
+#' test_2
 #'
 #' Test2 does things with [int] and returns [].
 #' 
@@ -82,7 +82,7 @@ test_2 <- function(par0) {
 	.Call("test_2", par0, PACKAGE = "mixed_0")
 }
 
-#' Test3
+#' test_3
 #'
 #' Test3 does things with [T S1] and returns [S1].
 #' 

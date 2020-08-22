@@ -22,7 +22,7 @@ export(test_0)
 
 #' @useDynLib int8_array_in_0
 
-#' Test0
+#' test_0
 #'
 #' Test0 does things with [[4]int8] and returns [].
 #' 

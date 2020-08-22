@@ -22,7 +22,7 @@ export(test_0)
 
 #' @useDynLib float64_in_0
 
-#' Test0
+#' test_0
 #'
 #' Test0 does things with [float64] and returns [].
 #' 

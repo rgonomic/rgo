@@ -22,7 +22,7 @@ export(test_0)
 
 #' @useDynLib int_in_0
 
-#' Test0
+#' test_0
 #'
 #' Test0 does things with [int] and returns [].
 #' 

@@ -22,7 +22,7 @@ export(test_0)
 
 #' @useDynLib complex64_in_0
 
-#' Test0
+#' test_0
 #'
 #' Test0 does things with [complex64] and returns [].
 #' 
