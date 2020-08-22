@@ -96,6 +96,11 @@ func (b *build) Run(ctx context.Context, args ...string) error {
 		dst = osfs.FileSystem{}
 	}
 
+	err = codegen.Description(dst, info)
+	if err != nil {
+		return fmt.Errorf("failed to generate DESCRIPTION: %w", err)
+	}
+
 	err = codegen.Licenses(dst, b.LicenseDir, info, candidate, b.app.Verbose)
 	if err != nil {
 		return fmt.Errorf("failed to get license information: %w", err)
