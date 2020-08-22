@@ -26,7 +26,7 @@ export(test_0)
 #'
 #' Test0 does things with [uint32] and returns [].
 #' 
-#' @param par0 is a integer value
+#' @param par0 is a scalar integer
 #' @seelso <https://godoc.org/uint32_in_0#Test0>
 #' @export
 test_0 <- function(par0) {

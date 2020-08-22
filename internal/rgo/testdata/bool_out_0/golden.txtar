@@ -26,7 +26,7 @@ export(test_0)
 #'
 #' Test0 does things with [] and returns [bool].
 #' 
-#' @return A logical value
+#' @return A scalar logical
 #' @seelso <https://godoc.org/bool_out_0#Test0>
 #' @export
 test_0 <- function() {

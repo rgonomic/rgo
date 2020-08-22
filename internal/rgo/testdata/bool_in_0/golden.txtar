@@ -26,7 +26,7 @@ export(test_0)
 #'
 #' Test0 does things with [bool] and returns [].
 #' 
-#' @param par0 is a logical value
+#' @param par0 is a scalar logical
 #' @seelso <https://godoc.org/bool_in_0#Test0>
 #' @export
 test_0 <- function(par0) {

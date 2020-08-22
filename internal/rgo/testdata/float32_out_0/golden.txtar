@@ -26,7 +26,7 @@ export(test_0)
 #'
 #' Test0 does things with [] and returns [float32].
 #' 
-#' @return A double value
+#' @return A scalar double
 #' @seelso <https://godoc.org/float32_out_0#Test0>
 #' @export
 test_0 <- function() {

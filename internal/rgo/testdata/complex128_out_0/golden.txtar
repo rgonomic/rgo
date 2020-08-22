@@ -26,7 +26,7 @@ export(test_0)
 #'
 #' Test0 does things with [] and returns [complex128].
 #' 
-#' @return A complex value
+#' @return A scalar complex
 #' @seelso <https://godoc.org/complex128_out_0#Test0>
 #' @export
 test_0 <- function() {

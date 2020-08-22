@@ -26,7 +26,7 @@ export(test_0)
 #'
 #' Test0 does things with [complex128] and returns [].
 #' 
-#' @param par0 is a complex value
+#' @param par0 is a scalar complex
 #' @seelso <https://godoc.org/complex128_in_0#Test0>
 #' @export
 test_0 <- function(par0) {

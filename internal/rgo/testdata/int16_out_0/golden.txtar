@@ -26,7 +26,7 @@ export(test_0)
 #'
 #' Test0 does things with [] and returns [int16].
 #' 
-#' @return An integer value
+#' @return A scalar integer
 #' @seelso <https://godoc.org/int16_out_0#Test0>
 #' @export
 test_0 <- function() {

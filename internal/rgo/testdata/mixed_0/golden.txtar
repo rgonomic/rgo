@@ -29,10 +29,10 @@ export(test_3)
 #'
 #' Test0 does things with [int] and returns [int int].
 #' 
-#' @param par0 is a integer value
+#' @param par0 is a scalar integer
 #' @return A structured value containing:
-#' @return - an integer value, $r0
-#' @return - an integer value, $r1
+#' @return - a scalar integer, $r0
+#' @return - a scalar integer, $r1
 #' @seelso <https://godoc.org/mixed_0#Test0>
 #' @export
 test_0 <- function(par0) {
@@ -49,10 +49,10 @@ test_0 <- function(par0) {
 #'
 #' Test1 does things with [int] and returns [float64 int].
 #' 
-#' @param par0 is a integer value
+#' @param par0 is a scalar integer
 #' @return A structured value containing:
-#' @return - a double value, $res0
-#' @return - an integer value, $res1
+#' @return - a scalar double, $res0
+#' @return - a scalar integer, $res1
 #' @seelso <https://godoc.org/mixed_0#Test1>
 #' @export
 test_1 <- function(par0) {
@@ -69,7 +69,7 @@ test_1 <- function(par0) {
 #'
 #' Test2 does things with [int] and returns [].
 #' 
-#' @param par0 is a integer value
+#' @param par0 is a scalar integer
 #' @seelso <https://godoc.org/mixed_0#Test2>
 #' @export
 test_2 <- function(par0) {
@@ -86,9 +86,9 @@ test_2 <- function(par0) {
 #'
 #' Test3 does things with [T S1] and returns [S1].
 #' 
-#' @param par0 is a integer value
-#' @param par1 is a character value
-#' @return A character value
+#' @param par0 is a scalar integer
+#' @param par1 is a scalar character
+#' @return A scalar character
 #' @seelso <https://godoc.org/mixed_0#Test3>
 #' @export
 test_3 <- function(par0, par1) {
