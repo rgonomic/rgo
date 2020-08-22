@@ -25,7 +25,7 @@ var sexpFuncGoTests = []struct {
 	{
 		typs: []types.Type{types.Typ[types.String]},
 		wantUnpack: `func unpackSEXP_types_Basic_string(p C.SEXP) string {
-	return C.R_gostring(p)
+	return C.R_gostring(p, 0)
 }`,
 		wantUnpackNamed: `func unpackSEXP_types_Named_path_to_pkg_T(p C.SEXP) pkg.T {
 	return pkg.T(unpackSEXP_types_Basic_string(p))
@@ -489,7 +489,7 @@ var sexpFuncGoTests = []struct {
 	n := C.Rf_xlength(p)
 	r := make([]string, n)
 	for i := range r {
-		r[i] = unpackSEXP_types_Basic_string(C.VECTOR_ELT(p, C.R_xlen_t(i)))
+		r[i] = string(C.R_gostring(p, C.R_xlen_t(i)))
 	}
 	return r
 }`,
@@ -500,7 +500,8 @@ var sexpFuncGoTests = []struct {
 	r := C.Rf_allocVector(C.STRSXP, C.R_xlen_t(len(p)))
 	C.Rf_protect(r)
 	for i, v := range p {
-		C.SET_STRING_ELT(r, C.R_xlen_t(i), packSEXP_types_Basic_string(v))
+		s := C.Rf_mkCharLenCE(C._GoStringPtr(string(v)), C.int(len(v)), C.CE_UTF8)
+		C.SET_STRING_ELT(r, C.R_xlen_t(i), s)
 	}
 	C.Rf_unprotect(1)
 	return r

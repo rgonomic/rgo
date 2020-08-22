@@ -62,8 +62,8 @@ void R_error(char* s) {
 
 // TODO(kortschak): Only emit these when needed:
 // Needed for unpacking SEXP character.
-GoString R_gostring(SEXP x) {
-	SEXP _s = STRING_ELT(x, 0);
+GoString R_gostring(SEXP x, R_xlen_t i) {
+	SEXP _s = STRING_ELT(x, i);
 	GoString s = {(char*)CHAR(_s), STDVEC_LENGTH(_s)};
 	return s;
 }
@@ -97,7 +97,7 @@ extern void R_error(char *s);
 
 // TODO(kortschak): Only emit these when needed.
 extern Rboolean Rf_isNull(SEXP s);
-extern _GoString_ R_gostring(SEXP x);
+extern _GoString_ R_gostring(SEXP x, R_xlen_t i);
 */
 import "C"
 
@@ -141,7 +141,8 @@ func packSEXP_types_Slice___string(p []string) C.SEXP {
 	r := C.Rf_allocVector(C.STRSXP, C.R_xlen_t(len(p)))
 	C.Rf_protect(r)
 	for i, v := range p {
-		C.SET_STRING_ELT(r, C.R_xlen_t(i), packSEXP_types_Basic_string(v))
+		s := C.Rf_mkCharLenCE(C._GoStringPtr(string(v)), C.int(len(v)), C.CE_UTF8)
+		C.SET_STRING_ELT(r, C.R_xlen_t(i), s)
 	}
 	C.Rf_unprotect(1)
 	return r

@@ -12,8 +12,8 @@ void R_error(char* s) {
 
 // TODO(kortschak): Only emit these when needed:
 // Needed for unpacking SEXP character.
-GoString R_gostring(SEXP x) {
-	SEXP _s = STRING_ELT(x, 0);
+GoString R_gostring(SEXP x, R_xlen_t i) {
+	SEXP _s = STRING_ELT(x, i);
 	GoString s = {(char*)CHAR(_s), STDVEC_LENGTH(_s)};
 	return s;
 }

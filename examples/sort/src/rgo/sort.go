@@ -10,7 +10,7 @@ extern void R_error(char *s);
 
 // TODO(kortschak): Only emit these when needed.
 extern Rboolean Rf_isNull(SEXP s);
-extern _GoString_ R_gostring(SEXP x);
+extern _GoString_ R_gostring(SEXP x, R_xlen_t i);
 */
 import "C"
 

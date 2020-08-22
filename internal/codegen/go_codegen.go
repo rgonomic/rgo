@@ -39,7 +39,7 @@ extern void R_error(char *s);
 
 // TODO(kortschak): Only emit these when needed.
 extern Rboolean Rf_isNull(SEXP s);
-extern _GoString_ R_gostring(SEXP x);
+extern _GoString_ R_gostring(SEXP x, R_xlen_t i);
 */
 import "C"
 
@@ -190,7 +190,7 @@ func unpackSEXPFuncBodyGo(buf *bytes.Buffer, typ types.Type) {
 		case types.Complex64:
 			fmt.Fprintf(buf, "\treturn %s(unpackSEXP%s(p))\n", nameOf(typ), pkg.Mangle(types.Typ[types.Complex128]))
 		case types.String:
-			fmt.Fprintln(buf, "\treturn C.R_gostring(p)")
+			fmt.Fprintln(buf, "\treturn C.R_gostring(p, 0)")
 		default:
 			panic(fmt.Sprintf("unhandled type: %s", typ))
 		}
@@ -266,6 +266,15 @@ func unpackSEXPFuncBodyGo(buf *bytes.Buffer, typ types.Type) {
 	}
 	return r
 `, nameOf(typ), len(&a{}), nameOf(types.Typ[types.Int32]))
+				return
+			case types.String:
+				fmt.Fprintf(buf, `	n := C.Rf_xlength(p)
+	r := make(%s, n)
+	for i := range r {
+		r[i] = %s(C.R_gostring(p, C.R_xlen_t(i)))
+	}
+	return r
+`, nameOf(typ), nameOf(elem))
 				return
 			}
 		}
@@ -464,18 +473,41 @@ func packSEXPFuncBodyGo(buf *bytes.Buffer, typ types.Type) {
 				return
 			}
 		}
-		setter := "SET_VECTOR_ELT"
-		if elem.String() == "string" || elem.String() == "error" {
-			setter = "SET_STRING_ELT"
-		}
-		fmt.Fprintf(buf, `	r := C.Rf_allocVector(C.%s, C.R_xlen_t(len(p)))
+
+		switch {
+		case elem.String() == "string":
+			fmt.Fprint(buf, `	r := C.Rf_allocVector(C.STRSXP, C.R_xlen_t(len(p)))
 	C.Rf_protect(r)
 	for i, v := range p {
-		C.%s(r, C.R_xlen_t(i), packSEXP%s(v))
+		s := C.Rf_mkCharLenCE(C._GoStringPtr(string(v)), C.int(len(v)), C.CE_UTF8)
+		C.SET_STRING_ELT(r, C.R_xlen_t(i), s)
 	}
 	C.Rf_unprotect(1)
 	return r
-`, rTypeLabelFor(typ), setter, pkg.Mangle(elem))
+`)
+		case elem.String() == "error":
+			fmt.Fprint(buf, `	r := C.Rf_allocVector(C.STRSXP, C.R_xlen_t(len(p)))
+	C.Rf_protect(r)
+	for i, v := range p {
+		s := C.R_NilValue
+		if v != nil {
+			s = C.Rf_mkCharLenCE(C._GoStringPtr(v), C.int(len(v)), C.CE_UTF8)
+		}
+		C.SET_STRING_ELT(r, C.R_xlen_t(i), s)
+	}
+	C.Rf_unprotect(1)
+	return r
+`)
+		default:
+			fmt.Fprintf(buf, `	r := C.Rf_allocVector(C.%s, C.R_xlen_t(len(p)))
+	C.Rf_protect(r)
+	for i, v := range p {
+		C.SET_VECTOR_ELT(r, C.R_xlen_t(i), packSEXP%s(v))
+	}
+	C.Rf_unprotect(1)
+	return r
+`, rTypeLabelFor(typ), pkg.Mangle(elem))
+		}
 
 	case *types.Struct:
 		n := typ.NumFields()
