@@ -1,0 +1,7 @@
+{
+	"PkgPath": "sort",
+	"AllowedFuncs": "Float64s",
+	"Words": ["Float64s"],
+	"LicenseDir": "LICENSE",
+	"LicensePattern": "(LICEN[SC]E|COPYING)(\\.(txt|md))?$"
+}

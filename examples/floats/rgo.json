@@ -1,0 +1,7 @@
+{
+	"PkgPath": "gonum.org/v1/gonum/floats",
+	"AllowedFuncs": "^Cum(Sum|Prod)$",
+	"Words": null,
+	"LicenseDir": "LICENSE",
+	"LicensePattern": "(LICEN[SC]E|COPYING)(\\.(txt|md))?$"
+}
