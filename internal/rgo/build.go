@@ -69,7 +69,7 @@ func (b *build) Run(ctx context.Context, args ...string) error {
 		return fmt.Errorf("failed to parse license name pattern: %w", err)
 	}
 
-	info, err := pkg.Analyse(b.PkgPath, b.AllowedFuncs, b.app.Verbose)
+	info, err := pkg.Analyse(b.Config.PkgPath, b.Config.AllowedFuncs, b.app.Verbose)
 	if err != nil {
 		return fmt.Errorf("load error: %w", err)
 	}
@@ -101,7 +101,7 @@ func (b *build) Run(ctx context.Context, args ...string) error {
 		return fmt.Errorf("failed to generate DESCRIPTION: %w", err)
 	}
 
-	err = codegen.Licenses(dst, b.LicenseDir, info, candidate, b.app.Verbose)
+	err = codegen.Licenses(dst, b.Config.LicenseDir, info, candidate, b.app.Verbose)
 	if err != nil {
 		return fmt.Errorf("failed to get license information: %w", err)
 	}

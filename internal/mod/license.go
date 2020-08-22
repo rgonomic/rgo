@@ -15,11 +15,12 @@ import (
 	"github.com/google/licensecheck"
 )
 
-// License holds a packages license information.
+// License holds a package's license information.
 type License struct {
 	// Path is the path to the license relative
 	// to the root of the repository.
 	Path string
+
 	// Text is the text of the license.
 	Text []byte
 

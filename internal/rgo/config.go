@@ -19,6 +19,7 @@ type Config struct {
 	// LicenseDir is the directory to put license files
 	// when more than one license exists.
 	LicenseDir string
+
 	// LicensePattern is the pattern for license file
 	// names to check. The pattern is used with the
 	// case-insensitive flag.
