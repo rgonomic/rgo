@@ -103,6 +103,7 @@ func (b *build) Run(ctx context.Context, args ...string) error {
 
 	words := []string{"NaN", "NA"}
 	templates := map[string]*template.Template{
+		"NAMESPACE":     codegen.NamespaceTemplate(words),
 		"R/%s.R":        codegen.RCallTemplate(words),
 		"src/rgo/%s.c":  codegen.CFuncTemplate(words),
 		"src/rgo/%s.go": codegen.GoFuncTemplate(),
