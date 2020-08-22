@@ -146,7 +146,7 @@ var sexpFuncGoTests = []struct {
 	if p {
 		b = 1
 	}
-	return C.ScalarBool(b)
+	return C.ScalarLogical(b)
 }`,
 		wantPackNamed: `func packSEXP_types_Named_path_to_pkg_T(p pkg.T) C.SEXP {
 	return packSEXP_types_Basic_bool(bool(p))

@@ -133,7 +133,7 @@ func packSEXP_types_Basic_bool(p bool) C.SEXP {
 	if p {
 		b = 1
 	}
-	return C.ScalarBool(b)
+	return C.ScalarLogical(b)
 }
 
 func packSEXP_types_Struct_struct_F1_bool__F2_bool__rgo___Rname____(p struct{F1 bool; F2 bool "rgo:\"Rname\""}) C.SEXP {

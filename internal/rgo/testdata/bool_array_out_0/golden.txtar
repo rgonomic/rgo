@@ -137,7 +137,7 @@ func packSEXP_types_Basic_bool(p bool) C.SEXP {
 	if p {
 		b = 1
 	}
-	return C.ScalarBool(b)
+	return C.ScalarLogical(b)
 }
 
 func packSEXP_types_Slice___bool(p []bool) C.SEXP {

@@ -347,7 +347,7 @@ func packSEXPFuncBodyGo(buf *bytes.Buffer, typ types.Type) {
 	if p {
 		b = 1
 	}
-	return C.ScalarBool(b)
+	return C.ScalarLogical(b)
 `)
 		case types.Int, types.Int8, types.Int16, types.Int32, types.Int64, types.Uint, types.Uint16, types.Uint32, types.Uint64:
 			fmt.Fprintln(buf, "\treturn C.ScalarInteger(C.int(p))")
