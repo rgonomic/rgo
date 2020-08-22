@@ -16,6 +16,13 @@ type Config struct {
 	// is empty all wrappable functions are wrapped.
 	AllowedFuncs string
 
+	// Words is a set of known words that can be provided
+	// to ensure camel-case to snake case breaks words
+	// correctly. If words is nil, "NaN" and "NA" are
+	// used. Set words to []string{} to provide an empty
+	// set of words.
+	Words []string
+
 	// LicenseDir is the directory to put license files
 	// when more than one license exists.
 	LicenseDir string

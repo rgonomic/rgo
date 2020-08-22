@@ -106,11 +106,13 @@ func (b *build) Run(ctx context.Context, args ...string) error {
 		return fmt.Errorf("failed to get license information: %w", err)
 	}
 
-	words := []string{"NaN", "NA"}
+	if b.Config.Words == nil {
+		b.Config.Words = []string{"NaN", "NA"}
+	}
 	templates := map[string]*template.Template{
-		"NAMESPACE":     codegen.NamespaceTemplate(words),
-		"R/%s.R":        codegen.RCallTemplate(words),
-		"src/rgo/%s.c":  codegen.CFuncTemplate(words),
+		"NAMESPACE":     codegen.NamespaceTemplate(b.Config.Words),
+		"R/%s.R":        codegen.RCallTemplate(b.Config.Words),
+		"src/rgo/%s.c":  codegen.CFuncTemplate(b.Config.Words),
 		"src/rgo/%s.go": codegen.GoFuncTemplate(),
 		"src/Makevars":  codegen.MakevarsTemplate(),
 	}
