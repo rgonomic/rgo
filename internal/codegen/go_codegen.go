@@ -388,7 +388,82 @@ func packSEXPFuncBodyGo(buf *bytes.Buffer, typ types.Type) {
 `, pkg.Mangle(typ.Elem()))
 
 	case *types.Slice:
+		// TODO(kortschak): Handle named simple types properly.
 		elem := typ.Elem()
+		if elem, ok := elem.(*types.Basic); ok {
+			switch elem.Kind() {
+			// TODO(kortschak): Make the fast path available
+			// to []T where T is one of these kinds.
+			case types.Int32:
+				// Maximum length array type for this element type.
+				type a [1 << 47]int32
+				fmt.Fprintf(buf, `	r := C.Rf_allocVector(C.INTSXP, C.R_xlen_t(len(p)))
+	C.Rf_protect(r)
+	s := (*[%d]%s)(unsafe.Pointer(C.INTEGER(r)))[:len(p):len(p)]
+	copy(s, p)
+	C.Rf_unprotect(1)
+	return r
+`, len(&a{}), nameOf(elem))
+				return
+			case types.Uint8:
+				// Maximum length array type for this element type.
+				type a [1 << 49]byte
+				fmt.Fprintf(buf, `	r := C.Rf_allocVector(C.RAWSXP, C.R_xlen_t(len(p)))
+	C.Rf_protect(r)
+	s := (*[%d]%s)(unsafe.Pointer(C.RAW(r)))[:len(p):len(p)]
+	copy(s, p)
+	C.Rf_unprotect(1)
+	return r
+`, len(&a{}), nameOf(elem))
+				return
+			case types.Float64:
+				// Maximum length array type for this element type.
+				type a [1 << 46]float64
+				fmt.Fprintf(buf, `	r := C.Rf_allocVector(C.REALSXP, C.R_xlen_t(len(p)))
+	C.Rf_protect(r)
+	s := (*[%d]%s)(unsafe.Pointer(C.REAL(r)))[:len(p):len(p)]
+	copy(s, p)
+	C.Rf_unprotect(1)
+	return r
+`, len(&a{}), nameOf(elem))
+				return
+			case types.Complex128:
+				// Maximum length array type for this element type.
+				type a [1 << 45]complex128
+				fmt.Fprintf(buf, `	r := C.Rf_allocVector(C.CPLXSXP, C.R_xlen_t(len(p)))
+	C.Rf_protect(r)
+	s := (*[%d]%s)(unsafe.Pointer(C.CPLXSXP(r)))[:len(p):len(p)]
+	copy(s, p)
+	C.Rf_unprotect(1)
+	return r
+`, len(&a{}), nameOf(elem))
+				return
+			case types.Bool:
+				// Maximum length array type for this element type.
+				type a [1 << 47]int32
+				// FIXME(kortschak): Does Rf_allocVector return a
+				// zeroed vector? If it does, the loop below doesn't
+				// need the else clause.
+				// Alternatively, convert the []bool to a []byte:
+				//  for i, v := range *(*[]byte)(unsafe.Pointer(&p)) {
+				//      s[i] = int32(v)
+				//  }
+				fmt.Fprintf(buf, `	r := C.Rf_allocVector(C.LGLSXP, C.R_xlen_t(len(p)))
+	C.Rf_protect(r)
+	s := (*[%d]%s)(unsafe.Pointer(C.LOGICAL(r)))[:len(p):len(p)]
+	for i, v := range p {
+		if v {
+			s[i] = 1
+		} else {
+			s[i] = 0
+		}
+	}
+	C.Rf_unprotect(1)
+	return r
+`, len(&a{}), nameOf(elem))
+				return
+			}
+		}
 		setter := "SET_VECTOR_ELT"
 		if elem.String() == "string" || elem.String() == "error" {
 			setter = "SET_STRING_ELT"
