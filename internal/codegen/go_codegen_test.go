@@ -719,7 +719,7 @@ var sexpFuncGoTests = []struct {
 		listSEXPSet(arg, string(k), packSEXP_types_Basic_string(v))
 		n--
 		if n > 0 {
-			arg = CDR(arg)
+			arg = C.CDR(arg)
 		}
 	}
 	C.Rf_unprotect(1)
@@ -755,7 +755,7 @@ var sexpFuncGoTests = []struct {
 		listSEXPSet(arg, string(k), packSEXP_types_Basic_int32(v))
 		n--
 		if n > 0 {
-			arg = CDR(arg)
+			arg = C.CDR(arg)
 		}
 	}
 	C.Rf_unprotect(1)
@@ -790,7 +790,7 @@ var sexpFuncGoTests = []struct {
 		listSEXPSet(arg, string(k), packSEXP_types_Basic_rune(v))
 		n--
 		if n > 0 {
-			arg = CDR(arg)
+			arg = C.CDR(arg)
 		}
 	}
 	C.Rf_unprotect(1)
@@ -826,7 +826,7 @@ var sexpFuncGoTests = []struct {
 		listSEXPSet(arg, string(k), packSEXP_types_Basic_uint8(v))
 		n--
 		if n > 0 {
-			arg = CDR(arg)
+			arg = C.CDR(arg)
 		}
 	}
 	C.Rf_unprotect(1)
@@ -861,7 +861,7 @@ var sexpFuncGoTests = []struct {
 		listSEXPSet(arg, string(k), packSEXP_types_Basic_byte(v))
 		n--
 		if n > 0 {
-			arg = CDR(arg)
+			arg = C.CDR(arg)
 		}
 	}
 	C.Rf_unprotect(1)
@@ -897,7 +897,7 @@ var sexpFuncGoTests = []struct {
 		listSEXPSet(arg, string(k), packSEXP_types_Basic_float64(v))
 		n--
 		if n > 0 {
-			arg = CDR(arg)
+			arg = C.CDR(arg)
 		}
 	}
 	C.Rf_unprotect(1)
@@ -933,7 +933,7 @@ var sexpFuncGoTests = []struct {
 		listSEXPSet(arg, string(k), packSEXP_types_Basic_complex128(v))
 		n--
 		if n > 0 {
-			arg = CDR(arg)
+			arg = C.CDR(arg)
 		}
 	}
 	C.Rf_unprotect(1)
@@ -969,7 +969,7 @@ var sexpFuncGoTests = []struct {
 		listSEXPSet(arg, string(k), packSEXP_types_Basic_bool(v))
 		n--
 		if n > 0 {
-			arg = CDR(arg)
+			arg = C.CDR(arg)
 		}
 	}
 	C.Rf_unprotect(1)

@@ -83,8 +83,8 @@ func Wrapped_{{$func.Name}}({{go $params}}) C.SEXP {
 {{end}}{{end}}
 {{/* TODO(kortschak): Hoist C.SEXP unpacking for basic types out to the C code. */ -}}
 {{- .Unpackers.Types | unpackSEXP -}}
-{{- .Packers.Types | packSEXP}}{{if or $resultNeedsList .Packers.NeedList}}func listSEXPSet(r C.SEXP, key string, val C.SEXP) {
-	C.setAttrib(arg, packSEXP_types_Basic_string(key))
+{{- .Packers.Types | packSEXP}}{{if or $resultNeedsList .Packers.NeedList}}func listSEXPSet(arg C.SEXP, key string, val C.SEXP) {
+	C.setAttrib(arg, packSEXP_types_Basic_string(key), val)
 	C.SETCAR(arg, val)
 }
 
@@ -373,7 +373,7 @@ func packSEXPFuncBodyGo(buf *bytes.Buffer, typ types.Type) {
 		listSEXPSet(arg, string(k), packSEXP%s(v))
 		n--
 		if n > 0 {
-			arg = CDR(arg)
+			arg = C.CDR(arg)
 		}
 	}
 	C.Rf_unprotect(1)

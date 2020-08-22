@@ -143,8 +143,8 @@ func packSEXP_types_Struct_struct_F1_float32__F2_float32__rgo___Rname____(p stru
 	return r
 }
 
-func listSEXPSet(r C.SEXP, key string, val C.SEXP) {
-	C.setAttrib(arg, packSEXP_types_Basic_string(key))
+func listSEXPSet(arg C.SEXP, key string, val C.SEXP) {
+	C.setAttrib(arg, packSEXP_types_Basic_string(key), val)
 	C.SETCAR(arg, val)
 }
 

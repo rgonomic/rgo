@@ -146,15 +146,15 @@ func packSEXP_types_Map_map_string_uint8(p map[string]uint8) C.SEXP {
 		listSEXPSet(arg, string(k), packSEXP_types_Basic_uint8(v))
 		n--
 		if n > 0 {
-			arg = CDR(arg)
+			arg = C.CDR(arg)
 		}
 	}
 	C.Rf_unprotect(1)
 	return r
 }
 
-func listSEXPSet(r C.SEXP, key string, val C.SEXP) {
-	C.setAttrib(arg, packSEXP_types_Basic_string(key))
+func listSEXPSet(arg C.SEXP, key string, val C.SEXP) {
+	C.setAttrib(arg, packSEXP_types_Basic_string(key), val)
 	C.SETCAR(arg, val)
 }
 
