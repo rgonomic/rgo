@@ -184,6 +184,7 @@ extern void R_error(char *s);
 // TODO(kortschak): Only emit these when needed.
 extern Rboolean Rf_isNull(SEXP s);
 extern _GoString_ R_gostring(SEXP x, R_xlen_t i);
+extern int getListElementIndex(SEXP list, const char *str);
 */
 import "C"
 
@@ -318,11 +319,6 @@ func packSEXP_types_Basic_string(p string) C.SEXP {
 
 func packSEXP_types_Named_mixed_0_S1(p mixed_0.S1) C.SEXP {
 	return packSEXP_types_Basic_string(string(p))
-}
-
-func listSEXPSet(arg C.SEXP, key string, val C.SEXP) {
-	C.setAttrib(arg, packSEXP_types_Basic_string(key), val)
-	C.SETCAR(arg, val)
 }
 
 func main() {}

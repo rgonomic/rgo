@@ -40,6 +40,7 @@ extern void R_error(char *s);
 // TODO(kortschak): Only emit these when needed.
 extern Rboolean Rf_isNull(SEXP s);
 extern _GoString_ R_gostring(SEXP x, R_xlen_t i);
+extern int getListElementIndex(SEXP list, const char *str);
 */
 import "C"
 
@@ -83,12 +84,7 @@ func Wrapped_{{$func.Name}}({{go $params}}) C.SEXP {
 {{end}}{{end}}
 {{/* TODO(kortschak): Hoist C.SEXP unpacking for basic types out to the C code. */ -}}
 {{- .Unpackers.Types | unpackSEXP -}}
-{{- .Packers.Types | packSEXP}}{{if or $resultNeedsList .Packers.NeedList}}func listSEXPSet(arg C.SEXP, key string, val C.SEXP) {
-	C.setAttrib(arg, packSEXP_types_Basic_string(key), val)
-	C.SETCAR(arg, val)
-}
-
-{{end}}func main() {}
+{{- .Packers.Types | packSEXP}}func main() {}
 `))
 }
 
@@ -196,17 +192,99 @@ func unpackSEXPFuncBodyGo(buf *bytes.Buffer, typ types.Type) {
 		}
 
 	case *types.Map:
+		fmt.Fprintf(buf, `	if C.Rf_isNull(p) != 0 {
+		return nil
+	}
+`)
 		elem := typ.Elem()
-		fmt.Fprintf(buf, `	n := C.Rf_xlength(p)
-	r := make(map[string]%s, n)
-	names := C.getAttrib(list, C.R_NamesSymbol)
-	for i := 0; i < n; i++ {
-		key := unpackSEXP%s(C.R_char(C.STRING_ELT(names, C.R_xlen_t(i))))
-		elem := unpackSEXP%s(C.VECTOR_ELT(p, C.R_xlen_t(i)))
+		if basic, ok := elem.Underlying().(*types.Basic); ok {
+			switch basic.Kind() {
+			// TODO(kortschak): Make the fast path available
+			// to []T where T is one of these kinds.
+			case types.Int, types.Int8, types.Int16, types.Int32, types.Uint, types.Uint16, types.Uint32:
+				// Maximum length array type for this element type.
+				type a [1 << 47]int32
+				fmt.Fprintf(buf, `	n := int(C.Rf_xlength(p))
+	r := make(map[string]%[2]s, n)
+	names := C.getAttrib(p, C.R_NamesSymbol)
+	values := (*[%[1]d]int32)(unsafe.Pointer(C.INTEGER(p)))[:n:n]
+	for i, elem := range values {
+		key := string(C.R_gostring(names, C.R_xlen_t(i)))
+		r[key] = %[2]s(elem)
+	}
+	return r
+`, len(&a{}), nameOf(elem))
+				return
+			case types.Uint8:
+				// Maximum length array type for this element type.
+				type a [1 << 49]byte
+				fmt.Fprintf(buf, `	n := int(C.Rf_xlength(p))
+	r := make(map[string]%[2]s, n)
+	names := C.getAttrib(p, C.R_NamesSymbol)
+	values := (*[%[1]d]%[2]s)(unsafe.Pointer(C.RAW(p)))[:n:n]
+	for i, elem := range values {
+		key := string(C.R_gostring(names, C.R_xlen_t(i)))
 		r[key] = elem
 	}
 	return r
-`, nameOf(elem), pkg.Mangle(types.Typ[types.String]), pkg.Mangle(elem))
+`, len(&a{}), nameOf(elem))
+				return
+			case types.Float32, types.Float64:
+				// Maximum length array type for this element type.
+				type a [1 << 46]float64
+				fmt.Fprintf(buf, `	n := int(C.Rf_xlength(p))
+	r := make(map[string]%[2]s, n)
+	names := C.getAttrib(p, C.R_NamesSymbol)
+	values := (*[%[1]d]float64)(unsafe.Pointer(C.REAL(p)))[:n:n]
+	for i, elem := range values {
+		key := string(C.R_gostring(names, C.R_xlen_t(i)))
+		r[key] = %[2]s(elem)
+	}
+	return r
+`, len(&a{}), nameOf(elem))
+				return
+			case types.Complex64, types.Complex128:
+				// Maximum length array type for this element type.
+				type a [1 << 45]complex128
+				fmt.Fprintf(buf, `	n := int(C.Rf_xlength(p))
+	r := make(map[string]%[2]s, n)
+	names := C.getAttrib(p, C.R_NamesSymbol)
+	values := (*[%[1]d]complex128)(unsafe.Pointer(C.COMPLEX(p)))[:n:n]
+	for i, elem := range values {
+		key := string(C.R_gostring(names, C.R_xlen_t(i)))
+		r[key] = %[2]s(elem)
+	}
+	return r
+`, len(&a{}), nameOf(elem))
+				return
+			case types.Bool:
+				// Maximum length array type for this element type.
+				type a [1 << 47]int32
+				fmt.Fprintf(buf, `	n := int(C.Rf_xlength(p))
+	r := make(map[string]%[2]s, n)
+	names := C.getAttrib(p, C.R_NamesSymbol)
+	values := (*[%[1]d]int32)(unsafe.Pointer(C.LOGICAL(p)))[:n:n]
+	for i, elem := range values {
+		key := string(C.R_gostring(names, C.R_xlen_t(i)))
+		r[key] = (elem == 1)
+	}
+	return r
+`, len(&a{}), nameOf(elem))
+				return
+			case types.String:
+				fmt.Fprintf(buf, `	n := int(C.Rf_xlength(p))
+	r := make(map[string]%[1]s, n)
+	names := C.getAttrib(p, C.R_NamesSymbol)
+	for i := 0; i < n; i++ {
+		key := string(C.R_gostring(names, C.R_xlen_t(i)))
+		r[key] = %[1]s(C.R_gostring(p, C.R_xlen_t(i)))
+	}
+	return r
+`, nameOf(elem))
+				return
+			}
+		}
+		panic(fmt.Sprintf("TODO: unpack map[string]%s", elem))
 
 	case *types.Pointer:
 		fmt.Fprintf(buf, `	if C.Rf_isNull(p) != 0 {
@@ -304,7 +382,7 @@ func unpackSEXPFuncBodyGo(buf *bytes.Buffer, typ types.Type) {
 
 			fmt.Fprintf(buf, `	key_%s := C.CString("%[1]s")
 	defer C.free(unsafe.Pointer(key_%[1]s))
-	i = getListElementIndex(p, key_%[1]s)
+	i = C.getListElementIndex(p, key_%[1]s)
 	if i < 0 {
 		panic("no list element for field: %[2]s")
 	}
@@ -374,20 +452,187 @@ func packSEXPFuncBodyGo(buf *bytes.Buffer, typ types.Type) {
 		}
 
 	case *types.Map:
-		fmt.Fprintf(buf, `	n := len(p)
-	r := C.allocList(C.int(n))
+		// TODO(kortschak): Handle named simple types properly.
+		elem := typ.Elem()
+		if basic, ok := elem.Underlying().(*types.Basic); ok {
+			switch basic.Kind() {
+			// TODO(kortschak): Make the fast path available
+			// to []T where T is one of these kinds.
+			case types.Int, types.Int8, types.Int16, types.Int32, types.Uint, types.Uint16, types.Uint32:
+				// Maximum length array type for this element type.
+				type a [1 << 47]int32
+				fmt.Fprintf(buf, `	n := len(p)
+	r := C.Rf_allocVector(C.%[1]s, C.R_xlen_t(n))
 	C.Rf_protect(r)
-	arg := r
+	names := C.Rf_allocVector(C.STRSXP, C.R_xlen_t(n))
+	C.Rf_protect(names)
+	s := (*[%[2]d]int32)(unsafe.Pointer(C.INTEGER(r)))[:len(p):len(p)]
+	var i C.R_xlen_t
 	for k, v := range p {
-		listSEXPSet(arg, string(k), packSEXP%s(v))
-		n--
-		if n > 0 {
-			arg = C.CDR(arg)
-		}
+		C.SET_STRING_ELT(names, i, C.Rf_mkCharLenCE(C._GoStringPtr(k), C.int(len(k)), C.CE_UTF8))
+		s[i] = int32(v)
+		i++
 	}
-	C.Rf_unprotect(1)
+	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
+	C.Rf_unprotect(2)
 	return r
-`, pkg.Mangle(typ.Elem()))
+`, rTypeLabelFor(elem), len(&a{}))
+				return
+
+			case types.Uint8:
+				// Maximum length array type for this element type.
+				type a [1 << 49]byte
+				fmt.Fprintf(buf, `	n := len(p)
+	r := C.Rf_allocVector(C.%[1]s, C.R_xlen_t(n))
+	C.Rf_protect(r)
+	names := C.Rf_allocVector(C.STRSXP, C.R_xlen_t(n))
+	C.Rf_protect(names)
+	s := (*[%[2]d]uint8)(unsafe.Pointer(C.RAW(r)))[:len(p):len(p)]
+	var i C.R_xlen_t
+	for k, v := range p {
+		C.SET_STRING_ELT(names, i, C.Rf_mkCharLenCE(C._GoStringPtr(k), C.int(len(k)), C.CE_UTF8))
+		i++
+	}
+	copy(s, p)
+	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
+	C.Rf_unprotect(2)
+	return r
+`, rTypeLabelFor(elem), len(&a{}), pkg.Mangle(elem))
+				return
+
+			case types.Float32, types.Float64:
+				// Maximum length array type for this element type.
+				type a [1 << 46]float64
+				fmt.Fprintf(buf, `	n := len(p)
+	r := C.Rf_allocVector(C.%[1]s, C.R_xlen_t(n))
+	C.Rf_protect(r)
+	names := C.Rf_allocVector(C.STRSXP, C.R_xlen_t(n))
+	C.Rf_protect(names)
+	s := (*[%[2]d]float64)(unsafe.Pointer(C.REAL(r)))[:len(p):len(p)]
+	var i C.R_xlen_t
+	for k, v := range p {
+		C.SET_STRING_ELT(names, i, C.Rf_mkCharLenCE(C._GoStringPtr(k), C.int(len(k)), C.CE_UTF8))
+		s[i] = float64(v)
+		i++
+	}
+	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
+	C.Rf_unprotect(2)
+	return r
+`, rTypeLabelFor(elem), len(&a{}))
+				return
+
+			case types.Complex64, types.Complex128:
+				// Maximum length array type for this element type.
+				type a [1 << 45]complex128
+				fmt.Fprintf(buf, `	n := len(p)
+	r := C.Rf_allocVector(C.%[1]s, C.R_xlen_t(n))
+	C.Rf_protect(r)
+	names := C.Rf_allocVector(C.STRSXP, C.R_xlen_t(n))
+	C.Rf_protect(names)
+	s := (*[%[2]d]complex128)(unsafe.Pointer(C.COMPLEX(r)))[:len(p):len(p)]
+	var i C.R_xlen_t
+	for k, v := range p {
+		C.SET_STRING_ELT(names, i, C.Rf_mkCharLenCE(C._GoStringPtr(k), C.int(len(k)), C.CE_UTF8))
+		s[i] = complex128(v)
+		i++
+	}
+	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
+	C.Rf_unprotect(2)
+	return r
+`, rTypeLabelFor(elem), len(&a{}))
+				return
+
+			case types.String:
+				fmt.Fprintf(buf, `	n := len(p)
+	r := C.Rf_allocVector(C.%[1]s, C.R_xlen_t(n))
+	C.Rf_protect(r)
+	names := C.Rf_allocVector(C.STRSXP, C.R_xlen_t(n))
+	C.Rf_protect(names)
+	var i C.R_xlen_t
+	for k, v := range p {
+		C.SET_STRING_ELT(names, i, C.Rf_mkCharLenCE(C._GoStringPtr(k), C.int(len(k)), C.CE_UTF8))
+		C.SET_STRING_ELT(r, i, packSEXP%s(v))
+		i++
+	}
+	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
+	C.Rf_unprotect(2)
+	return r
+`, rTypeLabelFor(elem), pkg.Mangle(elem))
+				return
+
+			case types.Bool:
+				// Maximum length array type for this element type.
+				type a [1 << 47]int32
+				// FIXME(kortschak): Does Rf_allocVector return a
+				// zeroed vector? If it does, the loop below doesn't
+				// need the else clause.
+				// Alternatively, convert the []bool to a []byte:
+				//  for i, v := range *(*[]byte)(unsafe.Pointer(&p)) {
+				//      s[i] = int32(v)
+				//  }
+				fmt.Fprintf(buf, `	n := len(p)
+	r := C.Rf_allocVector(C.LGLSXP, C.R_xlen_t(n))
+	C.Rf_protect(r)
+	names := C.Rf_allocVector(C.STRSXP, C.R_xlen_t(n))
+	C.Rf_protect(names)
+	s := (*[%d]int32)(unsafe.Pointer(C.LOGICAL(r)))[:len(p):len(p)]
+	var i C.R_xlen_t
+	for k, v := range p {
+		C.SET_STRING_ELT(names, i, C.Rf_mkCharLenCE(C._GoStringPtr(k), C.int(len(k)), C.CE_UTF8))
+		if v {
+			s[i] = 1
+		} else {
+			s[i] = 0
+		}
+		i++
+	}
+	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
+	C.Rf_unprotect(2)
+	return r
+`, len(&a{}))
+				return
+			}
+		}
+
+		switch {
+		case elem.String() == "error":
+			fmt.Fprintf(buf, `	n := len(p)
+	r := C.Rf_allocVector(C.%[1]s, C.R_xlen_t(n))
+	C.Rf_protect(r)
+	names := C.Rf_allocVector(C.STRSXP, C.R_xlen_t(n))
+	C.Rf_protect(names)
+	var i C.R_xlen_t
+	for k, v := range p {
+		C.SET_STRING_ELT(names, i, C.Rf_mkCharLenCE(C._GoStringPtr(k), C.int(len(k)), C.CE_UTF8))
+		s := C.R_NilValue
+		if v != nil {
+			C.SET_STRING_ELT(r, i, packSEXP%[2]s(v))
+		}
+		C.SET_STRING_ELT(r, i, s)
+		i++
+	}
+	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
+	C.Rf_unprotect(2)
+	return r
+`, rTypeLabelFor(elem), pkg.Mangle(elem))
+
+		default:
+			fmt.Fprintf(buf, `	n := len(p)
+	r := C.Rf_allocVector(C.%s, C.R_xlen_t(n))
+	C.Rf_protect(r)
+	names := C.Rf_allocVector(C.STRSXP, C.R_xlen_t(n))
+	C.Rf_protect(names)
+	var i C.R_xlen_t
+	for k, v := range p {
+		C.SET_STRING_ELT(names, i, C.Rf_mkCharLenCE(C._GoStringPtr(k), C.int(len(k)), C.CE_UTF8))
+		C.SET_VECTOR_ELT(r, i, packSEXP%s(v))
+		i++
+	}
+	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
+	C.Rf_unprotect(2)
+	return r
+`, rTypeLabelFor(elem), pkg.Mangle(elem))
+		}
 
 	case *types.Pointer:
 		fmt.Fprintf(buf, `	if p == nil {
@@ -512,15 +757,18 @@ func packSEXPFuncBodyGo(buf *bytes.Buffer, typ types.Type) {
 	case *types.Struct:
 		n := typ.NumFields()
 		fmt.Fprintf(buf, "\tr := C.allocList(%d)\n\tC.Rf_protect(r)\n", n)
+		fmt.Fprintf(buf, "\tnames := C.Rf_allocVector(C.STRSXP, %d)\n\tC.Rf_protect(names)\n", n)
 		fmt.Fprintln(buf, "\targ := r")
 		for i := 0; i < n; i++ {
 			f := typ.Field(i)
-			fmt.Fprintf(buf, "\tlistSEXPSet(arg, %q, packSEXP%s(p.%s))\n", f.Name(), pkg.Mangle(f.Type()), f.Name())
+			rName := targetFieldName(typ, i)
+			fmt.Fprintf(buf, "\tC.SET_STRING_ELT(names, %d, C.Rf_mkCharLenCE(C._GoStringPtr(`%s`), %d, C.CE_UTF8))\n", i, rName, len(rName))
+			fmt.Fprintf(buf, "\tC.SETCAR(arg, packSEXP%s(p.%s))\n", pkg.Mangle(f.Type()), f.Name())
 			if i < n-1 {
 				fmt.Fprintln(buf, "\targ = C.CDR(arg)")
 			}
 		}
-		fmt.Fprintln(buf, "\tC.Rf_unprotect(1)\n\treturn r")
+		fmt.Fprintln(buf, "\tC.setAttrib(r, packSEXP_types_Basic_string(`names`), names)\n\tC.Rf_unprotect(2)\n\treturn r")
 
 	default:
 		panic(fmt.Sprintf("unhandled type: %s", typ))

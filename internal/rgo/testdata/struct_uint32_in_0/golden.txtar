@@ -101,6 +101,7 @@ extern void R_error(char *s);
 // TODO(kortschak): Only emit these when needed.
 extern Rboolean Rf_isNull(SEXP s);
 extern _GoString_ R_gostring(SEXP x, R_xlen_t i);
+extern int getListElementIndex(SEXP list, const char *str);
 */
 import "C"
 
@@ -146,14 +147,14 @@ func unpackSEXP_types_Struct_struct_F1_uint32__F2_uint32__rgo___Rname____(p C.SE
 	var i C.int
 	key_F1 := C.CString("F1")
 	defer C.free(unsafe.Pointer(key_F1))
-	i = getListElementIndex(p, key_F1)
+	i = C.getListElementIndex(p, key_F1)
 	if i < 0 {
 		panic("no list element for field: F1")
 	}
 	r.F1 = unpackSEXP_types_Basic_uint32(C.VECTOR_ELT(p, C.R_xlen_t(i)))
 	key_Rname := C.CString("Rname")
 	defer C.free(unsafe.Pointer(key_Rname))
-	i = getListElementIndex(p, key_Rname)
+	i = C.getListElementIndex(p, key_Rname)
 	if i < 0 {
 		panic("no list element for field: F2")
 	}

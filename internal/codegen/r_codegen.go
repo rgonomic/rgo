@@ -102,6 +102,9 @@ func rDocFor(typ types.Type) string {
 		}
 		switch {
 		case length <= 0:
+			if rtyp == "vector" {
+				return rtyp
+			}
 			return fmt.Sprintf("%s vector", rtyp)
 		case length == 1:
 			return fmt.Sprintf("scalar %s", rtyp)
@@ -168,7 +171,9 @@ func rTypeOf(typ types.Type) (rtyp string, length int64) {
 			}
 			return basicRtype(etyp), typ.Len()
 		}
-	case *types.Map, *types.Struct:
+	case *types.Map:
+		return "vector", -1
+	case *types.Struct:
 		return "list", -1
 	}
 	return "", -1

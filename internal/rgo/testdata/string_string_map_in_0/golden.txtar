@@ -26,12 +26,12 @@ export(test_0)
 #'
 #' Test0 does things with [map[string]string] and returns [].
 #' 
-#' @param par0 is a list
+#' @param par0 is a vector
 #' @seelso <https://godoc.org/string_string_map_in_0#Test0>
 #' @export
 test_0 <- function(par0) {
-	if (!is.list(par0)) {
-		stop("Argument 'par0' must be of type 'list'.")
+	if (!is.vector(par0)) {
+		stop("Argument 'par0' must be of type 'vector'.")
 	}
 	.Call("test_0", par0, PACKAGE = "string_string_map_in_0")
 }
@@ -101,6 +101,7 @@ extern void R_error(char *s);
 // TODO(kortschak): Only emit these when needed.
 extern Rboolean Rf_isNull(SEXP s);
 extern _GoString_ R_gostring(SEXP x, R_xlen_t i);
+extern int getListElementIndex(SEXP list, const char *str);
 */
 import "C"
 
@@ -134,13 +135,15 @@ func unpackSEXP_types_Basic_string(p C.SEXP) string {
 }
 
 func unpackSEXP_types_Map_map_string_string(p C.SEXP) map[string]string {
-	n := C.Rf_xlength(p)
+	if C.Rf_isNull(p) != 0 {
+		return nil
+	}
+	n := int(C.Rf_xlength(p))
 	r := make(map[string]string, n)
-	names := C.getAttrib(list, C.R_NamesSymbol)
+	names := C.getAttrib(p, C.R_NamesSymbol)
 	for i := 0; i < n; i++ {
-		key := unpackSEXP_types_Basic_string(C.R_char(C.STRING_ELT(names, C.R_xlen_t(i))))
-		elem := unpackSEXP_types_Basic_string(C.VECTOR_ELT(p, C.R_xlen_t(i)))
-		r[key] = elem
+		key := string(C.R_gostring(names, C.R_xlen_t(i)))
+		r[key] = string(C.R_gostring(p, C.R_xlen_t(i)))
 	}
 	return r
 }

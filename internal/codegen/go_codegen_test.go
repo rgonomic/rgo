@@ -698,13 +698,15 @@ var sexpFuncGoTests = []struct {
 	{
 		typs: []types.Type{types.NewMap(types.Typ[types.String], types.Typ[types.String])},
 		wantUnpack: `func unpackSEXP_types_Map_map_string_string(p C.SEXP) map[string]string {
-	n := C.Rf_xlength(p)
+	if C.Rf_isNull(p) != 0 {
+		return nil
+	}
+	n := int(C.Rf_xlength(p))
 	r := make(map[string]string, n)
-	names := C.getAttrib(list, C.R_NamesSymbol)
+	names := C.getAttrib(p, C.R_NamesSymbol)
 	for i := 0; i < n; i++ {
-		key := unpackSEXP_types_Basic_string(C.R_char(C.STRING_ELT(names, C.R_xlen_t(i))))
-		elem := unpackSEXP_types_Basic_string(C.VECTOR_ELT(p, C.R_xlen_t(i)))
-		r[key] = elem
+		key := string(C.R_gostring(names, C.R_xlen_t(i)))
+		r[key] = string(C.R_gostring(p, C.R_xlen_t(i)))
 	}
 	return r
 }`,
@@ -713,17 +715,18 @@ var sexpFuncGoTests = []struct {
 }`,
 		wantPack: `func packSEXP_types_Map_map_string_string(p map[string]string) C.SEXP {
 	n := len(p)
-	r := C.allocList(C.int(n))
+	r := C.Rf_allocVector(C.STRSXP, C.R_xlen_t(n))
 	C.Rf_protect(r)
-	arg := r
+	names := C.Rf_allocVector(C.STRSXP, C.R_xlen_t(n))
+	C.Rf_protect(names)
+	var i C.R_xlen_t
 	for k, v := range p {
-		listSEXPSet(arg, string(k), packSEXP_types_Basic_string(v))
-		n--
-		if n > 0 {
-			arg = C.CDR(arg)
-		}
+		C.SET_STRING_ELT(names, i, C.Rf_mkCharLenCE(C._GoStringPtr(k), C.int(len(k)), C.CE_UTF8))
+		C.SET_STRING_ELT(r, i, packSEXP_types_Basic_string(v))
+		i++
 	}
-	C.Rf_unprotect(1)
+	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
+	C.Rf_unprotect(2)
 	return r
 }`,
 		wantPackNamed: `func packSEXP_types_Named_path_to_pkg_T(p pkg.T) C.SEXP {
@@ -734,13 +737,16 @@ var sexpFuncGoTests = []struct {
 	{
 		typs: []types.Type{types.NewMap(types.Typ[types.String], types.Typ[types.Int32])},
 		wantUnpack: `func unpackSEXP_types_Map_map_string_int32(p C.SEXP) map[string]int32 {
-	n := C.Rf_xlength(p)
+	if C.Rf_isNull(p) != 0 {
+		return nil
+	}
+	n := int(C.Rf_xlength(p))
 	r := make(map[string]int32, n)
-	names := C.getAttrib(list, C.R_NamesSymbol)
-	for i := 0; i < n; i++ {
-		key := unpackSEXP_types_Basic_string(C.R_char(C.STRING_ELT(names, C.R_xlen_t(i))))
-		elem := unpackSEXP_types_Basic_int32(C.VECTOR_ELT(p, C.R_xlen_t(i)))
-		r[key] = elem
+	names := C.getAttrib(p, C.R_NamesSymbol)
+	values := (*[140737488355328]int32)(unsafe.Pointer(C.INTEGER(p)))[:n:n]
+	for i, elem := range values {
+		key := string(C.R_gostring(names, C.R_xlen_t(i)))
+		r[key] = int32(elem)
 	}
 	return r
 }`,
@@ -749,17 +755,19 @@ var sexpFuncGoTests = []struct {
 }`,
 		wantPack: `func packSEXP_types_Map_map_string_int32(p map[string]int32) C.SEXP {
 	n := len(p)
-	r := C.allocList(C.int(n))
+	r := C.Rf_allocVector(C.INTSXP, C.R_xlen_t(n))
 	C.Rf_protect(r)
-	arg := r
+	names := C.Rf_allocVector(C.STRSXP, C.R_xlen_t(n))
+	C.Rf_protect(names)
+	s := (*[140737488355328]int32)(unsafe.Pointer(C.INTEGER(r)))[:len(p):len(p)]
+	var i C.R_xlen_t
 	for k, v := range p {
-		listSEXPSet(arg, string(k), packSEXP_types_Basic_int32(v))
-		n--
-		if n > 0 {
-			arg = C.CDR(arg)
-		}
+		C.SET_STRING_ELT(names, i, C.Rf_mkCharLenCE(C._GoStringPtr(k), C.int(len(k)), C.CE_UTF8))
+		s[i] = int32(v)
+		i++
 	}
-	C.Rf_unprotect(1)
+	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
+	C.Rf_unprotect(2)
 	return r
 }`,
 		wantPackNamed: `func packSEXP_types_Named_path_to_pkg_T(p pkg.T) C.SEXP {
@@ -769,13 +777,16 @@ var sexpFuncGoTests = []struct {
 	{
 		typs: []types.Type{types.NewMap(types.Typ[types.String], types.Universe.Lookup("rune").Type())},
 		wantUnpack: `func unpackSEXP_types_Map_map_string_rune(p C.SEXP) map[string]rune {
-	n := C.Rf_xlength(p)
+	if C.Rf_isNull(p) != 0 {
+		return nil
+	}
+	n := int(C.Rf_xlength(p))
 	r := make(map[string]rune, n)
-	names := C.getAttrib(list, C.R_NamesSymbol)
-	for i := 0; i < n; i++ {
-		key := unpackSEXP_types_Basic_string(C.R_char(C.STRING_ELT(names, C.R_xlen_t(i))))
-		elem := unpackSEXP_types_Basic_rune(C.VECTOR_ELT(p, C.R_xlen_t(i)))
-		r[key] = elem
+	names := C.getAttrib(p, C.R_NamesSymbol)
+	values := (*[140737488355328]int32)(unsafe.Pointer(C.INTEGER(p)))[:n:n]
+	for i, elem := range values {
+		key := string(C.R_gostring(names, C.R_xlen_t(i)))
+		r[key] = rune(elem)
 	}
 	return r
 }`,
@@ -784,17 +795,19 @@ var sexpFuncGoTests = []struct {
 }`,
 		wantPack: `func packSEXP_types_Map_map_string_rune(p map[string]rune) C.SEXP {
 	n := len(p)
-	r := C.allocList(C.int(n))
+	r := C.Rf_allocVector(C.INTSXP, C.R_xlen_t(n))
 	C.Rf_protect(r)
-	arg := r
+	names := C.Rf_allocVector(C.STRSXP, C.R_xlen_t(n))
+	C.Rf_protect(names)
+	s := (*[140737488355328]int32)(unsafe.Pointer(C.INTEGER(r)))[:len(p):len(p)]
+	var i C.R_xlen_t
 	for k, v := range p {
-		listSEXPSet(arg, string(k), packSEXP_types_Basic_rune(v))
-		n--
-		if n > 0 {
-			arg = C.CDR(arg)
-		}
+		C.SET_STRING_ELT(names, i, C.Rf_mkCharLenCE(C._GoStringPtr(k), C.int(len(k)), C.CE_UTF8))
+		s[i] = int32(v)
+		i++
 	}
-	C.Rf_unprotect(1)
+	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
+	C.Rf_unprotect(2)
 	return r
 }`,
 		wantPackNamed: `func packSEXP_types_Named_path_to_pkg_T(p pkg.T) C.SEXP {
@@ -805,12 +818,15 @@ var sexpFuncGoTests = []struct {
 	{
 		typs: []types.Type{types.NewMap(types.Typ[types.String], types.Typ[types.Uint8])},
 		wantUnpack: `func unpackSEXP_types_Map_map_string_uint8(p C.SEXP) map[string]uint8 {
-	n := C.Rf_xlength(p)
+	if C.Rf_isNull(p) != 0 {
+		return nil
+	}
+	n := int(C.Rf_xlength(p))
 	r := make(map[string]uint8, n)
-	names := C.getAttrib(list, C.R_NamesSymbol)
-	for i := 0; i < n; i++ {
-		key := unpackSEXP_types_Basic_string(C.R_char(C.STRING_ELT(names, C.R_xlen_t(i))))
-		elem := unpackSEXP_types_Basic_uint8(C.VECTOR_ELT(p, C.R_xlen_t(i)))
+	names := C.getAttrib(p, C.R_NamesSymbol)
+	values := (*[562949953421312]uint8)(unsafe.Pointer(C.RAW(p)))[:n:n]
+	for i, elem := range values {
+		key := string(C.R_gostring(names, C.R_xlen_t(i)))
 		r[key] = elem
 	}
 	return r
@@ -820,17 +836,19 @@ var sexpFuncGoTests = []struct {
 }`,
 		wantPack: `func packSEXP_types_Map_map_string_uint8(p map[string]uint8) C.SEXP {
 	n := len(p)
-	r := C.allocList(C.int(n))
+	r := C.Rf_allocVector(C.INTSXP, C.R_xlen_t(n))
 	C.Rf_protect(r)
-	arg := r
+	names := C.Rf_allocVector(C.STRSXP, C.R_xlen_t(n))
+	C.Rf_protect(names)
+	s := (*[562949953421312]uint8)(unsafe.Pointer(C.RAW(r)))[:len(p):len(p)]
+	var i C.R_xlen_t
 	for k, v := range p {
-		listSEXPSet(arg, string(k), packSEXP_types_Basic_uint8(v))
-		n--
-		if n > 0 {
-			arg = C.CDR(arg)
-		}
+		C.SET_STRING_ELT(names, i, C.Rf_mkCharLenCE(C._GoStringPtr(k), C.int(len(k)), C.CE_UTF8))
+		i++
 	}
-	C.Rf_unprotect(1)
+	copy(s, p)
+	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
+	C.Rf_unprotect(2)
 	return r
 }`,
 		wantPackNamed: `func packSEXP_types_Named_path_to_pkg_T(p pkg.T) C.SEXP {
@@ -840,12 +858,15 @@ var sexpFuncGoTests = []struct {
 	{
 		typs: []types.Type{types.NewMap(types.Typ[types.String], types.Universe.Lookup("byte").Type())},
 		wantUnpack: `func unpackSEXP_types_Map_map_string_byte(p C.SEXP) map[string]byte {
-	n := C.Rf_xlength(p)
+	if C.Rf_isNull(p) != 0 {
+		return nil
+	}
+	n := int(C.Rf_xlength(p))
 	r := make(map[string]byte, n)
-	names := C.getAttrib(list, C.R_NamesSymbol)
-	for i := 0; i < n; i++ {
-		key := unpackSEXP_types_Basic_string(C.R_char(C.STRING_ELT(names, C.R_xlen_t(i))))
-		elem := unpackSEXP_types_Basic_byte(C.VECTOR_ELT(p, C.R_xlen_t(i)))
+	names := C.getAttrib(p, C.R_NamesSymbol)
+	values := (*[562949953421312]byte)(unsafe.Pointer(C.RAW(p)))[:n:n]
+	for i, elem := range values {
+		key := string(C.R_gostring(names, C.R_xlen_t(i)))
 		r[key] = elem
 	}
 	return r
@@ -855,17 +876,19 @@ var sexpFuncGoTests = []struct {
 }`,
 		wantPack: `func packSEXP_types_Map_map_string_byte(p map[string]byte) C.SEXP {
 	n := len(p)
-	r := C.allocList(C.int(n))
+	r := C.Rf_allocVector(C.INTSXP, C.R_xlen_t(n))
 	C.Rf_protect(r)
-	arg := r
+	names := C.Rf_allocVector(C.STRSXP, C.R_xlen_t(n))
+	C.Rf_protect(names)
+	s := (*[562949953421312]uint8)(unsafe.Pointer(C.RAW(r)))[:len(p):len(p)]
+	var i C.R_xlen_t
 	for k, v := range p {
-		listSEXPSet(arg, string(k), packSEXP_types_Basic_byte(v))
-		n--
-		if n > 0 {
-			arg = C.CDR(arg)
-		}
+		C.SET_STRING_ELT(names, i, C.Rf_mkCharLenCE(C._GoStringPtr(k), C.int(len(k)), C.CE_UTF8))
+		i++
 	}
-	C.Rf_unprotect(1)
+	copy(s, p)
+	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
+	C.Rf_unprotect(2)
 	return r
 }`,
 		wantPackNamed: `func packSEXP_types_Named_path_to_pkg_T(p pkg.T) C.SEXP {
@@ -876,13 +899,16 @@ var sexpFuncGoTests = []struct {
 	{
 		typs: []types.Type{types.NewMap(types.Typ[types.String], types.Typ[types.Float64])},
 		wantUnpack: `func unpackSEXP_types_Map_map_string_float64(p C.SEXP) map[string]float64 {
-	n := C.Rf_xlength(p)
+	if C.Rf_isNull(p) != 0 {
+		return nil
+	}
+	n := int(C.Rf_xlength(p))
 	r := make(map[string]float64, n)
-	names := C.getAttrib(list, C.R_NamesSymbol)
-	for i := 0; i < n; i++ {
-		key := unpackSEXP_types_Basic_string(C.R_char(C.STRING_ELT(names, C.R_xlen_t(i))))
-		elem := unpackSEXP_types_Basic_float64(C.VECTOR_ELT(p, C.R_xlen_t(i)))
-		r[key] = elem
+	names := C.getAttrib(p, C.R_NamesSymbol)
+	values := (*[70368744177664]float64)(unsafe.Pointer(C.REAL(p)))[:n:n]
+	for i, elem := range values {
+		key := string(C.R_gostring(names, C.R_xlen_t(i)))
+		r[key] = float64(elem)
 	}
 	return r
 }`,
@@ -891,17 +917,19 @@ var sexpFuncGoTests = []struct {
 }`,
 		wantPack: `func packSEXP_types_Map_map_string_float64(p map[string]float64) C.SEXP {
 	n := len(p)
-	r := C.allocList(C.int(n))
+	r := C.Rf_allocVector(C.REALSXP, C.R_xlen_t(n))
 	C.Rf_protect(r)
-	arg := r
+	names := C.Rf_allocVector(C.STRSXP, C.R_xlen_t(n))
+	C.Rf_protect(names)
+	s := (*[70368744177664]float64)(unsafe.Pointer(C.REAL(r)))[:len(p):len(p)]
+	var i C.R_xlen_t
 	for k, v := range p {
-		listSEXPSet(arg, string(k), packSEXP_types_Basic_float64(v))
-		n--
-		if n > 0 {
-			arg = C.CDR(arg)
-		}
+		C.SET_STRING_ELT(names, i, C.Rf_mkCharLenCE(C._GoStringPtr(k), C.int(len(k)), C.CE_UTF8))
+		s[i] = float64(v)
+		i++
 	}
-	C.Rf_unprotect(1)
+	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
+	C.Rf_unprotect(2)
 	return r
 }`,
 		wantPackNamed: `func packSEXP_types_Named_path_to_pkg_T(p pkg.T) C.SEXP {
@@ -912,13 +940,16 @@ var sexpFuncGoTests = []struct {
 	{
 		typs: []types.Type{types.NewMap(types.Typ[types.String], types.Typ[types.Complex128])},
 		wantUnpack: `func unpackSEXP_types_Map_map_string_complex128(p C.SEXP) map[string]complex128 {
-	n := C.Rf_xlength(p)
+	if C.Rf_isNull(p) != 0 {
+		return nil
+	}
+	n := int(C.Rf_xlength(p))
 	r := make(map[string]complex128, n)
-	names := C.getAttrib(list, C.R_NamesSymbol)
-	for i := 0; i < n; i++ {
-		key := unpackSEXP_types_Basic_string(C.R_char(C.STRING_ELT(names, C.R_xlen_t(i))))
-		elem := unpackSEXP_types_Basic_complex128(C.VECTOR_ELT(p, C.R_xlen_t(i)))
-		r[key] = elem
+	names := C.getAttrib(p, C.R_NamesSymbol)
+	values := (*[35184372088832]complex128)(unsafe.Pointer(C.COMPLEX(p)))[:n:n]
+	for i, elem := range values {
+		key := string(C.R_gostring(names, C.R_xlen_t(i)))
+		r[key] = complex128(elem)
 	}
 	return r
 }`,
@@ -927,17 +958,19 @@ var sexpFuncGoTests = []struct {
 }`,
 		wantPack: `func packSEXP_types_Map_map_string_complex128(p map[string]complex128) C.SEXP {
 	n := len(p)
-	r := C.allocList(C.int(n))
+	r := C.Rf_allocVector(C.CPLXSXP, C.R_xlen_t(n))
 	C.Rf_protect(r)
-	arg := r
+	names := C.Rf_allocVector(C.STRSXP, C.R_xlen_t(n))
+	C.Rf_protect(names)
+	s := (*[35184372088832]complex128)(unsafe.Pointer(C.COMPLEX(r)))[:len(p):len(p)]
+	var i C.R_xlen_t
 	for k, v := range p {
-		listSEXPSet(arg, string(k), packSEXP_types_Basic_complex128(v))
-		n--
-		if n > 0 {
-			arg = C.CDR(arg)
-		}
+		C.SET_STRING_ELT(names, i, C.Rf_mkCharLenCE(C._GoStringPtr(k), C.int(len(k)), C.CE_UTF8))
+		s[i] = complex128(v)
+		i++
 	}
-	C.Rf_unprotect(1)
+	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
+	C.Rf_unprotect(2)
 	return r
 }`,
 		wantPackNamed: `func packSEXP_types_Named_path_to_pkg_T(p pkg.T) C.SEXP {
@@ -948,13 +981,16 @@ var sexpFuncGoTests = []struct {
 	{
 		typs: []types.Type{types.NewMap(types.Typ[types.String], types.Typ[types.Bool])},
 		wantUnpack: `func unpackSEXP_types_Map_map_string_bool(p C.SEXP) map[string]bool {
-	n := C.Rf_xlength(p)
+	if C.Rf_isNull(p) != 0 {
+		return nil
+	}
+	n := int(C.Rf_xlength(p))
 	r := make(map[string]bool, n)
-	names := C.getAttrib(list, C.R_NamesSymbol)
-	for i := 0; i < n; i++ {
-		key := unpackSEXP_types_Basic_string(C.R_char(C.STRING_ELT(names, C.R_xlen_t(i))))
-		elem := unpackSEXP_types_Basic_bool(C.VECTOR_ELT(p, C.R_xlen_t(i)))
-		r[key] = elem
+	names := C.getAttrib(p, C.R_NamesSymbol)
+	values := (*[140737488355328]int32)(unsafe.Pointer(C.LOGICAL(p)))[:n:n]
+	for i, elem := range values {
+		key := string(C.R_gostring(names, C.R_xlen_t(i)))
+		r[key] = (elem == 1)
 	}
 	return r
 }`,
@@ -963,17 +999,23 @@ var sexpFuncGoTests = []struct {
 }`,
 		wantPack: `func packSEXP_types_Map_map_string_bool(p map[string]bool) C.SEXP {
 	n := len(p)
-	r := C.allocList(C.int(n))
+	r := C.Rf_allocVector(C.LGLSXP, C.R_xlen_t(n))
 	C.Rf_protect(r)
-	arg := r
+	names := C.Rf_allocVector(C.STRSXP, C.R_xlen_t(n))
+	C.Rf_protect(names)
+	s := (*[140737488355328]int32)(unsafe.Pointer(C.LOGICAL(r)))[:len(p):len(p)]
+	var i C.R_xlen_t
 	for k, v := range p {
-		listSEXPSet(arg, string(k), packSEXP_types_Basic_bool(v))
-		n--
-		if n > 0 {
-			arg = C.CDR(arg)
+		C.SET_STRING_ELT(names, i, C.Rf_mkCharLenCE(C._GoStringPtr(k), C.int(len(k)), C.CE_UTF8))
+		if v {
+			s[i] = 1
+		} else {
+			s[i] = 0
 		}
+		i++
 	}
-	C.Rf_unprotect(1)
+	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
+	C.Rf_unprotect(2)
 	return r
 }`,
 		wantPackNamed: `func packSEXP_types_Named_path_to_pkg_T(p pkg.T) C.SEXP {
@@ -1000,14 +1042,14 @@ var sexpFuncGoTests = []struct {
 	var i C.int
 	key_Rname := C.CString("Rname")
 	defer C.free(unsafe.Pointer(key_Rname))
-	i = getListElementIndex(p, key_Rname)
+	i = C.getListElementIndex(p, key_Rname)
 	if i < 0 {
 		panic("no list element for field: F1")
 	}
 	r.F1 = unpackSEXP_types_Basic_string(C.VECTOR_ELT(p, C.R_xlen_t(i)))
 	key_F2 := C.CString("F2")
 	defer C.free(unsafe.Pointer(key_F2))
-	i = getListElementIndex(p, key_F2)
+	i = C.getListElementIndex(p, key_F2)
 	if i < 0 {
 		panic("no list element for field: F2")
 	}
@@ -1020,11 +1062,16 @@ var sexpFuncGoTests = []struct {
 		wantPack: `func packSEXP_types_Struct_struct_F1_string__rgo___Rname_____F2_string_(p struct{F1 string "rgo:\"Rname\""; F2 string}) C.SEXP {
 	r := C.allocList(2)
 	C.Rf_protect(r)
+	names := C.Rf_allocVector(C.STRSXP, 2)
+	C.Rf_protect(names)
 	arg := r
-	listSEXPSet(arg, "F1", packSEXP_types_Basic_string(p.F1))
+	C.SET_STRING_ELT(names, 0, C.Rf_mkCharLenCE(C._GoStringPtr(` + "`Rname`" + `), 5, C.CE_UTF8))
+	C.SETCAR(arg, packSEXP_types_Basic_string(p.F1))
 	arg = C.CDR(arg)
-	listSEXPSet(arg, "F2", packSEXP_types_Basic_string(p.F2))
-	C.Rf_unprotect(1)
+	C.SET_STRING_ELT(names, 1, C.Rf_mkCharLenCE(C._GoStringPtr(` + "`F2`" + `), 2, C.CE_UTF8))
+	C.SETCAR(arg, packSEXP_types_Basic_string(p.F2))
+	C.setAttrib(r, packSEXP_types_Basic_string(` + "`names`" + `), names)
+	C.Rf_unprotect(2)
 	return r
 }`,
 		wantPackNamed: `func packSEXP_types_Named_path_to_pkg_T(p pkg.T) C.SEXP {
@@ -1050,14 +1097,14 @@ var sexpFuncGoTests = []struct {
 	var i C.int
 	key_Rname := C.CString("Rname")
 	defer C.free(unsafe.Pointer(key_Rname))
-	i = getListElementIndex(p, key_Rname)
+	i = C.getListElementIndex(p, key_Rname)
 	if i < 0 {
 		panic("no list element for field: F1")
 	}
 	r.F1 = unpackSEXP_types_Basic_int32(C.VECTOR_ELT(p, C.R_xlen_t(i)))
 	key_F2 := C.CString("F2")
 	defer C.free(unsafe.Pointer(key_F2))
-	i = getListElementIndex(p, key_F2)
+	i = C.getListElementIndex(p, key_F2)
 	if i < 0 {
 		panic("no list element for field: F2")
 	}
@@ -1070,11 +1117,16 @@ var sexpFuncGoTests = []struct {
 		wantPack: `func packSEXP_types_Struct_struct_F1_int32__rgo___Rname_____F2_int32_(p struct{F1 int32 "rgo:\"Rname\""; F2 int32}) C.SEXP {
 	r := C.allocList(2)
 	C.Rf_protect(r)
+	names := C.Rf_allocVector(C.STRSXP, 2)
+	C.Rf_protect(names)
 	arg := r
-	listSEXPSet(arg, "F1", packSEXP_types_Basic_int32(p.F1))
+	C.SET_STRING_ELT(names, 0, C.Rf_mkCharLenCE(C._GoStringPtr(` + "`Rname`" + `), 5, C.CE_UTF8))
+	C.SETCAR(arg, packSEXP_types_Basic_int32(p.F1))
 	arg = C.CDR(arg)
-	listSEXPSet(arg, "F2", packSEXP_types_Basic_int32(p.F2))
-	C.Rf_unprotect(1)
+	C.SET_STRING_ELT(names, 1, C.Rf_mkCharLenCE(C._GoStringPtr(` + "`F2`" + `), 2, C.CE_UTF8))
+	C.SETCAR(arg, packSEXP_types_Basic_int32(p.F2))
+	C.setAttrib(r, packSEXP_types_Basic_string(` + "`names`" + `), names)
+	C.Rf_unprotect(2)
 	return r
 }`,
 		wantPackNamed: `func packSEXP_types_Named_path_to_pkg_T(p pkg.T) C.SEXP {
@@ -1099,14 +1151,14 @@ var sexpFuncGoTests = []struct {
 	var i C.int
 	key_Rname := C.CString("Rname")
 	defer C.free(unsafe.Pointer(key_Rname))
-	i = getListElementIndex(p, key_Rname)
+	i = C.getListElementIndex(p, key_Rname)
 	if i < 0 {
 		panic("no list element for field: F1")
 	}
 	r.F1 = unpackSEXP_types_Basic_rune(C.VECTOR_ELT(p, C.R_xlen_t(i)))
 	key_F2 := C.CString("F2")
 	defer C.free(unsafe.Pointer(key_F2))
-	i = getListElementIndex(p, key_F2)
+	i = C.getListElementIndex(p, key_F2)
 	if i < 0 {
 		panic("no list element for field: F2")
 	}
@@ -1119,11 +1171,16 @@ var sexpFuncGoTests = []struct {
 		wantPack: `func packSEXP_types_Struct_struct_F1_rune__rgo___Rname_____F2_rune_(p struct{F1 rune "rgo:\"Rname\""; F2 rune}) C.SEXP {
 	r := C.allocList(2)
 	C.Rf_protect(r)
+	names := C.Rf_allocVector(C.STRSXP, 2)
+	C.Rf_protect(names)
 	arg := r
-	listSEXPSet(arg, "F1", packSEXP_types_Basic_rune(p.F1))
+	C.SET_STRING_ELT(names, 0, C.Rf_mkCharLenCE(C._GoStringPtr(` + "`Rname`" + `), 5, C.CE_UTF8))
+	C.SETCAR(arg, packSEXP_types_Basic_rune(p.F1))
 	arg = C.CDR(arg)
-	listSEXPSet(arg, "F2", packSEXP_types_Basic_rune(p.F2))
-	C.Rf_unprotect(1)
+	C.SET_STRING_ELT(names, 1, C.Rf_mkCharLenCE(C._GoStringPtr(` + "`F2`" + `), 2, C.CE_UTF8))
+	C.SETCAR(arg, packSEXP_types_Basic_rune(p.F2))
+	C.setAttrib(r, packSEXP_types_Basic_string(` + "`names`" + `), names)
+	C.Rf_unprotect(2)
 	return r
 }`,
 		wantPackNamed: `func packSEXP_types_Named_path_to_pkg_T(p pkg.T) C.SEXP {
@@ -1149,14 +1206,14 @@ var sexpFuncGoTests = []struct {
 	var i C.int
 	key_Rname := C.CString("Rname")
 	defer C.free(unsafe.Pointer(key_Rname))
-	i = getListElementIndex(p, key_Rname)
+	i = C.getListElementIndex(p, key_Rname)
 	if i < 0 {
 		panic("no list element for field: F1")
 	}
 	r.F1 = unpackSEXP_types_Basic_uint8(C.VECTOR_ELT(p, C.R_xlen_t(i)))
 	key_F2 := C.CString("F2")
 	defer C.free(unsafe.Pointer(key_F2))
-	i = getListElementIndex(p, key_F2)
+	i = C.getListElementIndex(p, key_F2)
 	if i < 0 {
 		panic("no list element for field: F2")
 	}
@@ -1169,11 +1226,16 @@ var sexpFuncGoTests = []struct {
 		wantPack: `func packSEXP_types_Struct_struct_F1_uint8__rgo___Rname_____F2_uint8_(p struct{F1 uint8 "rgo:\"Rname\""; F2 uint8}) C.SEXP {
 	r := C.allocList(2)
 	C.Rf_protect(r)
+	names := C.Rf_allocVector(C.STRSXP, 2)
+	C.Rf_protect(names)
 	arg := r
-	listSEXPSet(arg, "F1", packSEXP_types_Basic_uint8(p.F1))
+	C.SET_STRING_ELT(names, 0, C.Rf_mkCharLenCE(C._GoStringPtr(` + "`Rname`" + `), 5, C.CE_UTF8))
+	C.SETCAR(arg, packSEXP_types_Basic_uint8(p.F1))
 	arg = C.CDR(arg)
-	listSEXPSet(arg, "F2", packSEXP_types_Basic_uint8(p.F2))
-	C.Rf_unprotect(1)
+	C.SET_STRING_ELT(names, 1, C.Rf_mkCharLenCE(C._GoStringPtr(` + "`F2`" + `), 2, C.CE_UTF8))
+	C.SETCAR(arg, packSEXP_types_Basic_uint8(p.F2))
+	C.setAttrib(r, packSEXP_types_Basic_string(` + "`names`" + `), names)
+	C.Rf_unprotect(2)
 	return r
 }`,
 		wantPackNamed: `func packSEXP_types_Named_path_to_pkg_T(p pkg.T) C.SEXP {
@@ -1198,14 +1260,14 @@ var sexpFuncGoTests = []struct {
 	var i C.int
 	key_Rname := C.CString("Rname")
 	defer C.free(unsafe.Pointer(key_Rname))
-	i = getListElementIndex(p, key_Rname)
+	i = C.getListElementIndex(p, key_Rname)
 	if i < 0 {
 		panic("no list element for field: F1")
 	}
 	r.F1 = unpackSEXP_types_Basic_byte(C.VECTOR_ELT(p, C.R_xlen_t(i)))
 	key_F2 := C.CString("F2")
 	defer C.free(unsafe.Pointer(key_F2))
-	i = getListElementIndex(p, key_F2)
+	i = C.getListElementIndex(p, key_F2)
 	if i < 0 {
 		panic("no list element for field: F2")
 	}
@@ -1218,11 +1280,16 @@ var sexpFuncGoTests = []struct {
 		wantPack: `func packSEXP_types_Struct_struct_F1_byte__rgo___Rname_____F2_byte_(p struct{F1 byte "rgo:\"Rname\""; F2 byte}) C.SEXP {
 	r := C.allocList(2)
 	C.Rf_protect(r)
+	names := C.Rf_allocVector(C.STRSXP, 2)
+	C.Rf_protect(names)
 	arg := r
-	listSEXPSet(arg, "F1", packSEXP_types_Basic_byte(p.F1))
+	C.SET_STRING_ELT(names, 0, C.Rf_mkCharLenCE(C._GoStringPtr(` + "`Rname`" + `), 5, C.CE_UTF8))
+	C.SETCAR(arg, packSEXP_types_Basic_byte(p.F1))
 	arg = C.CDR(arg)
-	listSEXPSet(arg, "F2", packSEXP_types_Basic_byte(p.F2))
-	C.Rf_unprotect(1)
+	C.SET_STRING_ELT(names, 1, C.Rf_mkCharLenCE(C._GoStringPtr(` + "`F2`" + `), 2, C.CE_UTF8))
+	C.SETCAR(arg, packSEXP_types_Basic_byte(p.F2))
+	C.setAttrib(r, packSEXP_types_Basic_string(` + "`names`" + `), names)
+	C.Rf_unprotect(2)
 	return r
 }`,
 		wantPackNamed: `func packSEXP_types_Named_path_to_pkg_T(p pkg.T) C.SEXP {
@@ -1248,14 +1315,14 @@ var sexpFuncGoTests = []struct {
 	var i C.int
 	key_Rname := C.CString("Rname")
 	defer C.free(unsafe.Pointer(key_Rname))
-	i = getListElementIndex(p, key_Rname)
+	i = C.getListElementIndex(p, key_Rname)
 	if i < 0 {
 		panic("no list element for field: F1")
 	}
 	r.F1 = unpackSEXP_types_Basic_float64(C.VECTOR_ELT(p, C.R_xlen_t(i)))
 	key_F2 := C.CString("F2")
 	defer C.free(unsafe.Pointer(key_F2))
-	i = getListElementIndex(p, key_F2)
+	i = C.getListElementIndex(p, key_F2)
 	if i < 0 {
 		panic("no list element for field: F2")
 	}
@@ -1268,11 +1335,16 @@ var sexpFuncGoTests = []struct {
 		wantPack: `func packSEXP_types_Struct_struct_F1_float64__rgo___Rname_____F2_float64_(p struct{F1 float64 "rgo:\"Rname\""; F2 float64}) C.SEXP {
 	r := C.allocList(2)
 	C.Rf_protect(r)
+	names := C.Rf_allocVector(C.STRSXP, 2)
+	C.Rf_protect(names)
 	arg := r
-	listSEXPSet(arg, "F1", packSEXP_types_Basic_float64(p.F1))
+	C.SET_STRING_ELT(names, 0, C.Rf_mkCharLenCE(C._GoStringPtr(` + "`Rname`" + `), 5, C.CE_UTF8))
+	C.SETCAR(arg, packSEXP_types_Basic_float64(p.F1))
 	arg = C.CDR(arg)
-	listSEXPSet(arg, "F2", packSEXP_types_Basic_float64(p.F2))
-	C.Rf_unprotect(1)
+	C.SET_STRING_ELT(names, 1, C.Rf_mkCharLenCE(C._GoStringPtr(` + "`F2`" + `), 2, C.CE_UTF8))
+	C.SETCAR(arg, packSEXP_types_Basic_float64(p.F2))
+	C.setAttrib(r, packSEXP_types_Basic_string(` + "`names`" + `), names)
+	C.Rf_unprotect(2)
 	return r
 }`,
 		wantPackNamed: `func packSEXP_types_Named_path_to_pkg_T(p pkg.T) C.SEXP {
@@ -1298,14 +1370,14 @@ var sexpFuncGoTests = []struct {
 	var i C.int
 	key_Rname := C.CString("Rname")
 	defer C.free(unsafe.Pointer(key_Rname))
-	i = getListElementIndex(p, key_Rname)
+	i = C.getListElementIndex(p, key_Rname)
 	if i < 0 {
 		panic("no list element for field: F1")
 	}
 	r.F1 = unpackSEXP_types_Basic_complex128(C.VECTOR_ELT(p, C.R_xlen_t(i)))
 	key_F2 := C.CString("F2")
 	defer C.free(unsafe.Pointer(key_F2))
-	i = getListElementIndex(p, key_F2)
+	i = C.getListElementIndex(p, key_F2)
 	if i < 0 {
 		panic("no list element for field: F2")
 	}
@@ -1318,11 +1390,16 @@ var sexpFuncGoTests = []struct {
 		wantPack: `func packSEXP_types_Struct_struct_F1_complex128__rgo___Rname_____F2_complex128_(p struct{F1 complex128 "rgo:\"Rname\""; F2 complex128}) C.SEXP {
 	r := C.allocList(2)
 	C.Rf_protect(r)
+	names := C.Rf_allocVector(C.STRSXP, 2)
+	C.Rf_protect(names)
 	arg := r
-	listSEXPSet(arg, "F1", packSEXP_types_Basic_complex128(p.F1))
+	C.SET_STRING_ELT(names, 0, C.Rf_mkCharLenCE(C._GoStringPtr(` + "`Rname`" + `), 5, C.CE_UTF8))
+	C.SETCAR(arg, packSEXP_types_Basic_complex128(p.F1))
 	arg = C.CDR(arg)
-	listSEXPSet(arg, "F2", packSEXP_types_Basic_complex128(p.F2))
-	C.Rf_unprotect(1)
+	C.SET_STRING_ELT(names, 1, C.Rf_mkCharLenCE(C._GoStringPtr(` + "`F2`" + `), 2, C.CE_UTF8))
+	C.SETCAR(arg, packSEXP_types_Basic_complex128(p.F2))
+	C.setAttrib(r, packSEXP_types_Basic_string(` + "`names`" + `), names)
+	C.Rf_unprotect(2)
 	return r
 }`,
 		wantPackNamed: `func packSEXP_types_Named_path_to_pkg_T(p pkg.T) C.SEXP {
@@ -1348,14 +1425,14 @@ var sexpFuncGoTests = []struct {
 	var i C.int
 	key_Rname := C.CString("Rname")
 	defer C.free(unsafe.Pointer(key_Rname))
-	i = getListElementIndex(p, key_Rname)
+	i = C.getListElementIndex(p, key_Rname)
 	if i < 0 {
 		panic("no list element for field: F1")
 	}
 	r.F1 = unpackSEXP_types_Basic_bool(C.VECTOR_ELT(p, C.R_xlen_t(i)))
 	key_F2 := C.CString("F2")
 	defer C.free(unsafe.Pointer(key_F2))
-	i = getListElementIndex(p, key_F2)
+	i = C.getListElementIndex(p, key_F2)
 	if i < 0 {
 		panic("no list element for field: F2")
 	}
@@ -1368,11 +1445,16 @@ var sexpFuncGoTests = []struct {
 		wantPack: `func packSEXP_types_Struct_struct_F1_bool__rgo___Rname_____F2_bool_(p struct{F1 bool "rgo:\"Rname\""; F2 bool}) C.SEXP {
 	r := C.allocList(2)
 	C.Rf_protect(r)
+	names := C.Rf_allocVector(C.STRSXP, 2)
+	C.Rf_protect(names)
 	arg := r
-	listSEXPSet(arg, "F1", packSEXP_types_Basic_bool(p.F1))
+	C.SET_STRING_ELT(names, 0, C.Rf_mkCharLenCE(C._GoStringPtr(` + "`Rname`" + `), 5, C.CE_UTF8))
+	C.SETCAR(arg, packSEXP_types_Basic_bool(p.F1))
 	arg = C.CDR(arg)
-	listSEXPSet(arg, "F2", packSEXP_types_Basic_bool(p.F2))
-	C.Rf_unprotect(1)
+	C.SET_STRING_ELT(names, 1, C.Rf_mkCharLenCE(C._GoStringPtr(` + "`F2`" + `), 2, C.CE_UTF8))
+	C.SETCAR(arg, packSEXP_types_Basic_bool(p.F2))
+	C.setAttrib(r, packSEXP_types_Basic_string(` + "`names`" + `), names)
+	C.Rf_unprotect(2)
 	return r
 }`,
 		wantPackNamed: `func packSEXP_types_Named_path_to_pkg_T(p pkg.T) C.SEXP {

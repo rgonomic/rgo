@@ -26,7 +26,7 @@ export(test_0)
 #'
 #' Test0 does things with [] and returns [map[string]uint32].
 #' 
-#' @return A list, res0
+#' @return A vector, res0
 #' @seelso <https://godoc.org/string_uint32_map_out_named_0#Test0>
 #' @export
 test_0 <- function() {
@@ -98,6 +98,7 @@ extern void R_error(char *s);
 // TODO(kortschak): Only emit these when needed.
 extern Rboolean Rf_isNull(SEXP s);
 extern _GoString_ R_gostring(SEXP x, R_xlen_t i);
+extern int getListElementIndex(SEXP list, const char *str);
 */
 import "C"
 
@@ -139,23 +140,20 @@ func packSEXP_types_Basic_uint32(p uint32) C.SEXP {
 
 func packSEXP_types_Map_map_string_uint32(p map[string]uint32) C.SEXP {
 	n := len(p)
-	r := C.allocList(C.int(n))
+	r := C.Rf_allocVector(C.INTSXP, C.R_xlen_t(n))
 	C.Rf_protect(r)
-	arg := r
+	names := C.Rf_allocVector(C.STRSXP, C.R_xlen_t(n))
+	C.Rf_protect(names)
+	s := (*[140737488355328]int32)(unsafe.Pointer(C.INTEGER(r)))[:len(p):len(p)]
+	var i C.R_xlen_t
 	for k, v := range p {
-		listSEXPSet(arg, string(k), packSEXP_types_Basic_uint32(v))
-		n--
-		if n > 0 {
-			arg = C.CDR(arg)
-		}
+		C.SET_STRING_ELT(names, i, C.Rf_mkCharLenCE(C._GoStringPtr(k), C.int(len(k)), C.CE_UTF8))
+		s[i] = int32(v)
+		i++
 	}
-	C.Rf_unprotect(1)
+	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
+	C.Rf_unprotect(2)
 	return r
-}
-
-func listSEXPSet(arg C.SEXP, key string, val C.SEXP) {
-	C.setAttrib(arg, packSEXP_types_Basic_string(key), val)
-	C.SETCAR(arg, val)
 }
 
 func main() {}
