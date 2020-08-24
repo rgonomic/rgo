@@ -419,7 +419,11 @@ func packSEXPFuncBodyGo(buf *bytes.Buffer, typ types.Type) {
 	switch typ := typ.(type) {
 	case *types.Named:
 		if pkg.IsError(typ) {
-			fmt.Fprintf(buf, "\treturn packSEXP%s(p.Error())\n", pkg.Mangle(types.Typ[types.String]))
+			fmt.Fprintf(buf, `	if p == nil {
+		return C.R_NilValue
+	}
+	return packSEXP%s(p.Error())
+`, pkg.Mangle(types.Typ[types.String]))
 		} else {
 			switch typ := typ.Underlying().(type) {
 			case *types.Pointer:
