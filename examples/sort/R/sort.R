@@ -27,6 +27,31 @@ search_float64s <- function(a, x) {
 	.Call("search_float64s", a, x, PACKAGE = "sort")
 }
 
+#' search_strings
+#'
+#' SearchStrings searches for x in a sorted slice of strings and returns the index
+#' as specified by Search. The return value is the index to insert x if x is not
+#' present (it could be len(a)).
+#' The slice must be sorted in ascending order.
+#' 
+#' @param a is a character vector
+#' @param x is a scalar character
+#' @return A scalar integer
+#' @seelso <https://godoc.org/sort#SearchStrings>
+#' @export
+search_strings <- function(a, x) {
+	if (!is.character(a)) {
+		stop("Argument 'a' must be of type 'character'.")
+	}
+	if (!is.character(x)) {
+		stop("Argument 'x' must be of type 'character'.")
+	}
+	if (length(x) != 1) {
+		stop("Argument 'x' must have 1 element.")
+	}
+	.Call("search_strings", a, x, PACKAGE = "sort")
+}
+
 #' float64s
 #'
 #' Float64s sorts a slice of float64s in increasing order
@@ -40,6 +65,20 @@ float64s <- function(a) {
 		stop("Argument 'a' must be of type 'double'.")
 	}
 	.Call("float64s", a, PACKAGE = "sort")
+}
+
+#' strings
+#'
+#' Strings sorts a slice of strings in increasing order.
+#' 
+#' @param a is a character vector
+#' @seelso <https://godoc.org/sort#Strings>
+#' @export
+strings <- function(a) {
+	if (!is.character(a)) {
+		stop("Argument 'a' must be of type 'character'.")
+	}
+	.Call("strings", a, PACKAGE = "sort")
 }
 
 #' float64s_are_sorted
@@ -56,4 +95,19 @@ float64s_are_sorted <- function(a) {
 		stop("Argument 'a' must be of type 'double'.")
 	}
 	.Call("float64s_are_sorted", a, PACKAGE = "sort")
+}
+
+#' strings_are_sorted
+#'
+#' StringsAreSorted tests whether a slice of strings is sorted in increasing order.
+#' 
+#' @param a is a character vector
+#' @return A scalar logical
+#' @seelso <https://godoc.org/sort#StringsAreSorted>
+#' @export
+strings_are_sorted <- function(a) {
+	if (!is.character(a)) {
+		stop("Argument 'a' must be of type 'character'.")
+	}
+	.Call("strings_are_sorted", a, PACKAGE = "sort")
 }

@@ -2,5 +2,8 @@
 
 useDynLib(sort)
 export(search_float64s)
+export(search_strings)
 export(float64s)
+export(strings)
 export(float64s_are_sorted)
+export(strings_are_sorted)

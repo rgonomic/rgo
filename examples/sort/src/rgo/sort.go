@@ -11,6 +11,7 @@ extern void R_error(char *s);
 // TODO(kortschak): Only emit these when needed.
 extern Rboolean Rf_isNull(SEXP s);
 extern _GoString_ R_gostring(SEXP x, R_xlen_t i);
+extern int getListElementIndex(SEXP list, const char *str);
 */
 import "C"
 
@@ -43,6 +44,27 @@ func packSEXP_SearchFloat64s(p0 int) C.SEXP {
 	return packSEXP_types_Basic_int(p0)
 }
 
+//export Wrapped_SearchStrings
+func Wrapped_SearchStrings(a, x C.SEXP) C.SEXP {
+	defer func() {
+		r := recover()
+		if r != nil {
+			err := C.CString(fmt.Sprint(r))
+			C.R_error(err)
+			C.free(unsafe.Pointer(err))
+		}
+	}()
+
+	_p0 := unpackSEXP_types_Slice___string(a)
+	_p1 := unpackSEXP_types_Basic_string(x)
+	_r0 := sort.SearchStrings(_p0, _p1)
+	return packSEXP_SearchStrings(_r0)
+}
+
+func packSEXP_SearchStrings(p0 int) C.SEXP {
+	return packSEXP_types_Basic_int(p0)
+}
+
 //export Wrapped_Float64s
 func Wrapped_Float64s(a C.SEXP) C.SEXP {
 	defer func() {
@@ -56,6 +78,23 @@ func Wrapped_Float64s(a C.SEXP) C.SEXP {
 
 	_p0 := unpackSEXP_types_Slice___float64(a)
 	sort.Float64s(_p0)
+	return C.R_NilValue
+}
+
+
+//export Wrapped_Strings
+func Wrapped_Strings(a C.SEXP) C.SEXP {
+	defer func() {
+		r := recover()
+		if r != nil {
+			err := C.CString(fmt.Sprint(r))
+			C.R_error(err)
+			C.free(unsafe.Pointer(err))
+		}
+	}()
+
+	_p0 := unpackSEXP_types_Slice___string(a)
+	sort.Strings(_p0)
 	return C.R_NilValue
 }
 
@@ -80,8 +119,32 @@ func packSEXP_Float64sAreSorted(p0 bool) C.SEXP {
 	return packSEXP_types_Basic_bool(p0)
 }
 
+//export Wrapped_StringsAreSorted
+func Wrapped_StringsAreSorted(a C.SEXP) C.SEXP {
+	defer func() {
+		r := recover()
+		if r != nil {
+			err := C.CString(fmt.Sprint(r))
+			C.R_error(err)
+			C.free(unsafe.Pointer(err))
+		}
+	}()
+
+	_p0 := unpackSEXP_types_Slice___string(a)
+	_r0 := sort.StringsAreSorted(_p0)
+	return packSEXP_StringsAreSorted(_r0)
+}
+
+func packSEXP_StringsAreSorted(p0 bool) C.SEXP {
+	return packSEXP_types_Basic_bool(p0)
+}
+
 func unpackSEXP_types_Basic_float64(p C.SEXP) float64 {
 	return float64(*C.REAL(p))
+}
+
+func unpackSEXP_types_Basic_string(p C.SEXP) string {
+	return C.R_gostring(p, 0)
 }
 
 func unpackSEXP_types_Slice___float64(p C.SEXP) []float64 {
@@ -90,6 +153,18 @@ func unpackSEXP_types_Slice___float64(p C.SEXP) []float64 {
 	}
 	n := C.Rf_xlength(p)
 	return (*[70368744177664]float64)(unsafe.Pointer(C.REAL(p)))[:n:n]
+}
+
+func unpackSEXP_types_Slice___string(p C.SEXP) []string {
+	if C.Rf_isNull(p) != 0 {
+		return nil
+	}
+	n := C.Rf_xlength(p)
+	r := make([]string, n)
+	for i := range r {
+		r[i] = string(C.R_gostring(p, C.R_xlen_t(i)))
+	}
+	return r
 }
 
 func packSEXP_types_Basic_bool(p bool) C.SEXP {

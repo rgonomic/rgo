@@ -35,10 +35,22 @@ SEXP search_float64s(SEXP a, SEXP x) {
 	return Wrapped_SearchFloat64s(a, x);
 }
 
+SEXP search_strings(SEXP a, SEXP x) {
+	return Wrapped_SearchStrings(a, x);
+}
+
 SEXP float64s(SEXP a) {
 	return Wrapped_Float64s(a);
 }
 
+SEXP strings(SEXP a) {
+	return Wrapped_Strings(a);
+}
+
 SEXP float64s_are_sorted(SEXP a) {
 	return Wrapped_Float64sAreSorted(a);
+}
+
+SEXP strings_are_sorted(SEXP a) {
+	return Wrapped_StringsAreSorted(a);
 }
