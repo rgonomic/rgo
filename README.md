@@ -84,7 +84,8 @@ $ R CMD INSTALL .
 | scalar `character`              | `string` (and `error` in returned values)                                                  |
 | `character` vector              | `[]string` (and `[]error` in returned values)                                              |
 | fixed length `character` vector | `[n]string` (and `[n]error` in returned values)                                            |
-| `list`                          | `map[string]T`, `struct{...}`                                                              |
+| named `vector`                  | `map[string]T`                                                                             |
+| `list`                          | `struct{...}`                                                                              |
 | `raw`                           | `[]uint8`/`[]byte`                                                                         |
 | fixed length `raw`              | `[n]uint8`/`[n]byte`                                                                       |
 
