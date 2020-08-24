@@ -113,7 +113,7 @@ func Analyse(path, allowed string, verbose bool) (*Info, error) {
 			}
 
 			par := sig.Params()
-			err := checkType(par, par, false)
+			err := checkType(par, par, true)
 			if err != nil {
 				if verbose {
 					log.Printf("skipping %s: %v", fn.Name(), err)
@@ -121,7 +121,7 @@ func Analyse(path, allowed string, verbose bool) (*Info, error) {
 				continue
 			}
 			res := sig.Results()
-			err = checkType(res, res, true)
+			err = checkType(res, res, false)
 			if err != nil {
 				if verbose {
 					log.Printf("skipping %s: %v", fn.Name(), err)
