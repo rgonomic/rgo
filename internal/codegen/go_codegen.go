@@ -72,13 +72,17 @@ func Wrapped_{{$func.Name}}({{go "_R_" $params}}) C.SEXP {
 {{$l := len $results -}}
 {{- if eq $l 1 -}}
 {{- $p := index $results 0}}	return packSEXP{{mangle $p.Type}}({{if $p.Name}}{{$p.Name}}{{else}}p0{{end -}})
-{{- else}}{{$resultNeedsList = true}}	r := C.allocateList({{len $results}})
+{{- else}}{{$resultNeedsList = true}}	r := C.allocList({{len $results}})
 	C.Rf_protect(r)
+	names := C.Rf_allocVector(C.STRSXP, {{len $results}})
+	C.Rf_protect(names)
 	arg := r
-{{range $i, $p := $results}}	listSEXPSet(arg, {{if $p.Name}}"{{$p.Name}}"{{else}}"r{{$i}}"{{end}}, packSEXP{{mangle $p.Type}}({{if $p.Name}}{{$p.Name}}{{else}}p{{$i}}{{end}}))
+{{range $i, $p := $results}}{{$res := printf "r%d" $i}}{{if $p.Name}}{{$res := $p.Name}}{{end}}	C.SET_STRING_ELT(names, {{$i}}, C.Rf_mkCharLenCE(C._GoStringPtr("{{$res}}"), {{len $res}}, C.CE_UTF8))
+	C.SETCAR(arg, packSEXP{{mangle $p.Type}}({{if $p.Name}}{{$p.Name}}{{else}}p{{$i}}{{end}}))
 {{if lt $i (dec $l)}}	arg = C.CDR(arg)
 {{end -}}
-{{- end}}	C.Rf_unprotect(1)
+{{- end}}	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
+	C.Rf_unprotect(2)
 	return r{{end}}
 }
 {{end}}{{end}}
