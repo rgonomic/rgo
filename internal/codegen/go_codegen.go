@@ -53,7 +53,7 @@ import (
 {{$resultNeedsList := false}}
 {{range $func := .Funcs}}{{$params := varsOf $func.Signature.Params}}{{$results := varsOf $func.Signature.Results}}
 //export Wrapped_{{$func.Name}}
-func Wrapped_{{$func.Name}}({{go $params}}) C.SEXP {
+func Wrapped_{{$func.Name}}({{go "_R_" $params}}) C.SEXP {
 	defer func() {
 		r := recover()
 		if r != nil {
@@ -63,7 +63,7 @@ func Wrapped_{{$func.Name}}({{go $params}}) C.SEXP {
 		}
 	}()
 
-	{{range $i, $p := $params}}_p{{$i}} := unpackSEXP{{mangle $p.Type}}({{$p.Name}})
+	{{range $i, $p := $params}}_p{{$i}} := unpackSEXP{{mangle $p.Type}}(_R_{{$p.Name}})
 	{{end}}{{with $results}}{{anon . "_r" false}} := {{end}}{{$pkg.Name}}.{{$func.Name}}({{anon $params "_p" false}}{{if $func.Signature.Variadic}}...{{end}})
 	{{with $results}}return packSEXP_{{$func.Name}}({{anon . "_r" false}}){{else}}return C.R_NilValue{{end}}
 }
@@ -89,8 +89,8 @@ func Wrapped_{{$func.Name}}({{go $params}}) C.SEXP {
 }
 
 // goParams returns a comma-separated list of C.SEXP parameters using the
-// parameter names in vars.
-func goParams(vars []*types.Var) string {
+// parameter names in vars with the mangling prefix applied.
+func goParams(prefix string, vars []*types.Var) string {
 	if len(vars) == 0 {
 		return ""
 	}
@@ -99,6 +99,7 @@ func goParams(vars []*types.Var) string {
 		if i != 0 {
 			buf.WriteString(", ")
 		}
+		buf.WriteString(prefix)
 		buf.WriteString(v.Name())
 	}
 	buf.WriteString(" C.SEXP")

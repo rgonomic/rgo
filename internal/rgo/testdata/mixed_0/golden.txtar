@@ -197,7 +197,7 @@ import (
 
 
 //export Wrapped_Test0
-func Wrapped_Test0(par0 C.SEXP) C.SEXP {
+func Wrapped_Test0(_R_par0 C.SEXP) C.SEXP {
 	defer func() {
 		r := recover()
 		if r != nil {
@@ -207,7 +207,7 @@ func Wrapped_Test0(par0 C.SEXP) C.SEXP {
 		}
 	}()
 
-	_p0 := unpackSEXP_types_Basic_int(par0)
+	_p0 := unpackSEXP_types_Basic_int(_R_par0)
 	_r0, _r1 := mixed_0.Test0(_p0)
 	return packSEXP_Test0(_r0, _r1)
 }
@@ -224,7 +224,7 @@ func packSEXP_Test0(p0 int, p1 int) C.SEXP {
 }
 
 //export Wrapped_Test1
-func Wrapped_Test1(par0 C.SEXP) C.SEXP {
+func Wrapped_Test1(_R_par0 C.SEXP) C.SEXP {
 	defer func() {
 		r := recover()
 		if r != nil {
@@ -234,7 +234,7 @@ func Wrapped_Test1(par0 C.SEXP) C.SEXP {
 		}
 	}()
 
-	_p0 := unpackSEXP_types_Basic_int(par0)
+	_p0 := unpackSEXP_types_Basic_int(_R_par0)
 	_r0, _r1 := mixed_0.Test1(_p0)
 	return packSEXP_Test1(_r0, _r1)
 }
@@ -251,7 +251,7 @@ func packSEXP_Test1(res0 float64, res1 int) C.SEXP {
 }
 
 //export Wrapped_Test2
-func Wrapped_Test2(par0 C.SEXP) C.SEXP {
+func Wrapped_Test2(_R_par0 C.SEXP) C.SEXP {
 	defer func() {
 		r := recover()
 		if r != nil {
@@ -261,14 +261,14 @@ func Wrapped_Test2(par0 C.SEXP) C.SEXP {
 		}
 	}()
 
-	_p0 := unpackSEXP_types_Basic_int(par0)
+	_p0 := unpackSEXP_types_Basic_int(_R_par0)
 	mixed_0.Test2(_p0)
 	return C.R_NilValue
 }
 
 
 //export Wrapped_Test3
-func Wrapped_Test3(par0, par1 C.SEXP) C.SEXP {
+func Wrapped_Test3(_R_par0, _R_par1 C.SEXP) C.SEXP {
 	defer func() {
 		r := recover()
 		if r != nil {
@@ -278,8 +278,8 @@ func Wrapped_Test3(par0, par1 C.SEXP) C.SEXP {
 		}
 	}()
 
-	_p0 := unpackSEXP_types_Named_mixed_0_T(par0)
-	_p1 := unpackSEXP_types_Named_mixed_0_S1(par1)
+	_p0 := unpackSEXP_types_Named_mixed_0_T(_R_par0)
+	_p1 := unpackSEXP_types_Named_mixed_0_S1(_R_par1)
 	_r0 := mixed_0.Test3(_p0, _p1)
 	return packSEXP_Test3(_r0)
 }

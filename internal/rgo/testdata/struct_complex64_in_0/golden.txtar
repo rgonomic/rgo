@@ -114,7 +114,7 @@ import (
 
 
 //export Wrapped_Test0
-func Wrapped_Test0(par0 C.SEXP) C.SEXP {
+func Wrapped_Test0(_R_par0 C.SEXP) C.SEXP {
 	defer func() {
 		r := recover()
 		if r != nil {
@@ -124,7 +124,7 @@ func Wrapped_Test0(par0 C.SEXP) C.SEXP {
 		}
 	}()
 
-	_p0 := unpackSEXP_types_Struct_struct_F1_complex64__F2_complex64__rgo___Rname____(par0)
+	_p0 := unpackSEXP_types_Struct_struct_F1_complex64__F2_complex64__rgo___Rname____(_R_par0)
 	struct_complex64_in_0.Test0(_p0)
 	return C.R_NilValue
 }

@@ -11,6 +11,7 @@ extern void R_error(char *s);
 // TODO(kortschak): Only emit these when needed.
 extern Rboolean Rf_isNull(SEXP s);
 extern _GoString_ R_gostring(SEXP x, R_xlen_t i);
+extern int getListElementIndex(SEXP list, const char *str);
 */
 import "C"
 
@@ -23,7 +24,7 @@ import (
 
 
 //export Wrapped_CumProd
-func Wrapped_CumProd(dst, s C.SEXP) C.SEXP {
+func Wrapped_CumProd(_R_dst, _R_s C.SEXP) C.SEXP {
 	defer func() {
 		r := recover()
 		if r != nil {
@@ -33,8 +34,8 @@ func Wrapped_CumProd(dst, s C.SEXP) C.SEXP {
 		}
 	}()
 
-	_p0 := unpackSEXP_types_Slice___float64(dst)
-	_p1 := unpackSEXP_types_Slice___float64(s)
+	_p0 := unpackSEXP_types_Slice___float64(_R_dst)
+	_p1 := unpackSEXP_types_Slice___float64(_R_s)
 	_r0 := floats.CumProd(_p0, _p1)
 	return packSEXP_CumProd(_r0)
 }
@@ -44,7 +45,7 @@ func packSEXP_CumProd(p0 []float64) C.SEXP {
 }
 
 //export Wrapped_CumSum
-func Wrapped_CumSum(dst, s C.SEXP) C.SEXP {
+func Wrapped_CumSum(_R_dst, _R_s C.SEXP) C.SEXP {
 	defer func() {
 		r := recover()
 		if r != nil {
@@ -54,8 +55,8 @@ func Wrapped_CumSum(dst, s C.SEXP) C.SEXP {
 		}
 	}()
 
-	_p0 := unpackSEXP_types_Slice___float64(dst)
-	_p1 := unpackSEXP_types_Slice___float64(s)
+	_p0 := unpackSEXP_types_Slice___float64(_R_dst)
+	_p1 := unpackSEXP_types_Slice___float64(_R_s)
 	_r0 := floats.CumSum(_p0, _p1)
 	return packSEXP_CumSum(_r0)
 }
