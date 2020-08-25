@@ -77,7 +77,7 @@ func Wrapped_{{$func.Name}}({{go "_R_" $params}}) C.SEXP {
 	names := C.Rf_allocVector(C.STRSXP, {{len $results}})
 	C.Rf_protect(names)
 	arg := r
-{{range $i, $p := $results}}{{$res := printf "r%d" $i}}{{if $p.Name}}{{$res := $p.Name}}{{end}}	C.SET_STRING_ELT(names, {{$i}}, C.Rf_mkCharLenCE(C._GoStringPtr("{{$res}}"), {{len $res}}, C.CE_UTF8))
+{{range $i, $p := $results}}{{$res := printf "r%d" $i}}{{if $p.Name}}{{$res = $p.Name}}{{end}}	C.SET_STRING_ELT(names, {{$i}}, C.Rf_mkCharLenCE(C._GoStringPtr("{{$res}}"), {{len $res}}, C.CE_UTF8))
 	C.SETCAR(arg, packSEXP{{mangle $p.Type}}({{if $p.Name}}{{$p.Name}}{{else}}p{{$i}}{{end}}))
 {{if lt $i (dec $l)}}	arg = C.CDR(arg)
 {{end -}}
