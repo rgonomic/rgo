@@ -19,9 +19,11 @@ import (
 	"fmt"
 	"unsafe"
 
-	"github.com/rgonomic/rgo/examples/cca"
 	"gonum.org/v1/gonum/blas/blas64"
+
+	"github.com/rgonomic/rgo/examples/cca"
 )
+
 
 //export Wrapped_CCA
 func Wrapped_CCA(_R_x, _R_y C.SEXP) C.SEXP {
@@ -84,12 +86,7 @@ func unpackSEXP_types_Slice___float64(p C.SEXP) []float64 {
 	return (*[70368744177664]float64)(unsafe.Pointer(C.REAL(p)))[:n:n]
 }
 
-func unpackSEXP_types_Struct_struct_Rows_int__Cols_int__Data___float64__Stride_int_(p C.SEXP) struct {
-	Rows   int
-	Cols   int
-	Data   []float64
-	Stride int
-} {
+func unpackSEXP_types_Struct_struct_Rows_int__Cols_int__Data___float64__Stride_int_(p C.SEXP) struct{Rows int; Cols int; Data []float64; Stride int} {
 	switch n := C.Rf_xlength(p); {
 	case n < 4:
 		panic(`missing list element for struct{Rows int; Cols int; Data []float64; Stride int}`)
@@ -98,12 +95,7 @@ func unpackSEXP_types_Struct_struct_Rows_int__Cols_int__Data___float64__Stride_i
 		C.R_error(err)
 		C.free(unsafe.Pointer(err))
 	}
-	var r struct {
-		Rows   int
-		Cols   int
-		Data   []float64
-		Stride int
-	}
+	var r struct{Rows int; Cols int; Data []float64; Stride int}
 	var i C.int
 	key_Rows := C.CString("Rows")
 	defer C.free(unsafe.Pointer(key_Rows))
@@ -157,12 +149,7 @@ func packSEXP_types_Named_error(p error) C.SEXP {
 }
 
 func packSEXP_types_Named_gonum_org_v1_gonum_blas_blas64_GeneralCols(p blas64.GeneralCols) C.SEXP {
-	return packSEXP_types_Struct_struct_Rows_int__Cols_int__Data___float64__Stride_int_(struct {
-		Rows   int
-		Cols   int
-		Data   []float64
-		Stride int
-	}(p))
+	return packSEXP_types_Struct_struct_Rows_int__Cols_int__Data___float64__Stride_int_(struct{Rows int; Cols int; Data []float64; Stride int}(p))
 }
 
 func packSEXP_types_Slice___float64(p []float64) C.SEXP {
@@ -174,12 +161,7 @@ func packSEXP_types_Slice___float64(p []float64) C.SEXP {
 	return r
 }
 
-func packSEXP_types_Struct_struct_Rows_int__Cols_int__Data___float64__Stride_int_(p struct {
-	Rows   int
-	Cols   int
-	Data   []float64
-	Stride int
-}) C.SEXP {
+func packSEXP_types_Struct_struct_Rows_int__Cols_int__Data___float64__Stride_int_(p struct{Rows int; Cols int; Data []float64; Stride int}) C.SEXP {
 	r := C.allocList(4)
 	C.Rf_protect(r)
 	names := C.Rf_allocVector(C.STRSXP, 4)

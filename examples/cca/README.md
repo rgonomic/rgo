@@ -76,11 +76,6 @@ $ rgo build
 ```
 This will generate the Go, C and R wrapper code for the R package, and collate all the licenses in the source package into the `LicenseDir` directory. At this stage the `DESCRIPTION` file should be edited and non-relevant licenses should be removed.
 
-Due to a temporary limitation in `rgo`'s import handling, we also need to adjust the imports in the generate Go wrapper (this step will not be necessary in future versions).
-```
-$ goimports -w src/rgo/cca.go 
-```
-
 The package can now be installed.
 ```
 $ R CMD INSTALL .

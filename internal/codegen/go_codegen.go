@@ -10,6 +10,7 @@ import (
 	"go/types"
 	"path"
 	"reflect"
+	"sort"
 	"strings"
 	"text/template"
 
@@ -19,6 +20,7 @@ import (
 // goFunc is the template for Go function file generation.
 func GoFuncTemplate() *template.Template {
 	return template.Must(template.New("Go func").Funcs(template.FuncMap{
+		"imports":    imports,
 		"varsOf":     varsOf,
 		"go":         goParams,
 		"anon":       anonymous,
@@ -48,7 +50,9 @@ import (
 	"fmt"
 	"unsafe"
 
-	"{{$pkg.Path}}"
+{{with imports .}}{{range $p := .}}	"{{.}}"
+{{end}}
+{{end}}	"{{$pkg.Path}}"
 )
 {{$resultNeedsList := false}}
 {{range $func := .Funcs}}{{$params := varsOf $func.Signature.Params}}{{$results := varsOf $func.Signature.Results}}
@@ -782,6 +786,31 @@ func packSEXPFuncBodyGo(buf *bytes.Buffer, typ types.Type) {
 	default:
 		panic(fmt.Sprintf("unhandled type: %s", typ))
 	}
+}
+
+func imports(info *pkg.Info) []string {
+	us := info.Pkg()
+	pkgs := make(map[string]bool)
+	for _, pack := range []map[string]types.Type{info.Unpackers, info.Packers} {
+		for _, p := range pack {
+			named, ok := p.(*types.Named)
+			if !ok {
+				continue
+			}
+			pkg := named.Obj().Pkg()
+			if pkg == nil || pkg == us {
+				continue
+			}
+			pkgs[pkg.Path()] = true
+		}
+	}
+	paths := make([]string, 0, len(pkgs))
+	for p := range pkgs {
+		paths = append(paths, p)
+	}
+	sort.Strings(paths)
+
+	return paths
 }
 
 // nameOf returns the package name-qualified name of t.
