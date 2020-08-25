@@ -22,7 +22,6 @@ import (
 	"io/ioutil"
 )
 
-
 //export Wrapped_ReadFile
 func Wrapped_ReadFile(_R_filename C.SEXP) C.SEXP {
 	defer func() {

@@ -22,7 +22,6 @@ import (
 	"sort"
 )
 
-
 //export Wrapped_SearchFloat64s
 func Wrapped_SearchFloat64s(_R_a, _R_x C.SEXP) C.SEXP {
 	defer func() {

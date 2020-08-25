@@ -54,8 +54,7 @@ import (
 {{end}}
 {{end}}	"{{$pkg.Path}}"
 )
-{{$resultNeedsList := false}}
-{{range $func := .Funcs}}{{$params := varsOf $func.Signature.Params}}{{$results := varsOf $func.Signature.Results}}
+{{$resultNeedsList := false}}{{range $func := .Funcs}}{{$params := varsOf $func.Signature.Params}}{{$results := varsOf $func.Signature.Results}}
 //export Wrapped_{{$func.Name}}
 func Wrapped_{{$func.Name}}({{go "_R_" $params}}) C.SEXP {
 	defer func() {

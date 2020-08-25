@@ -22,7 +22,6 @@ import (
 	"gonum.org/v1/gonum/floats"
 )
 
-
 //export Wrapped_CumProd
 func Wrapped_CumProd(_R_dst, _R_s C.SEXP) C.SEXP {
 	defer func() {

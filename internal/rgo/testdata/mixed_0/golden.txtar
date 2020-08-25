@@ -195,7 +195,6 @@ import (
 	"mixed_0"
 )
 
-
 //export Wrapped_Test0
 func Wrapped_Test0(_R_par0 C.SEXP) C.SEXP {
 	defer func() {

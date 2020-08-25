@@ -24,7 +24,6 @@ import (
 	"github.com/rgonomic/rgo/examples/cca"
 )
 
-
 //export Wrapped_CCA
 func Wrapped_CCA(_R_x, _R_y C.SEXP) C.SEXP {
 	defer func() {

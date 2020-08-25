@@ -109,7 +109,6 @@ import (
 	"int16_out_named_0"
 )
 
-
 //export Wrapped_Test0
 func Wrapped_Test0() C.SEXP {
 	defer func() {
