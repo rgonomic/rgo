@@ -122,7 +122,7 @@ R and Go have differences in indexing; R is one-based and Go is zero-based. This
 
 R lacks 64-bit integers, so `rgo` will refuse to wrap functions that have 64-bit integer inputs or results (`int64` and `uint64`). It also refuses to wrap function that take or return `uintptr` values. On Go architectures with 64-bit `int` and `uint` types, results are truncated to 32 bits. This behaviour will not change until R gets 64-bit integer types.
 
-R Matrix values are not currently handled and will need to be destructured to a vector and a pair of dimensions.
+R Matrix values are not currently handled and will need to be destructured to a vector and a pair of dimensions (see the [matrix example](examples/cca) for how to do this).
 
 Currently the extraction of type identities is weaker than it should be. This will be improved.
 
