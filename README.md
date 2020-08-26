@@ -84,10 +84,21 @@ $ R CMD INSTALL .
 | scalar `character`              | `string` (and `error` in returned values)                                                  |
 | `character` vector              | `[]string` (and `[]error` in returned values)                                              |
 | fixed length `character` vector | `[n]string` (and `[n]error` in returned values)                                            |
-| named `vector`                  | `map[string]T`                                                                             |
+| unnamed `list`                  | `[]C` (not yet implemented)                                                                |
+| fixed length unnamed `list`     | `[n]C` (not yet implemented)                                                               |
+| named `vector`                  | `map[string]A`                                                                             |
+| named `list`                    | `map[string]C` (not yet implemented)                                                       |
 | `list`                          | `struct{...}`                                                                              |
 | `raw`                           | `[]uint8`/`[]byte`                                                                         |
 | fixed length `raw`              | `[n]uint8`/`[n]byte`                                                                       |
+
+The Go `A` types correspond to R `atomic` types.
+
+> `int`, `int8`, `int16`, `int32`/`rune`, `uint`, `uint8`/`byte`, `uint16`, `uint32`, `float32`, `float64`, `complex64`, `complex128`, `bool`, `string` and `error`
+
+The Go `C` types correspond all other supported types.
+
+> `[]T`, `[n]T`, `map[string]T` and `struct{...}` where `T` is any type.
 
 
 Pointer types are also handled. Currently pointers are indirected so that mutations to pointees do not propagate between the Go and R environments. This behaviour may change for pointers being passed to Go from R.
