@@ -8,7 +8,6 @@ import (
 	"bytes"
 	"fmt"
 	"go/types"
-	"sort"
 
 	"github.com/rgonomic/rgo/internal/pkg"
 )
@@ -394,33 +393,6 @@ func packSEXPFuncBodyGo(buf *bytes.Buffer, typ types.Type) {
 	default:
 		panic(fmt.Sprintf("unhandled type: %s", typ))
 	}
-}
-
-// imports returns a slice of import paths to packages imported by the code
-// we are wrapping.
-func imports(info *pkg.Info) []string {
-	us := info.Pkg()
-	pkgs := make(map[string]bool)
-	for _, pack := range []map[string]types.Type{info.Unpackers, info.Packers} {
-		for _, p := range pack {
-			named, ok := p.(*types.Named)
-			if !ok {
-				continue
-			}
-			pkg := named.Obj().Pkg()
-			if pkg == nil || pkg == us {
-				continue
-			}
-			pkgs[pkg.Path()] = true
-		}
-	}
-	paths := make([]string, 0, len(pkgs))
-	for p := range pkgs {
-		paths = append(paths, p)
-	}
-	sort.Strings(paths)
-
-	return paths
 }
 
 var typeLabelTable = map[string]string{
