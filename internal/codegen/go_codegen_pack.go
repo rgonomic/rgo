@@ -396,6 +396,8 @@ func packSEXPFuncBodyGo(buf *bytes.Buffer, typ types.Type) {
 	}
 }
 
+// imports returns a slice of import paths to packages imported by the code
+// we are wrapping.
 func imports(info *pkg.Info) []string {
 	us := info.Pkg()
 	pkgs := make(map[string]bool)
@@ -431,6 +433,8 @@ var typeLabelTable = map[string]string{
 	"list":      "VECSXP",
 }
 
+// rTypeLabelFor returns the R type label for the R atomic type
+// corresponding to typ.
 func rTypeLabelFor(typ types.Type) string {
 	name, _ := rTypeOf(typ)
 	label, ok := typeLabelTable[name]
