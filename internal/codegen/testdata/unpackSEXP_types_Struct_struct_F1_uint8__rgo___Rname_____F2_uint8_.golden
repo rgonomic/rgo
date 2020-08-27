@@ -1,0 +1,27 @@
+func unpackSEXP_types_Struct_struct_F1_uint8__rgo___Rname_____F2_uint8_(p C.SEXP) struct{F1 uint8 "rgo:\"Rname\""; F2 uint8} {
+	switch n := C.Rf_xlength(p); {
+	case n < 2:
+		panic(`missing list element for struct{F1 uint8 "rgo:\"Rname\""; F2 uint8}`)
+	case n > 2:
+		err := C.CString(`extra list element ignored for struct{F1 uint8 "rgo:\"Rname\""; F2 uint8}`)
+		C.R_error(err)
+		C.free(unsafe.Pointer(err))
+	}
+	var r struct{F1 uint8 "rgo:\"Rname\""; F2 uint8}
+	var i C.int
+	key_Rname := C.CString("Rname")
+	defer C.free(unsafe.Pointer(key_Rname))
+	i = C.getListElementIndex(p, key_Rname)
+	if i < 0 {
+		panic("no list element for field: F1")
+	}
+	r.F1 = unpackSEXP_types_Basic_uint8(C.VECTOR_ELT(p, C.R_xlen_t(i)))
+	key_F2 := C.CString("F2")
+	defer C.free(unsafe.Pointer(key_F2))
+	i = C.getListElementIndex(p, key_F2)
+	if i < 0 {
+		panic("no list element for field: F2")
+	}
+	r.F2 = unpackSEXP_types_Basic_uint8(C.VECTOR_ELT(p, C.R_xlen_t(i)))
+	return r
+}

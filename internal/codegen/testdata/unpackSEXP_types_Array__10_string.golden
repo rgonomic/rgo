@@ -1,0 +1,5 @@
+func unpackSEXP_types_Array__10_string(p C.SEXP) [10]string {
+	var a [10]string
+	copy(a[:], unpackSEXP_types_Slice___string(p))
+	return a
+}

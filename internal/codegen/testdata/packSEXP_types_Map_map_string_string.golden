@@ -1,0 +1,16 @@
+func packSEXP_types_Map_map_string_string(p map[string]string) C.SEXP {
+	n := len(p)
+	r := C.Rf_allocVector(C.STRSXP, C.R_xlen_t(n))
+	C.Rf_protect(r)
+	names := C.Rf_allocVector(C.STRSXP, C.R_xlen_t(n))
+	C.Rf_protect(names)
+	var i C.R_xlen_t
+	for k, v := range p {
+		C.SET_STRING_ELT(names, i, C.Rf_mkCharLenCE(C._GoStringPtr(k), C.int(len(k)), C.CE_UTF8))
+		C.SET_STRING_ELT(r, i, packSEXP_types_Basic_string(v))
+		i++
+	}
+	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
+	C.Rf_unprotect(2)
+	return r
+}

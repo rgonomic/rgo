@@ -1,0 +1,14 @@
+func unpackSEXP_types_Map_map_string_bool(p C.SEXP) map[string]bool {
+	if C.Rf_isNull(p) != 0 {
+		return nil
+	}
+	n := int(C.Rf_xlength(p))
+	r := make(map[string]bool, n)
+	names := C.getAttrib(p, C.R_NamesSymbol)
+	values := (*[140737488355328]int32)(unsafe.Pointer(C.LOGICAL(p)))[:n:n]
+	for i, elem := range values {
+		key := string(C.R_gostring(names, C.R_xlen_t(i)))
+		r[key] = (elem == 1)
+	}
+	return r
+}

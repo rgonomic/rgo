@@ -1,0 +1,6 @@
+func packSEXP_types_Pointer__uint8(p *uint8) C.SEXP {
+	if p == nil {
+		return C.R_NilValue
+	}
+	return packSEXP_types_Basic_uint8(*p)
+}

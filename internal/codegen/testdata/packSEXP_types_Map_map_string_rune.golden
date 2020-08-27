@@ -1,0 +1,17 @@
+func packSEXP_types_Map_map_string_rune(p map[string]rune) C.SEXP {
+	n := len(p)
+	r := C.Rf_allocVector(C.INTSXP, C.R_xlen_t(n))
+	C.Rf_protect(r)
+	names := C.Rf_allocVector(C.STRSXP, C.R_xlen_t(n))
+	C.Rf_protect(names)
+	s := (*[140737488355328]int32)(unsafe.Pointer(C.INTEGER(r)))[:len(p):len(p)]
+	var i C.R_xlen_t
+	for k, v := range p {
+		C.SET_STRING_ELT(names, i, C.Rf_mkCharLenCE(C._GoStringPtr(k), C.int(len(k)), C.CE_UTF8))
+		s[i] = int32(v)
+		i++
+	}
+	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
+	C.Rf_unprotect(2)
+	return r
+}

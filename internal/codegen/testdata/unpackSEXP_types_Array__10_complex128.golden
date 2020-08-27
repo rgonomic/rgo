@@ -1,0 +1,5 @@
+func unpackSEXP_types_Array__10_complex128(p C.SEXP) [10]complex128 {
+	var a [10]complex128
+	copy(a[:], unpackSEXP_types_Slice___complex128(p))
+	return a
+}

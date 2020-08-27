@@ -1,0 +1,14 @@
+func unpackSEXP_types_Map_map_string_complex128(p C.SEXP) map[string]complex128 {
+	if C.Rf_isNull(p) != 0 {
+		return nil
+	}
+	n := int(C.Rf_xlength(p))
+	r := make(map[string]complex128, n)
+	names := C.getAttrib(p, C.R_NamesSymbol)
+	values := (*[35184372088832]complex128)(unsafe.Pointer(C.COMPLEX(p)))[:n:n]
+	for i, elem := range values {
+		key := string(C.R_gostring(names, C.R_xlen_t(i)))
+		r[key] = complex128(elem)
+	}
+	return r
+}

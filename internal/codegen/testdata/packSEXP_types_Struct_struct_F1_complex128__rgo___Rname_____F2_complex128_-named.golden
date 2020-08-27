@@ -1,0 +1,3 @@
+func packSEXP_types_Named_path_to_pkg_T(p pkg.T) C.SEXP {
+	return packSEXP_types_Struct_struct_F1_complex128__rgo___Rname_____F2_complex128_(struct{F1 complex128 "rgo:\"Rname\""; F2 complex128}(p))
+}

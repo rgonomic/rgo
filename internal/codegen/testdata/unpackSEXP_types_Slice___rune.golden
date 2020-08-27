@@ -1,0 +1,7 @@
+func unpackSEXP_types_Slice___rune(p C.SEXP) []rune {
+	if C.Rf_isNull(p) != 0 {
+		return nil
+	}
+	n := C.Rf_xlength(p)
+	return (*[140737488355328]rune)(unsafe.Pointer(C.INTEGER(p)))[:n:n]
+}

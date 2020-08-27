@@ -1,0 +1,5 @@
+func unpackSEXP_types_Array__10_float64(p C.SEXP) [10]float64 {
+	var a [10]float64
+	copy(a[:], unpackSEXP_types_Slice___float64(p))
+	return a
+}

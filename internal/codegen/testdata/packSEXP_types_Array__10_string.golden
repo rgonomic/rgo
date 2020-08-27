@@ -1,0 +1,3 @@
+func packSEXP_types_Array__10_string(p [10]string) C.SEXP {
+	return packSEXP_types_Slice___string(p[:])
+}

@@ -1,0 +1,7 @@
+func unpackSEXP_types_Pointer__bool(p C.SEXP) *bool {
+	if C.Rf_isNull(p) != 0 {
+		return nil
+	}
+	r := unpackSEXP_types_Basic_bool(p)
+	return &r
+}

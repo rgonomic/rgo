@@ -1,0 +1,3 @@
+func packSEXP_types_Array__10_complex128(p [10]complex128) C.SEXP {
+	return packSEXP_types_Slice___complex128(p[:])
+}

@@ -1,0 +1,3 @@
+func packSEXP_types_Array__10_bool(p [10]bool) C.SEXP {
+	return packSEXP_types_Slice___bool(p[:])
+}

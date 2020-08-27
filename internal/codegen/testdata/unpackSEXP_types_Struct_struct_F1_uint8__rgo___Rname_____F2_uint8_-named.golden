@@ -1,0 +1,3 @@
+func unpackSEXP_types_Named_path_to_pkg_T(p C.SEXP) pkg.T {
+	return pkg.T(unpackSEXP_types_Struct_struct_F1_uint8__rgo___Rname_____F2_uint8_(p))
+}

@@ -1,0 +1,7 @@
+func unpackSEXP_types_Pointer__complex128(p C.SEXP) *complex128 {
+	if C.Rf_isNull(p) != 0 {
+		return nil
+	}
+	r := unpackSEXP_types_Basic_complex128(p)
+	return &r
+}

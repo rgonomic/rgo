@@ -1,0 +1,5 @@
+func unpackSEXP_types_Array__10_rune(p C.SEXP) [10]rune {
+	var a [10]rune
+	copy(a[:], unpackSEXP_types_Slice___rune(p))
+	return a
+}

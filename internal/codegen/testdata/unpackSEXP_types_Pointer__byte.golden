@@ -1,0 +1,7 @@
+func unpackSEXP_types_Pointer__byte(p C.SEXP) *byte {
+	if C.Rf_isNull(p) != 0 {
+		return nil
+	}
+	r := unpackSEXP_types_Basic_byte(p)
+	return &r
+}

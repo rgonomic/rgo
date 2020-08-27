@@ -1,0 +1,4 @@
+func packSEXP_types_Basic_string(p string) C.SEXP {
+	s := C.Rf_mkCharLenCE(C._GoStringPtr(p), C.int(len(p)), C.CE_UTF8)
+	return C.ScalarString(s)
+}

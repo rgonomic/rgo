@@ -1,0 +1,11 @@
+func unpackSEXP_types_Slice___bool(p C.SEXP) []bool {
+	if C.Rf_isNull(p) != 0 {
+		return nil
+	}
+	n := C.Rf_xlength(p)
+	r := make([]bool, n)
+	for i, b := range (*[140737488355328]int32)(unsafe.Pointer(C.BOOL(p)))[:n] {
+		r[i] = (b == 1)
+	}
+	return r
+}

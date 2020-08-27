@@ -5,25 +5,34 @@
 package codegen
 
 import (
+	"bytes"
+	"flag"
+	"fmt"
 	"go/types"
+	"io/ioutil"
+	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/pkg/diff"
+
+	"github.com/rgonomic/rgo/internal/pkg"
 )
+
+var regenerate = flag.Bool("regen", false, "regenerate golden data from current state")
 
 var mockPkg = types.NewPackage("path/to/pkg", "pkg")
 
 var sexpFuncGoTests = []struct {
-	typs            []types.Type
+	typ             types.Type
 	wantUnpack      string
 	wantUnpackNamed string
 	wantPack        string
 	wantPackNamed   string
 }{
-	{typs: nil},
-
 	// Basic types.
 	{
-		typs: []types.Type{types.Typ[types.String]},
+		typ: types.Typ[types.String],
 		wantUnpack: `func unpackSEXP_types_Basic_string(p C.SEXP) string {
 	return C.R_gostring(p, 0)
 }`,
@@ -40,7 +49,7 @@ var sexpFuncGoTests = []struct {
 	},
 
 	{
-		typs: []types.Type{types.Typ[types.Int32]},
+		typ: types.Typ[types.Int32],
 		wantUnpack: `func unpackSEXP_types_Basic_int32(p C.SEXP) int32 {
 	return int32(*C.INTEGER(p))
 }`,
@@ -55,7 +64,7 @@ var sexpFuncGoTests = []struct {
 }`,
 	},
 	{
-		typs: []types.Type{types.Universe.Lookup("rune").Type()},
+		typ: types.Universe.Lookup("rune").Type(),
 		wantUnpack: `func unpackSEXP_types_Basic_rune(p C.SEXP) rune {
 	return rune(*C.INTEGER(p))
 }`,
@@ -71,7 +80,7 @@ var sexpFuncGoTests = []struct {
 	},
 
 	{
-		typs: []types.Type{types.Typ[types.Uint8]},
+		typ: types.Typ[types.Uint8],
 		wantUnpack: `func unpackSEXP_types_Basic_uint8(p C.SEXP) uint8 {
 	return uint8(*C.RAW(p))
 }`,
@@ -86,7 +95,7 @@ var sexpFuncGoTests = []struct {
 }`,
 	},
 	{
-		typs: []types.Type{types.Universe.Lookup("byte").Type()},
+		typ: types.Universe.Lookup("byte").Type(),
 		wantUnpack: `func unpackSEXP_types_Basic_byte(p C.SEXP) byte {
 	return byte(*C.RAW(p))
 }`,
@@ -102,7 +111,7 @@ var sexpFuncGoTests = []struct {
 	},
 
 	{
-		typs: []types.Type{types.Typ[types.Float64]},
+		typ: types.Typ[types.Float64],
 		wantUnpack: `func unpackSEXP_types_Basic_float64(p C.SEXP) float64 {
 	return float64(*C.REAL(p))
 }`,
@@ -118,7 +127,7 @@ var sexpFuncGoTests = []struct {
 	},
 
 	{
-		typs: []types.Type{types.Typ[types.Complex128]},
+		typ: types.Typ[types.Complex128],
 		wantUnpack: `func unpackSEXP_types_Basic_complex128(p C.SEXP) complex128 {
 	return complex128(*(*complex128)(unsafe.Pointer(C.COMPLEX(p))))
 }`,
@@ -134,7 +143,7 @@ var sexpFuncGoTests = []struct {
 	},
 
 	{
-		typs: []types.Type{types.Typ[types.Bool]},
+		typ: types.Typ[types.Bool],
 		wantUnpack: `func unpackSEXP_types_Basic_bool(p C.SEXP) bool {
 	return *C.RAW(p) == 1
 }`,
@@ -155,7 +164,7 @@ var sexpFuncGoTests = []struct {
 
 	// Pointer types.
 	{
-		typs: []types.Type{types.NewPointer(types.Typ[types.String])},
+		typ: types.NewPointer(types.Typ[types.String]),
 		wantUnpack: `func unpackSEXP_types_Pointer__string(p C.SEXP) *string {
 	if C.Rf_isNull(p) != 0 {
 		return nil
@@ -178,7 +187,7 @@ var sexpFuncGoTests = []struct {
 	},
 
 	{
-		typs: []types.Type{types.NewPointer(types.Typ[types.Int32])},
+		typ: types.NewPointer(types.Typ[types.Int32]),
 		wantUnpack: `func unpackSEXP_types_Pointer__int32(p C.SEXP) *int32 {
 	if C.Rf_isNull(p) != 0 {
 		return nil
@@ -200,7 +209,7 @@ var sexpFuncGoTests = []struct {
 }`,
 	},
 	{
-		typs: []types.Type{types.NewPointer(types.Universe.Lookup("rune").Type())},
+		typ: types.NewPointer(types.Universe.Lookup("rune").Type()),
 		wantUnpack: `func unpackSEXP_types_Pointer__rune(p C.SEXP) *rune {
 	if C.Rf_isNull(p) != 0 {
 		return nil
@@ -223,7 +232,7 @@ var sexpFuncGoTests = []struct {
 	},
 
 	{
-		typs: []types.Type{types.NewPointer(types.Typ[types.Uint8])},
+		typ: types.NewPointer(types.Typ[types.Uint8]),
 		wantUnpack: `func unpackSEXP_types_Pointer__uint8(p C.SEXP) *uint8 {
 	if C.Rf_isNull(p) != 0 {
 		return nil
@@ -245,7 +254,7 @@ var sexpFuncGoTests = []struct {
 }`,
 	},
 	{
-		typs: []types.Type{types.NewPointer(types.Universe.Lookup("byte").Type())},
+		typ: types.NewPointer(types.Universe.Lookup("byte").Type()),
 		wantUnpack: `func unpackSEXP_types_Pointer__byte(p C.SEXP) *byte {
 	if C.Rf_isNull(p) != 0 {
 		return nil
@@ -268,7 +277,7 @@ var sexpFuncGoTests = []struct {
 	},
 
 	{
-		typs: []types.Type{types.NewPointer(types.Typ[types.Float64])},
+		typ: types.NewPointer(types.Typ[types.Float64]),
 		wantUnpack: `func unpackSEXP_types_Pointer__float64(p C.SEXP) *float64 {
 	if C.Rf_isNull(p) != 0 {
 		return nil
@@ -291,7 +300,7 @@ var sexpFuncGoTests = []struct {
 	},
 
 	{
-		typs: []types.Type{types.NewPointer(types.Typ[types.Complex128])},
+		typ: types.NewPointer(types.Typ[types.Complex128]),
 		wantUnpack: `func unpackSEXP_types_Pointer__complex128(p C.SEXP) *complex128 {
 	if C.Rf_isNull(p) != 0 {
 		return nil
@@ -314,7 +323,7 @@ var sexpFuncGoTests = []struct {
 	},
 
 	{
-		typs: []types.Type{types.NewPointer(types.Typ[types.Bool])},
+		typ: types.NewPointer(types.Typ[types.Bool]),
 		wantUnpack: `func unpackSEXP_types_Pointer__bool(p C.SEXP) *bool {
 	if C.Rf_isNull(p) != 0 {
 		return nil
@@ -338,7 +347,7 @@ var sexpFuncGoTests = []struct {
 
 	// Array types.
 	{
-		typs: []types.Type{types.NewArray(types.Typ[types.String], 10)},
+		typ: types.NewArray(types.Typ[types.String], 10),
 		wantUnpack: `func unpackSEXP_types_Array__10_string(p C.SEXP) [10]string {
 	var a [10]string
 	copy(a[:], unpackSEXP_types_Slice___string(p))
@@ -356,7 +365,7 @@ var sexpFuncGoTests = []struct {
 	},
 
 	{
-		typs: []types.Type{types.NewArray(types.Typ[types.Int32], 10)},
+		typ: types.NewArray(types.Typ[types.Int32], 10),
 		wantUnpack: `func unpackSEXP_types_Array__10_int32(p C.SEXP) [10]int32 {
 	var a [10]int32
 	copy(a[:], unpackSEXP_types_Slice___int32(p))
@@ -373,7 +382,7 @@ var sexpFuncGoTests = []struct {
 }`,
 	},
 	{
-		typs: []types.Type{types.NewArray(types.Universe.Lookup("rune").Type(), 10)},
+		typ: types.NewArray(types.Universe.Lookup("rune").Type(), 10),
 		wantUnpack: `func unpackSEXP_types_Array__10_rune(p C.SEXP) [10]rune {
 	var a [10]rune
 	copy(a[:], unpackSEXP_types_Slice___rune(p))
@@ -391,7 +400,7 @@ var sexpFuncGoTests = []struct {
 	},
 
 	{
-		typs: []types.Type{types.NewArray(types.Typ[types.Uint8], 10)},
+		typ: types.NewArray(types.Typ[types.Uint8], 10),
 		wantUnpack: `func unpackSEXP_types_Array__10_uint8(p C.SEXP) [10]uint8 {
 	var a [10]uint8
 	copy(a[:], unpackSEXP_types_Slice___uint8(p))
@@ -408,7 +417,7 @@ var sexpFuncGoTests = []struct {
 }`,
 	},
 	{
-		typs: []types.Type{types.NewArray(types.Universe.Lookup("byte").Type(), 10)},
+		typ: types.NewArray(types.Universe.Lookup("byte").Type(), 10),
 		wantUnpack: `func unpackSEXP_types_Array__10_byte(p C.SEXP) [10]byte {
 	var a [10]byte
 	copy(a[:], unpackSEXP_types_Slice___byte(p))
@@ -426,7 +435,7 @@ var sexpFuncGoTests = []struct {
 	},
 
 	{
-		typs: []types.Type{types.NewArray(types.Typ[types.Float64], 10)},
+		typ: types.NewArray(types.Typ[types.Float64], 10),
 		wantUnpack: `func unpackSEXP_types_Array__10_float64(p C.SEXP) [10]float64 {
 	var a [10]float64
 	copy(a[:], unpackSEXP_types_Slice___float64(p))
@@ -444,7 +453,7 @@ var sexpFuncGoTests = []struct {
 	},
 
 	{
-		typs: []types.Type{types.NewArray(types.Typ[types.Complex128], 10)},
+		typ: types.NewArray(types.Typ[types.Complex128], 10),
 		wantUnpack: `func unpackSEXP_types_Array__10_complex128(p C.SEXP) [10]complex128 {
 	var a [10]complex128
 	copy(a[:], unpackSEXP_types_Slice___complex128(p))
@@ -462,7 +471,7 @@ var sexpFuncGoTests = []struct {
 	},
 
 	{
-		typs: []types.Type{types.NewArray(types.Typ[types.Bool], 10)},
+		typ: types.NewArray(types.Typ[types.Bool], 10),
 		wantUnpack: `func unpackSEXP_types_Array__10_bool(p C.SEXP) [10]bool {
 	var a [10]bool
 	copy(a[:], unpackSEXP_types_Slice___bool(p))
@@ -481,7 +490,7 @@ var sexpFuncGoTests = []struct {
 
 	// Slice types.
 	{
-		typs: []types.Type{types.NewSlice(types.Typ[types.String])},
+		typ: types.NewSlice(types.Typ[types.String]),
 		wantUnpack: `func unpackSEXP_types_Slice___string(p C.SEXP) []string {
 	if C.Rf_isNull(p) != 0 {
 		return nil
@@ -512,7 +521,7 @@ var sexpFuncGoTests = []struct {
 	},
 
 	{
-		typs: []types.Type{types.NewSlice(types.Typ[types.Int32])},
+		typ: types.NewSlice(types.Typ[types.Int32]),
 		wantUnpack: `func unpackSEXP_types_Slice___int32(p C.SEXP) []int32 {
 	if C.Rf_isNull(p) != 0 {
 		return nil
@@ -536,7 +545,7 @@ var sexpFuncGoTests = []struct {
 }`,
 	},
 	{
-		typs: []types.Type{types.NewSlice(types.Universe.Lookup("rune").Type())},
+		typ: types.NewSlice(types.Universe.Lookup("rune").Type()),
 		wantUnpack: `func unpackSEXP_types_Slice___rune(p C.SEXP) []rune {
 	if C.Rf_isNull(p) != 0 {
 		return nil
@@ -561,7 +570,7 @@ var sexpFuncGoTests = []struct {
 	},
 
 	{
-		typs: []types.Type{types.NewSlice(types.Typ[types.Uint8])},
+		typ: types.NewSlice(types.Typ[types.Uint8]),
 		wantUnpack: `func unpackSEXP_types_Slice___uint8(p C.SEXP) []uint8 {
 	if C.Rf_isNull(p) != 0 {
 		return nil
@@ -585,7 +594,7 @@ var sexpFuncGoTests = []struct {
 }`,
 	},
 	{
-		typs: []types.Type{types.NewSlice(types.Universe.Lookup("byte").Type())},
+		typ: types.NewSlice(types.Universe.Lookup("byte").Type()),
 		wantUnpack: `func unpackSEXP_types_Slice___byte(p C.SEXP) []byte {
 	if C.Rf_isNull(p) != 0 {
 		return nil
@@ -610,7 +619,7 @@ var sexpFuncGoTests = []struct {
 	},
 
 	{
-		typs: []types.Type{types.NewSlice(types.Typ[types.Float64])},
+		typ: types.NewSlice(types.Typ[types.Float64]),
 		wantUnpack: `func unpackSEXP_types_Slice___float64(p C.SEXP) []float64 {
 	if C.Rf_isNull(p) != 0 {
 		return nil
@@ -635,7 +644,7 @@ var sexpFuncGoTests = []struct {
 	},
 
 	{
-		typs: []types.Type{types.NewSlice(types.Typ[types.Complex128])},
+		typ: types.NewSlice(types.Typ[types.Complex128]),
 		wantUnpack: `func unpackSEXP_types_Slice___complex128(p C.SEXP) []complex128 {
 	if C.Rf_isNull(p) != 0 {
 		return nil
@@ -660,7 +669,7 @@ var sexpFuncGoTests = []struct {
 	},
 
 	{
-		typs: []types.Type{types.NewSlice(types.Typ[types.Bool])},
+		typ: types.NewSlice(types.Typ[types.Bool]),
 		wantUnpack: `func unpackSEXP_types_Slice___bool(p C.SEXP) []bool {
 	if C.Rf_isNull(p) != 0 {
 		return nil
@@ -696,7 +705,7 @@ var sexpFuncGoTests = []struct {
 
 	// Map types.
 	{
-		typs: []types.Type{types.NewMap(types.Typ[types.String], types.Typ[types.String])},
+		typ: types.NewMap(types.Typ[types.String], types.Typ[types.String]),
 		wantUnpack: `func unpackSEXP_types_Map_map_string_string(p C.SEXP) map[string]string {
 	if C.Rf_isNull(p) != 0 {
 		return nil
@@ -735,7 +744,7 @@ var sexpFuncGoTests = []struct {
 	},
 
 	{
-		typs: []types.Type{types.NewMap(types.Typ[types.String], types.Typ[types.Int32])},
+		typ: types.NewMap(types.Typ[types.String], types.Typ[types.Int32]),
 		wantUnpack: `func unpackSEXP_types_Map_map_string_int32(p C.SEXP) map[string]int32 {
 	if C.Rf_isNull(p) != 0 {
 		return nil
@@ -775,7 +784,7 @@ var sexpFuncGoTests = []struct {
 }`,
 	},
 	{
-		typs: []types.Type{types.NewMap(types.Typ[types.String], types.Universe.Lookup("rune").Type())},
+		typ: types.NewMap(types.Typ[types.String], types.Universe.Lookup("rune").Type()),
 		wantUnpack: `func unpackSEXP_types_Map_map_string_rune(p C.SEXP) map[string]rune {
 	if C.Rf_isNull(p) != 0 {
 		return nil
@@ -816,7 +825,7 @@ var sexpFuncGoTests = []struct {
 	},
 
 	{
-		typs: []types.Type{types.NewMap(types.Typ[types.String], types.Typ[types.Uint8])},
+		typ: types.NewMap(types.Typ[types.String], types.Typ[types.Uint8]),
 		wantUnpack: `func unpackSEXP_types_Map_map_string_uint8(p C.SEXP) map[string]uint8 {
 	if C.Rf_isNull(p) != 0 {
 		return nil
@@ -856,7 +865,7 @@ var sexpFuncGoTests = []struct {
 }`,
 	},
 	{
-		typs: []types.Type{types.NewMap(types.Typ[types.String], types.Universe.Lookup("byte").Type())},
+		typ: types.NewMap(types.Typ[types.String], types.Universe.Lookup("byte").Type()),
 		wantUnpack: `func unpackSEXP_types_Map_map_string_byte(p C.SEXP) map[string]byte {
 	if C.Rf_isNull(p) != 0 {
 		return nil
@@ -897,7 +906,7 @@ var sexpFuncGoTests = []struct {
 	},
 
 	{
-		typs: []types.Type{types.NewMap(types.Typ[types.String], types.Typ[types.Float64])},
+		typ: types.NewMap(types.Typ[types.String], types.Typ[types.Float64]),
 		wantUnpack: `func unpackSEXP_types_Map_map_string_float64(p C.SEXP) map[string]float64 {
 	if C.Rf_isNull(p) != 0 {
 		return nil
@@ -938,7 +947,7 @@ var sexpFuncGoTests = []struct {
 	},
 
 	{
-		typs: []types.Type{types.NewMap(types.Typ[types.String], types.Typ[types.Complex128])},
+		typ: types.NewMap(types.Typ[types.String], types.Typ[types.Complex128]),
 		wantUnpack: `func unpackSEXP_types_Map_map_string_complex128(p C.SEXP) map[string]complex128 {
 	if C.Rf_isNull(p) != 0 {
 		return nil
@@ -979,7 +988,7 @@ var sexpFuncGoTests = []struct {
 	},
 
 	{
-		typs: []types.Type{types.NewMap(types.Typ[types.String], types.Typ[types.Bool])},
+		typ: types.NewMap(types.Typ[types.String], types.Typ[types.Bool]),
 		wantUnpack: `func unpackSEXP_types_Map_map_string_bool(p C.SEXP) map[string]bool {
 	if C.Rf_isNull(p) != 0 {
 		return nil
@@ -1025,10 +1034,10 @@ var sexpFuncGoTests = []struct {
 
 	// Struct types.
 	{
-		typs: []types.Type{types.NewStruct([]*types.Var{
+		typ: types.NewStruct([]*types.Var{
 			types.NewField(0, mockPkg, "F1", types.Typ[types.String], false),
 			types.NewField(0, mockPkg, "F2", types.Typ[types.String], false),
-		}, []string{`rgo:"Rname"`})},
+		}, []string{`rgo:"Rname"`}),
 		wantUnpack: `func unpackSEXP_types_Struct_struct_F1_string__rgo___Rname_____F2_string_(p C.SEXP) struct{F1 string "rgo:\"Rname\""; F2 string} {
 	switch n := C.Rf_xlength(p); {
 	case n < 2:
@@ -1080,10 +1089,10 @@ var sexpFuncGoTests = []struct {
 	},
 
 	{
-		typs: []types.Type{types.NewStruct([]*types.Var{
+		typ: types.NewStruct([]*types.Var{
 			types.NewField(0, mockPkg, "F1", types.Typ[types.Int32], false),
 			types.NewField(0, mockPkg, "F2", types.Typ[types.Int32], false),
-		}, []string{`rgo:"Rname"`})},
+		}, []string{`rgo:"Rname"`}),
 		wantUnpack: `func unpackSEXP_types_Struct_struct_F1_int32__rgo___Rname_____F2_int32_(p C.SEXP) struct{F1 int32 "rgo:\"Rname\""; F2 int32} {
 	switch n := C.Rf_xlength(p); {
 	case n < 2:
@@ -1134,10 +1143,10 @@ var sexpFuncGoTests = []struct {
 }`,
 	},
 	{
-		typs: []types.Type{types.NewStruct([]*types.Var{
+		typ: types.NewStruct([]*types.Var{
 			types.NewField(0, mockPkg, "F1", types.Universe.Lookup("rune").Type(), false),
 			types.NewField(0, mockPkg, "F2", types.Universe.Lookup("rune").Type(), false),
-		}, []string{`rgo:"Rname"`})},
+		}, []string{`rgo:"Rname"`}),
 		wantUnpack: `func unpackSEXP_types_Struct_struct_F1_rune__rgo___Rname_____F2_rune_(p C.SEXP) struct{F1 rune "rgo:\"Rname\""; F2 rune} {
 	switch n := C.Rf_xlength(p); {
 	case n < 2:
@@ -1189,10 +1198,10 @@ var sexpFuncGoTests = []struct {
 	},
 
 	{
-		typs: []types.Type{types.NewStruct([]*types.Var{
+		typ: types.NewStruct([]*types.Var{
 			types.NewField(0, mockPkg, "F1", types.Typ[types.Uint8], false),
 			types.NewField(0, mockPkg, "F2", types.Typ[types.Uint8], false),
-		}, []string{`rgo:"Rname"`})},
+		}, []string{`rgo:"Rname"`}),
 		wantUnpack: `func unpackSEXP_types_Struct_struct_F1_uint8__rgo___Rname_____F2_uint8_(p C.SEXP) struct{F1 uint8 "rgo:\"Rname\""; F2 uint8} {
 	switch n := C.Rf_xlength(p); {
 	case n < 2:
@@ -1243,10 +1252,10 @@ var sexpFuncGoTests = []struct {
 }`,
 	},
 	{
-		typs: []types.Type{types.NewStruct([]*types.Var{
+		typ: types.NewStruct([]*types.Var{
 			types.NewField(0, mockPkg, "F1", types.Universe.Lookup("byte").Type(), false),
 			types.NewField(0, mockPkg, "F2", types.Universe.Lookup("byte").Type(), false),
-		}, []string{`rgo:"Rname"`})},
+		}, []string{`rgo:"Rname"`}),
 		wantUnpack: `func unpackSEXP_types_Struct_struct_F1_byte__rgo___Rname_____F2_byte_(p C.SEXP) struct{F1 byte "rgo:\"Rname\""; F2 byte} {
 	switch n := C.Rf_xlength(p); {
 	case n < 2:
@@ -1298,10 +1307,10 @@ var sexpFuncGoTests = []struct {
 	},
 
 	{
-		typs: []types.Type{types.NewStruct([]*types.Var{
+		typ: types.NewStruct([]*types.Var{
 			types.NewField(0, mockPkg, "F1", types.Typ[types.Float64], false),
 			types.NewField(0, mockPkg, "F2", types.Typ[types.Float64], false),
-		}, []string{`rgo:"Rname"`})},
+		}, []string{`rgo:"Rname"`}),
 		wantUnpack: `func unpackSEXP_types_Struct_struct_F1_float64__rgo___Rname_____F2_float64_(p C.SEXP) struct{F1 float64 "rgo:\"Rname\""; F2 float64} {
 	switch n := C.Rf_xlength(p); {
 	case n < 2:
@@ -1353,10 +1362,10 @@ var sexpFuncGoTests = []struct {
 	},
 
 	{
-		typs: []types.Type{types.NewStruct([]*types.Var{
+		typ: types.NewStruct([]*types.Var{
 			types.NewField(0, mockPkg, "F1", types.Typ[types.Complex128], false),
 			types.NewField(0, mockPkg, "F2", types.Typ[types.Complex128], false),
-		}, []string{`rgo:"Rname"`})},
+		}, []string{`rgo:"Rname"`}),
 		wantUnpack: `func unpackSEXP_types_Struct_struct_F1_complex128__rgo___Rname_____F2_complex128_(p C.SEXP) struct{F1 complex128 "rgo:\"Rname\""; F2 complex128} {
 	switch n := C.Rf_xlength(p); {
 	case n < 2:
@@ -1408,10 +1417,10 @@ var sexpFuncGoTests = []struct {
 	},
 
 	{
-		typs: []types.Type{types.NewStruct([]*types.Var{
+		typ: types.NewStruct([]*types.Var{
 			types.NewField(0, mockPkg, "F1", types.Typ[types.Bool], false),
 			types.NewField(0, mockPkg, "F2", types.Typ[types.Bool], false),
-		}, []string{`rgo:"Rname"`})},
+		}, []string{`rgo:"Rname"`}),
 		wantUnpack: `func unpackSEXP_types_Struct_struct_F1_bool__rgo___Rname_____F2_bool_(p C.SEXP) struct{F1 bool "rgo:\"Rname\""; F2 bool} {
 	switch n := C.Rf_xlength(p); {
 	case n < 2:
@@ -1464,41 +1473,91 @@ var sexpFuncGoTests = []struct {
 }
 
 func TestUnpackSEXPFuncGo(t *testing.T) {
-	for i, test := range sexpFuncGoTests {
-		got := strings.TrimSpace(unpackSEXPFuncGo(test.typs))
-		if got != test.wantUnpack {
-			t.Errorf("unexpected result for test %d:\ngot:\n%s\nwant:\n%s", i, got, test.wantUnpack)
-		}
+	if got := strings.TrimSpace(packSEXPFuncGo(nil)); got != "" {
+		t.Errorf("unexpected output for empty slice: %s", got)
 	}
-
 	for i, test := range sexpFuncGoTests {
-		typs := make([]types.Type, len(test.typs))
-		for j, u := range test.typs {
-			typs[j] = types.NewNamed(types.NewTypeName(0, mockPkg, "T", nil), u, nil)
+		typs := []types.Type{
+			test.typ,
+			types.NewNamed(types.NewTypeName(0, mockPkg, "T", nil), test.typ, nil),
 		}
-		got := strings.TrimSpace(unpackSEXPFuncGo(typs))
-		if got != test.wantUnpackNamed {
-			t.Errorf("unexpected result for named type test %d:\ngot:\n%s\nwant:\n%s", i, got, test.wantUnpackNamed)
+		for j, typ := range typs {
+			got := []byte(strings.TrimSpace(unpackSEXPFuncGo([]types.Type{typ})))
+			if (j == 0 && string(got) != test.wantUnpack) || (j == 1 && string(got) != test.wantUnpackNamed) {
+				t.Errorf("unexpected result for test %d %s:\ngot:\n%s\nwant:\n%s", i, typ, got, test.wantUnpack)
+			}
+
+			var named string
+			if _, ok := typ.(*types.Named); ok {
+				named = "-named"
+			}
+			golden := filepath.Join("testdata", fmt.Sprintf("unpackSEXP%s%s.golden", pkg.Mangle(test.typ), named))
+			if *regenerate {
+				err := ioutil.WriteFile(golden, got, 0o664)
+				if err != nil {
+					t.Fatalf("failed to write golden data: %v", err)
+				}
+				continue
+			}
+
+			want, err := ioutil.ReadFile(golden)
+			if err != nil {
+				t.Fatalf("failed to read golden data: %v", err)
+			}
+
+			if !bytes.Equal(got, want) {
+				var buf bytes.Buffer
+				err := diff.Text("got", "want", got, want, &buf)
+				if err != nil {
+					t.Errorf("unexpected error: %v", err)
+				}
+				t.Errorf("unexpected generated code for test %d %s (unpackSEXP%s.golden):\n%s", i, typ, pkg.Mangle(typ), &buf)
+			}
 		}
 	}
 }
 
 func TestPackSEXPFuncGo(t *testing.T) {
-	for i, test := range sexpFuncGoTests {
-		got := strings.TrimSpace(packSEXPFuncGo(test.typs))
-		if got != test.wantPack {
-			t.Errorf("unexpected result for test %d:\ngot:\n%s\nwant:\n%s", i, got, test.wantPack)
-		}
+	if got := strings.TrimSpace(packSEXPFuncGo(nil)); got != "" {
+		t.Errorf("unexpected output for empty slice: %s", got)
 	}
-
 	for i, test := range sexpFuncGoTests {
-		typs := make([]types.Type, len(test.typs))
-		for j, u := range test.typs {
-			typs[j] = types.NewNamed(types.NewTypeName(0, mockPkg, "T", nil), u, nil)
+		typs := []types.Type{
+			test.typ,
+			types.NewNamed(types.NewTypeName(0, mockPkg, "T", nil), test.typ, nil),
 		}
-		got := strings.TrimSpace(packSEXPFuncGo(typs))
-		if got != test.wantPackNamed {
-			t.Errorf("unexpected result for test %d:\ngot:\n%s\nwant:\n%s", i, got, test.wantPackNamed)
+		for j, typ := range typs {
+			got := []byte(strings.TrimSpace(packSEXPFuncGo([]types.Type{typ})))
+			if (j == 0 && string(got) != test.wantPack) || (j == 1 && string(got) != test.wantPackNamed) {
+				t.Errorf("unexpected result for test %d %s:\ngot:\n%s\nwant:\n%s", i, typ, got, test.wantUnpack)
+			}
+
+			var named string
+			if _, ok := typ.(*types.Named); ok {
+				named = "-named"
+			}
+			golden := filepath.Join("testdata", fmt.Sprintf("packSEXP%s%s.golden", pkg.Mangle(test.typ), named))
+			if *regenerate {
+				err := ioutil.WriteFile(golden, got, 0o664)
+				if err != nil {
+					t.Fatalf("failed to write golden data: %v", err)
+				}
+				continue
+			}
+
+			want, err := ioutil.ReadFile(golden)
+			if err != nil {
+				t.Fatalf("failed to read golden data: %v", err)
+			}
+
+			if !bytes.Equal(got, want) {
+				var buf bytes.Buffer
+				err := diff.Text("got", "want", got, want, &buf)
+				if err != nil {
+					t.Errorf("unexpected error: %v", err)
+				}
+				t.Errorf("unexpected generated code for test %d %s:\n%s", i, golden, &buf)
+			}
 		}
 	}
 }

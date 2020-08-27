@@ -1,0 +1,11 @@
+func unpackSEXP_types_Slice___string(p C.SEXP) []string {
+	if C.Rf_isNull(p) != 0 {
+		return nil
+	}
+	n := C.Rf_xlength(p)
+	r := make([]string, n)
+	for i := range r {
+		r[i] = string(C.R_gostring(p, C.R_xlen_t(i)))
+	}
+	return r
+}

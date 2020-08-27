@@ -1,0 +1,6 @@
+func packSEXP_types_Pointer__complex128(p *complex128) C.SEXP {
+	if p == nil {
+		return C.R_NilValue
+	}
+	return packSEXP_types_Basic_complex128(*p)
+}

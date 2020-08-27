@@ -1,0 +1,5 @@
+func unpackSEXP_types_Array__10_uint8(p C.SEXP) [10]uint8 {
+	var a [10]uint8
+	copy(a[:], unpackSEXP_types_Slice___uint8(p))
+	return a
+}

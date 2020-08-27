@@ -1,0 +1,3 @@
+func unpackSEXP_types_Basic_string(p C.SEXP) string {
+	return C.R_gostring(p, 0)
+}

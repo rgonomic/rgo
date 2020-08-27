@@ -1,0 +1,7 @@
+func unpackSEXP_types_Pointer__float64(p C.SEXP) *float64 {
+	if C.Rf_isNull(p) != 0 {
+		return nil
+	}
+	r := unpackSEXP_types_Basic_float64(p)
+	return &r
+}

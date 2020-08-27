@@ -1,0 +1,3 @@
+func unpackSEXP_types_Basic_float64(p C.SEXP) float64 {
+	return float64(*C.REAL(p))
+}

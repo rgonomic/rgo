@@ -1,0 +1,7 @@
+func unpackSEXP_types_Slice___uint8(p C.SEXP) []uint8 {
+	if C.Rf_isNull(p) != 0 {
+		return nil
+	}
+	n := C.Rf_xlength(p)
+	return (*[562949953421312]uint8)(unsafe.Pointer(C.RAW(p)))[:n:n]
+}
