@@ -15,6 +15,7 @@ import (
 	"testing"
 
 	"github.com/pkg/diff"
+	"github.com/pkg/diff/write"
 
 	"github.com/rgonomic/rgo/internal/pkg"
 )
@@ -164,7 +165,7 @@ func TestUnpackSEXPFuncGo(t *testing.T) {
 
 			if !bytes.Equal(got, want) {
 				var buf bytes.Buffer
-				err := diff.Text("got", "want", got, want, &buf)
+				err := diff.Text("got", "want", got, want, &buf, write.TerminalColor())
 				if err != nil {
 					t.Errorf("unexpected error: %v", err)
 				}
@@ -206,7 +207,7 @@ func TestPackSEXPFuncGo(t *testing.T) {
 
 			if !bytes.Equal(got, want) {
 				var buf bytes.Buffer
-				err := diff.Text("got", "want", got, want, &buf)
+				err := diff.Text("got", "want", got, want, &buf, write.TerminalColor())
 				if err != nil {
 					t.Errorf("unexpected error: %v", err)
 				}

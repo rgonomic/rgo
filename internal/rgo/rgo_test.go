@@ -106,7 +106,7 @@ func TestRgo(t *testing.T) {
 
 			if !bytes.Equal(got, want) {
 				var buf bytes.Buffer
-				err := diff.Text("got", "want", got, want, &buf)
+				err := diff.Text("got", "want", got, want, &buf, write.TerminalColor())
 				if err != nil {
 					t.Errorf("unexpected error: %v", err)
 				}
