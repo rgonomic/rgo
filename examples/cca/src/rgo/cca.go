@@ -25,7 +25,7 @@ import (
 )
 
 //export Wrapped_CCA
-func Wrapped_CCA(_R_x, _R_y C.SEXP) C.SEXP {
+func Wrapped_CCA(_R_x, _R_y, _R_weights C.SEXP) C.SEXP {
 	defer func() {
 		r := recover()
 		if r != nil {
@@ -37,7 +37,8 @@ func Wrapped_CCA(_R_x, _R_y C.SEXP) C.SEXP {
 
 	_p0 := unpackSEXP_types_Named_gonum_org_v1_gonum_blas_blas64_GeneralCols(_R_x)
 	_p1 := unpackSEXP_types_Named_gonum_org_v1_gonum_blas_blas64_GeneralCols(_R_y)
-	_r0, _r1, _r2, _r3, _r4, _r5 := cca.CCA(_p0, _p1)
+	_p2 := unpackSEXP_types_Slice___float64(_R_weights)
+	_r0, _r1, _r2, _r3, _r4, _r5 := cca.CCA(_p0, _p1, _p2)
 	return packSEXP_CCA(_r0, _r1, _r2, _r3, _r4, _r5)
 }
 

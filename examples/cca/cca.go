@@ -8,14 +8,23 @@ import (
 
 // CCA performs a canonical correlation analysis of the input data x
 // and y, columns of which should be interpretable as two sets of
-// measurements on the same observations (rows).
-func CCA(x, y blas64.GeneralCols) (ccors []float64, pVecs, qVecs, phiVs, psiVs blas64.GeneralCols, err error) {
+// measurements on the same observations (rows). These observations
+// are optionally weighted by weights.
+//
+// CCA will return an error if the inputs x and y do not have the same
+// number of rows.
+//
+// The vector weights is used to weight the observations. If weights is NULL,
+// each weight is considered to have a value of one, otherwise the length of
+// weights must match the number of observations (rows of both x and y) or
+// CanonicalCorrelations will return an error..
+func CCA(x, y blas64.GeneralCols, weights []float64) (ccors []float64, pVecs, qVecs, phiVs, psiVs blas64.GeneralCols, err error) {
 	var xdata, ydata mat.Dense
 	xdata.SetRawMatrix(rowMajor(x))
 	ydata.SetRawMatrix(rowMajor(y))
 
 	var cc stat.CC
-	err = cc.CanonicalCorrelations(&xdata, &ydata, nil)
+	err = cc.CanonicalCorrelations(&xdata, &ydata, weights)
 	if err != nil {
 		return nil, pVecs, qVecs, phiVs, psiVs, err
 	}

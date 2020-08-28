@@ -17,11 +17,11 @@
 #' @seelso <https://godoc.org/gonum.org/v1/gonum/floats#CumProd>
 #' @export
 cum_prod <- function(dst, s) {
-	if (!is.double(dst)) {
-		stop("Argument 'dst' must be of type 'double'.")
+	if (!is.double(dst) && !is.null(dst)) {
+		stop("Argument 'dst' must be of type 'double' or NULL.")
 	}
-	if (!is.double(s)) {
-		stop("Argument 's' must be of type 'double'.")
+	if (!is.double(s) && !is.null(s)) {
+		stop("Argument 's' must be of type 'double' or NULL.")
 	}
 	.Call("cum_prod", dst, s, PACKAGE = "floats")
 }
@@ -41,11 +41,11 @@ cum_prod <- function(dst, s) {
 #' @seelso <https://godoc.org/gonum.org/v1/gonum/floats#CumSum>
 #' @export
 cum_sum <- function(dst, s) {
-	if (!is.double(dst)) {
-		stop("Argument 'dst' must be of type 'double'.")
+	if (!is.double(dst) && !is.null(dst)) {
+		stop("Argument 'dst' must be of type 'double' or NULL.")
 	}
-	if (!is.double(s)) {
-		stop("Argument 's' must be of type 'double'.")
+	if (!is.double(s) && !is.null(s)) {
+		stop("Argument 's' must be of type 'double' or NULL.")
 	}
 	.Call("cum_sum", dst, s, PACKAGE = "floats")
 }

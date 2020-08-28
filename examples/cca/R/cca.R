@@ -6,10 +6,20 @@
 #'
 #' CCA performs a canonical correlation analysis of the input data x
 #' and y, columns of which should be interpretable as two sets of
-#' measurements on the same observations (rows).
+#' measurements on the same observations (rows). These observations
+#' are optionally weighted by weights.
+#' 
+#' CCA will return an error if the inputs x and y do not have the same
+#' number of rows.
+#' 
+#' The vector weights is used to weight the observations. If weights is NULL,
+#' each weight is considered to have a value of one, otherwise the length of
+#' weights must match the number of observations (rows of both x and y) or
+#' CanonicalCorrelations will return an error..
 #' 
 #' @param x is a list corresponding to struct{Rows int; Cols int; Data []float64; Stride int}
 #' @param y is a list corresponding to struct{Rows int; Cols int; Data []float64; Stride int}
+#' @param weights is a double vector
 #' @return A structured value containing:
 #' @return - a double vector, $ccors
 #' @return - a list corresponding to struct{Rows int; Cols int; Data []float64; Stride int}, $pVecs
@@ -19,12 +29,15 @@
 #' @return - a character vector, $err
 #' @seelso <https://godoc.org/github.com/rgonomic/rgo/examples/cca#CCA>
 #' @export
-cca <- function(x, y) {
+cca <- function(x, y, weights) {
 	if (!is.list(x)) {
 		stop("Argument 'x' must be of type 'list'.")
 	}
 	if (!is.list(y)) {
 		stop("Argument 'y' must be of type 'list'.")
 	}
-	.Call("cca", x, y, PACKAGE = "cca")
+	if (!is.double(weights) && !is.null(weights)) {
+		stop("Argument 'weights' must be of type 'double' or NULL.")
+	}
+	.Call("cca", x, y, weights, PACKAGE = "cca")
 }

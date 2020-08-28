@@ -103,7 +103,7 @@ Note that we could leave the result in row-major and assume that the user will g
 With all that done, invoking `cca` with our Boston data gives us the results that we expect.
 ```
 > library(cca)
-> r <- cca(mat_list(x), mat_list(y))
+> r <- cca(mat_list(x), mat_list(y), NULL)
 > r$err
 NULL
 > r$ccors

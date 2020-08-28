@@ -31,6 +31,6 @@ int getListElementIndex(SEXP list, const char *str) {
 	return index;
 }
 
-SEXP cca(SEXP x, SEXP y) {
-	return Wrapped_CCA(x, y);
+SEXP cca(SEXP x, SEXP y, SEXP weights) {
+	return Wrapped_CCA(x, y, weights);
 }

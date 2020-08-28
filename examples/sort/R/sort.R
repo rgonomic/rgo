@@ -15,8 +15,8 @@
 #' @seelso <https://godoc.org/sort#SearchFloat64s>
 #' @export
 search_float64s <- function(a, x) {
-	if (!is.double(a)) {
-		stop("Argument 'a' must be of type 'double'.")
+	if (!is.double(a) && !is.null(a)) {
+		stop("Argument 'a' must be of type 'double' or NULL.")
 	}
 	if (!is.double(x)) {
 		stop("Argument 'x' must be of type 'double'.")
@@ -40,8 +40,8 @@ search_float64s <- function(a, x) {
 #' @seelso <https://godoc.org/sort#SearchStrings>
 #' @export
 search_strings <- function(a, x) {
-	if (!is.character(a)) {
-		stop("Argument 'a' must be of type 'character'.")
+	if (!is.character(a) && !is.null(a)) {
+		stop("Argument 'a' must be of type 'character' or NULL.")
 	}
 	if (!is.character(x)) {
 		stop("Argument 'x' must be of type 'character'.")
@@ -61,8 +61,8 @@ search_strings <- function(a, x) {
 #' @seelso <https://godoc.org/sort#Float64s>
 #' @export
 float64s <- function(a) {
-	if (!is.double(a)) {
-		stop("Argument 'a' must be of type 'double'.")
+	if (!is.double(a) && !is.null(a)) {
+		stop("Argument 'a' must be of type 'double' or NULL.")
 	}
 	.Call("float64s", a, PACKAGE = "sort")
 }
@@ -75,8 +75,8 @@ float64s <- function(a) {
 #' @seelso <https://godoc.org/sort#Strings>
 #' @export
 strings <- function(a) {
-	if (!is.character(a)) {
-		stop("Argument 'a' must be of type 'character'.")
+	if (!is.character(a) && !is.null(a)) {
+		stop("Argument 'a' must be of type 'character' or NULL.")
 	}
 	.Call("strings", a, PACKAGE = "sort")
 }
@@ -91,8 +91,8 @@ strings <- function(a) {
 #' @seelso <https://godoc.org/sort#Float64sAreSorted>
 #' @export
 float64s_are_sorted <- function(a) {
-	if (!is.double(a)) {
-		stop("Argument 'a' must be of type 'double'.")
+	if (!is.double(a) && !is.null(a)) {
+		stop("Argument 'a' must be of type 'double' or NULL.")
 	}
 	.Call("float64s_are_sorted", a, PACKAGE = "sort")
 }
@@ -106,8 +106,8 @@ float64s_are_sorted <- function(a) {
 #' @seelso <https://godoc.org/sort#StringsAreSorted>
 #' @export
 strings_are_sorted <- function(a) {
-	if (!is.character(a)) {
-		stop("Argument 'a' must be of type 'character'.")
+	if (!is.character(a) && !is.null(a)) {
+		stop("Argument 'a' must be of type 'character' or NULL.")
 	}
 	.Call("strings_are_sorted", a, PACKAGE = "sort")
 }

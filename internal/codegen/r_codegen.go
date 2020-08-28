@@ -90,7 +90,7 @@ func returns(t *types.Tuple) string {
 
 // rDocFor returns a string describing the R type based on the given Go type.
 func rDocFor(typ types.Type) string {
-	rtyp, length := rTypeOf(typ)
+	rtyp, length, _ := rTypeOf(typ)
 	switch typ := typ.Underlying().(type) {
 	case *types.Pointer:
 		return rDocFor(typ.Elem())
@@ -129,10 +129,17 @@ func article(noun string, capital bool) string {
 }
 
 func typeCheck(p *types.Var) string {
-	rtyp, length := rTypeOf(p.Type())
-	check := fmt.Sprintf(`if (!is.%[1]s(%[2]s)) {
+	rtyp, length, nilable := rTypeOf(p.Type())
+	var check string
+	if nilable {
+		check = fmt.Sprintf(`if (!is.%[1]s(%[2]s) && !is.null(%[2]s)) {
+		stop("Argument '%[2]s' must be of type '%[1]s' or NULL.")
+	}`, rtyp, p.Name())
+	} else {
+		check = fmt.Sprintf(`if (!is.%[1]s(%[2]s)) {
 		stop("Argument '%[2]s' must be of type '%[1]s'.")
 	}`, rtyp, p.Name())
+	}
 	if length > 0 {
 		var plural string
 		if length != 1 {
@@ -146,37 +153,38 @@ func typeCheck(p *types.Var) string {
 	return check
 }
 
-func rTypeOf(typ types.Type) (rtyp string, length int64) {
+func rTypeOf(typ types.Type) (rtyp string, length int64, nilable bool) {
 	if pkg.IsError(typ) {
-		return "character", -1
+		return "character", -1, true
 	}
 	switch typ := typ.Underlying().(type) {
 	case *types.Pointer:
-		return rTypeOf(typ.Elem())
+		rtyp, length, _ = rTypeOf(typ.Elem())
+		return rtyp, length, true
 	case *types.Basic:
-		return basicRtype(typ), 1
+		return basicRtype(typ), 1, false
 	case *types.Slice:
 		elem := typ.Elem()
 		if etyp, ok := elem.(*types.Basic); ok {
 			if etyp.Kind() == types.Uint8 {
-				return "raw", -1
+				return "raw", -1, true
 			}
-			return basicRtype(etyp), -1
+			return basicRtype(etyp), -1, true
 		}
 	case *types.Array:
 		elem := typ.Elem()
 		if etyp, ok := elem.(*types.Basic); ok {
 			if etyp.Kind() == types.Uint8 {
-				return "raw", typ.Len()
+				return "raw", typ.Len(), false
 			}
-			return basicRtype(etyp), typ.Len()
+			return basicRtype(etyp), typ.Len(), false
 		}
 	case *types.Map:
-		return "vector", -1
+		return "vector", -1, true
 	case *types.Struct:
-		return "list", -1
+		return "list", -1, false
 	}
-	return "", -1
+	return "", -1, false
 }
 
 func basicRtype(typ *types.Basic) string {

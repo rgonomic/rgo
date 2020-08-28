@@ -436,7 +436,7 @@ var typeLabelTable = map[string]string{
 // rTypeLabelFor returns the R type label for the R atomic type
 // corresponding to typ.
 func rTypeLabelFor(typ types.Type) string {
-	name, _ := rTypeOf(typ)
+	name, _, _ := rTypeOf(typ)
 	label, ok := typeLabelTable[name]
 	if !ok {
 		return fmt.Sprintf("<%s>", typ)
