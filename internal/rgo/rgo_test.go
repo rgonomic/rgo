@@ -16,6 +16,7 @@ import (
 	"testing"
 
 	"github.com/pkg/diff"
+	"github.com/pkg/diff/write"
 )
 
 var regenerate = flag.Bool("regen", false, "regenerate golden data from current state")
