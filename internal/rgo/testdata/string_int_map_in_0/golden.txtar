@@ -30,8 +30,8 @@ export(test_0)
 #' @seelso <https://godoc.org/string_int_map_in_0#Test0>
 #' @export
 test_0 <- function(par0) {
-	if (!is.vector(par0)) {
-		stop("Argument 'par0' must be of type 'vector'.")
+	if (!is.vector(par0) && !is.null(par0)) {
+		stop("Argument 'par0' must be of type 'vector' or NULL.")
 	}
 	.Call("test_0", par0, PACKAGE = "string_int_map_in_0")
 }
