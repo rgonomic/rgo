@@ -1,0 +1,18 @@
+sudo: no
+
+language: go
+go:
+  - 1.15.x
+  - 1.14.x
+  
+env:
+  - GO111MODULE=on
+
+install:
+  - go get github.com/mattn/goveralls
+
+script:
+  - go test -v ./...
+  - go test -v -race ./...
+  - diff <(gofmt -d .) <("")
+  - if [[ $TRAVIS_SECURE_ENV_VARS = "true" ]]; then bash .travis/test-coverage.sh; fi
