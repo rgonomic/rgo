@@ -2,7 +2,7 @@
 
 package rune_array_out_0
 
-//{"out":["[4]int32","[]int32","int32"]}
+//{"out":["[4]int32","[]int32"]}
 func Test0() [4]rune {
 	var res0 [4]rune
 	return res0

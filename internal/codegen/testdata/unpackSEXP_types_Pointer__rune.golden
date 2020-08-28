@@ -2,6 +2,6 @@ func unpackSEXP_types_Pointer__rune(p C.SEXP) *rune {
 	if C.Rf_isNull(p) != 0 {
 		return nil
 	}
-	r := unpackSEXP_types_Basic_int32(p)
+	r := unpackSEXP_types_Basic_rune(p)
 	return &r
 }

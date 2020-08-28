@@ -2,7 +2,7 @@
 
 package int16_array_out_0
 
-//{"out":["[4]int16","[]int16","int16"]}
+//{"out":["[4]int16","[]int16"]}
 func Test0() [4]int16 {
 	var res0 [4]int16
 	return res0

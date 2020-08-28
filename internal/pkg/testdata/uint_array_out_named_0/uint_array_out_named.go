@@ -2,7 +2,7 @@
 
 package uint_array_out_named_0
 
-//{"out":["[4]uint","[]uint","uint"]}
+//{"out":["[4]uint","[]uint"]}
 func Test0() (res0 [4]uint) {
 	return res0
 }

@@ -129,18 +129,14 @@ func Wrapped_Test0(_R_par0 C.SEXP) C.SEXP {
 }
 
 
-func unpackSEXP_types_Basic_uint(p C.SEXP) uint {
-	return uint(*C.INTEGER(p))
-}
-
 func unpackSEXP_types_Slice___uint(p C.SEXP) []uint {
 	if C.Rf_isNull(p) != 0 {
 		return nil
 	}
 	n := C.Rf_xlength(p)
 	r := make([]uint, n)
-	for i := range r {
-		r[i] = unpackSEXP_types_Basic_uint(C.VECTOR_ELT(p, C.R_xlen_t(i)))
+	for i, v := range (*[140737488355328]int32)(unsafe.Pointer(C.INTEGER(p)))[:n] {
+		r[i] = uint(v)
 	}
 	return r
 }

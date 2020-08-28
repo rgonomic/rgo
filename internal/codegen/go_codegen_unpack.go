@@ -56,29 +56,7 @@ func unpackSEXPFuncBodyGo(buf *bytes.Buffer, typ types.Type) {
 
 func unpackNamed(buf *bytes.Buffer, typ *types.Named) {
 	switch under := typ.Underlying().(type) {
-	case *types.Array:
-		under = types.NewArray(unalias(under.Elem()), under.Len())
-		fmt.Fprintf(buf, "\treturn unpackSEXP%s(p)\n", pkg.Mangle(under))
-	case *types.Map:
-		under = types.NewMap(under.Key(), unalias(under.Elem()))
-		fmt.Fprintf(buf, "\treturn unpackSEXP%s(p)\n", pkg.Mangle(under))
-	case *types.Pointer:
-		under = types.NewPointer(unalias(under.Elem()))
-		fmt.Fprintf(buf, "\treturn unpackSEXP%s(p)\n", pkg.Mangle(under))
-	case *types.Slice:
-		under = types.NewSlice(unalias(under.Elem()))
-		fmt.Fprintf(buf, "\treturn unpackSEXP%s(p)\n", pkg.Mangle(under))
-	case *types.Struct:
-		var (
-			fields []*types.Var
-			tags   []string
-		)
-		for i := 0; i < under.NumFields(); i++ {
-			field := under.Field(i)
-			fields = append(fields, types.NewVar(field.Pos(), field.Pkg(), field.Name(), unalias(field.Type())))
-			tags = append(tags, under.Tag(i))
-		}
-		under = types.NewStruct(fields, tags)
+	case *types.Array, *types.Map, *types.Pointer, *types.Slice, *types.Struct:
 		fmt.Fprintf(buf, "\treturn unpackSEXP%s(p)\n", pkg.Mangle(under))
 	default:
 		fmt.Fprintf(buf, "\treturn %s(unpackSEXP%s(p))\n", nameOf(typ), pkg.Mangle(under))
@@ -232,32 +210,65 @@ func unpackSlice(buf *bytes.Buffer, typ *types.Slice) {
 		switch elem.Kind() {
 		// TODO(kortschak): Make the fast path available
 		// to []T where T is one of these kinds.
-		case types.Int32:
+		case types.Int32, types.Uint32:
 			// Maximum length array type for this element type.
 			type a [1 << 47]int32
 			fmt.Fprintf(buf, `	n := C.Rf_xlength(p)
-	return (*[%d]%s)(unsafe.Pointer(C.INTEGER(p)))[:n:n]
+	return (*[%d]%s)(unsafe.Pointer(C.INTEGER(p)))[:n]
 `, len(&a{}), nameOf(elem))
 			return
-		case types.Uint8:
+		case types.Int, types.Int16, types.Uint, types.Uint16:
+			// Maximum length array type for this element type.
+			type a [1 << 47]int32
+			fmt.Fprintf(buf, `	n := C.Rf_xlength(p)
+	r := make(%s, n)
+	for i, v := range (*[%d]%s)(unsafe.Pointer(C.INTEGER(p)))[:n] {
+		r[i] = %s(v)
+	}
+	return r
+`, nameOf(typ), len(&a{}), nameOf(types.Typ[types.Int32]), elem)
+			return
+		case types.Int8, types.Uint8:
 			// Maximum length array type for this element type.
 			type a [1 << 49]byte
 			fmt.Fprintf(buf, `	n := C.Rf_xlength(p)
-	return (*[%d]%s)(unsafe.Pointer(C.RAW(p)))[:n:n]
+	return (*[%d]%s)(unsafe.Pointer(C.RAW(p)))[:n]
 `, len(&a{}), nameOf(elem))
+			return
+		case types.Float32:
+			// Maximum length array type for this element type.
+			type a [1 << 46]float64
+			fmt.Fprintf(buf, `	n := C.Rf_xlength(p)
+	r := make(%s, n)
+	for i, v := range (*[%d]%s)(unsafe.Pointer(C.REAL(p)))[:n] {
+		r[i] = %s(v)
+	}
+	return r
+`, nameOf(typ), len(&a{}), nameOf(types.Typ[types.Float64]), elem)
 			return
 		case types.Float64:
 			// Maximum length array type for this element type.
 			type a [1 << 46]float64
 			fmt.Fprintf(buf, `	n := C.Rf_xlength(p)
-	return (*[%d]%s)(unsafe.Pointer(C.REAL(p)))[:n:n]
+	return (*[%d]%s)(unsafe.Pointer(C.REAL(p)))[:n]
 `, len(&a{}), nameOf(elem))
+			return
+		case types.Complex64:
+			// Maximum length array type for this element type.
+			type a [1 << 45]complex128
+			fmt.Fprintf(buf, `	n := C.Rf_xlength(p)
+	r := make(%s, n)
+	for i, v := range (*[%d]%s)(unsafe.Pointer(C.COMPLEX(p)))[:n] {
+		r[i] = %s(v)
+	}
+	return r
+`, nameOf(typ), len(&a{}), nameOf(types.Typ[types.Complex128]), elem)
 			return
 		case types.Complex128:
 			// Maximum length array type for this element type.
 			type a [1 << 45]complex128
 			fmt.Fprintf(buf, `	n := C.Rf_xlength(p)
-	return (*[%d]%s)(unsafe.Pointer(C.COMPLEX(p)))[:n:n]
+	return (*[%d]%s)(unsafe.Pointer(C.COMPLEX(p)))[:n]
 `, len(&a{}), nameOf(elem))
 			return
 		case types.Bool:

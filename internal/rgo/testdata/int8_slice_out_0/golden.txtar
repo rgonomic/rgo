@@ -128,16 +128,11 @@ func packSEXP_Test0(p0 []int8) C.SEXP {
 	return packSEXP_types_Slice___int8(p0)
 }
 
-func packSEXP_types_Basic_int8(p int8) C.SEXP {
-	return C.ScalarInteger(C.int(p))
-}
-
 func packSEXP_types_Slice___int8(p []int8) C.SEXP {
-	r := C.Rf_allocVector(C.INTSXP, C.R_xlen_t(len(p)))
+	r := C.Rf_allocVector(C.RAWSXP, C.R_xlen_t(len(p)))
 	C.Rf_protect(r)
-	for i, v := range p {
-		C.SET_VECTOR_ELT(r, C.R_xlen_t(i), packSEXP_types_Basic_int8(v))
-	}
+	s := (*[562949953421312]int8)(unsafe.Pointer(C.RAW(r)))[:len(p)]
+	copy(s, p)
 	C.Rf_unprotect(1)
 	return r
 }

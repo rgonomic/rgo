@@ -124,7 +124,7 @@ func Wrapped_Test0() C.SEXP {
 	return packSEXP_Test0(_r0)
 }
 
-func packSEXP_Test0(res0 byte) C.SEXP {
+func packSEXP_Test0(res0 uint8) C.SEXP {
 	return packSEXP_types_Basic_uint8(res0)
 }
 

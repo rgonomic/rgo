@@ -69,17 +69,13 @@ func unpackSEXP_types_Slice___float64(p C.SEXP) []float64 {
 		return nil
 	}
 	n := C.Rf_xlength(p)
-	return (*[70368744177664]float64)(unsafe.Pointer(C.REAL(p)))[:n:n]
-}
-
-func packSEXP_types_Basic_float64(p float64) C.SEXP {
-	return C.ScalarReal(C.double(p))
+	return (*[70368744177664]float64)(unsafe.Pointer(C.REAL(p)))[:n]
 }
 
 func packSEXP_types_Slice___float64(p []float64) C.SEXP {
 	r := C.Rf_allocVector(C.REALSXP, C.R_xlen_t(len(p)))
 	C.Rf_protect(r)
-	s := (*[70368744177664]float64)(unsafe.Pointer(C.REAL(r)))[:len(p):len(p)]
+	s := (*[70368744177664]float64)(unsafe.Pointer(C.REAL(r)))[:len(p)]
 	copy(s, p)
 	C.Rf_unprotect(1)
 	return r

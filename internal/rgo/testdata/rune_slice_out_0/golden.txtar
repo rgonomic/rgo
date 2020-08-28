@@ -124,18 +124,14 @@ func Wrapped_Test0() C.SEXP {
 	return packSEXP_Test0(_r0)
 }
 
-func packSEXP_Test0(p0 []rune) C.SEXP {
-	return packSEXP_types_Slice___rune(p0)
-}
-
-func packSEXP_types_Basic_int32(p int32) C.SEXP {
-	return C.ScalarInteger(C.int(p))
+func packSEXP_Test0(p0 []int32) C.SEXP {
+	return packSEXP_types_Slice___int32(p0)
 }
 
 func packSEXP_types_Slice___int32(p []int32) C.SEXP {
 	r := C.Rf_allocVector(C.INTSXP, C.R_xlen_t(len(p)))
 	C.Rf_protect(r)
-	s := (*[140737488355328]int32)(unsafe.Pointer(C.INTEGER(r)))[:len(p):len(p)]
+	s := (*[140737488355328]int32)(unsafe.Pointer(C.INTEGER(r)))[:len(p)]
 	copy(s, p)
 	C.Rf_unprotect(1)
 	return r

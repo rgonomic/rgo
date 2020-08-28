@@ -83,7 +83,7 @@ func unpackSEXP_types_Slice___float64(p C.SEXP) []float64 {
 		return nil
 	}
 	n := C.Rf_xlength(p)
-	return (*[70368744177664]float64)(unsafe.Pointer(C.REAL(p)))[:n:n]
+	return (*[70368744177664]float64)(unsafe.Pointer(C.REAL(p)))[:n]
 }
 
 func unpackSEXP_types_Struct_struct_Rows_int__Cols_int__Data___float64__Stride_int_(p C.SEXP) struct{Rows int; Cols int; Data []float64; Stride int} {
@@ -128,10 +128,6 @@ func unpackSEXP_types_Struct_struct_Rows_int__Cols_int__Data___float64__Stride_i
 	return r
 }
 
-func packSEXP_types_Basic_float64(p float64) C.SEXP {
-	return C.ScalarReal(C.double(p))
-}
-
 func packSEXP_types_Basic_int(p int) C.SEXP {
 	return C.ScalarInteger(C.int(p))
 }
@@ -155,7 +151,7 @@ func packSEXP_types_Named_gonum_org_v1_gonum_blas_blas64_GeneralCols(p blas64.Ge
 func packSEXP_types_Slice___float64(p []float64) C.SEXP {
 	r := C.Rf_allocVector(C.REALSXP, C.R_xlen_t(len(p)))
 	C.Rf_protect(r)
-	s := (*[70368744177664]float64)(unsafe.Pointer(C.REAL(r)))[:len(p):len(p)]
+	s := (*[70368744177664]float64)(unsafe.Pointer(C.REAL(r)))[:len(p)]
 	copy(s, p)
 	C.Rf_unprotect(1)
 	return r

@@ -79,11 +79,9 @@ func addTypeTest(dst []pkg, typ *types.Basic) []pkg {
 	// Set up the helpers we will need for non-R native types.
 	helpIn := []string{name}
 	helpOut := []string{name}
-	var cmplxHelpIn []string
 	if typ.Kind() == types.Complex64 {
 		// complex64 is not handled by R, so we need to convert via complex128.
 		helpIn = append(helpIn, "complex128")
-		cmplxHelpIn = helpIn
 	}
 
 	// Generate scalar value test functions.
@@ -97,40 +95,24 @@ func addTypeTest(dst []pkg, typ *types.Basic) []pkg {
 	)
 
 	// Generate slice value test functions.
-	var sliceHelpIn []string
-	switch typ.Kind() {
-	case types.Bool, types.Uint8, types.Uint32, types.Int32, types.Float64, types.Complex128:
-		// Do nothing, already handled.
-	default:
-		// Add element helper.
-		sliceHelpIn = append(cmplxHelpIn[:len(cmplxHelpIn):len(cmplxHelpIn)], name)
-	}
 	dst = append(dst,
 		pkg{Name: fmt.Sprintf("%s_slice_in", name), Funcs: []fn{
-			{In: []string{"[]" + name}, HelpIn: sliceHelpIn}}},
+			{In: []string{"[]" + name}}}},
 		pkg{Name: fmt.Sprintf("%s_slice_out", name), Funcs: []fn{
-			{Out: []string{"[]" + name}, HelpOut: helpOut}}},
+			{Out: []string{"[]" + name}}}},
 		pkg{Name: fmt.Sprintf("%s_slice_out_named", name), Funcs: []fn{
-			{Out: []string{"[]" + name}, HelpOut: helpOut, Named: true}}},
+			{Out: []string{"[]" + name}, Named: true}}},
 	)
 
 	// Generate array value test functions.
-	arrayHelpIn := append(cmplxHelpIn[:len(cmplxHelpIn):len(cmplxHelpIn)], "[]"+name)
-	switch typ.Kind() {
-	case types.Bool, types.Uint8, types.Uint32, types.Int32, types.Float64, types.Complex128:
-		// Do nothing, already handled.
-	default:
-		// Add element helper.
-		arrayHelpIn = append(arrayHelpIn, name)
-	}
-	arrayHelpOut := append(helpOut[:len(helpOut):len(helpOut)], "[]"+name)
+	arrayHelp := []string{"[]" + name}
 	dst = append(dst,
 		pkg{Name: fmt.Sprintf("%s_array_in", name), Funcs: []fn{
-			{In: []string{"[4]" + name}, HelpIn: arrayHelpIn}}},
+			{In: []string{"[4]" + name}, HelpIn: arrayHelp}}},
 		pkg{Name: fmt.Sprintf("%s_array_out", name), Funcs: []fn{
-			{Out: []string{"[4]" + name}, HelpOut: arrayHelpOut}}},
+			{Out: []string{"[4]" + name}, HelpOut: arrayHelp}}},
 		pkg{Name: fmt.Sprintf("%s_array_out_named", name), Funcs: []fn{
-			{Out: []string{"[4]" + name}, HelpOut: arrayHelpOut, Named: true}}},
+			{Out: []string{"[4]" + name}, HelpOut: arrayHelp, Named: true}}},
 	)
 
 	// Generate struct value test functions.

@@ -2,6 +2,6 @@
 
 package int8_array_in_0
 
-//{"in":["[4]int8","[]int8","int8"]}
+//{"in":["[4]int8","[]int8"]}
 func Test0(par0 [4]int8) {
 }

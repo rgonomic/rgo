@@ -138,20 +138,12 @@ func unpackSEXP_types_Array__4_int8(p C.SEXP) [4]int8 {
 	return a
 }
 
-func unpackSEXP_types_Basic_int8(p C.SEXP) int8 {
-	return int8(*C.INTEGER(p))
-}
-
 func unpackSEXP_types_Slice___int8(p C.SEXP) []int8 {
 	if C.Rf_isNull(p) != 0 {
 		return nil
 	}
 	n := C.Rf_xlength(p)
-	r := make([]int8, n)
-	for i := range r {
-		r[i] = unpackSEXP_types_Basic_int8(C.VECTOR_ELT(p, C.R_xlen_t(i)))
-	}
-	return r
+	return (*[562949953421312]int8)(unsafe.Pointer(C.RAW(p)))[:n]
 }
 
 func main() {}

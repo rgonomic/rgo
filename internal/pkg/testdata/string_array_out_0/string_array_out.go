@@ -2,7 +2,7 @@
 
 package string_array_out_0
 
-//{"out":["[4]string","[]string","string"]}
+//{"out":["[4]string","[]string"]}
 func Test0() [4]string {
 	var res0 [4]string
 	return res0

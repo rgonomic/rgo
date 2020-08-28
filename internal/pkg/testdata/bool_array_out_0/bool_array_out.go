@@ -2,7 +2,7 @@
 
 package bool_array_out_0
 
-//{"out":["[4]bool","[]bool","bool"]}
+//{"out":["[4]bool","[]bool"]}
 func Test0() [4]bool {
 	var res0 [4]bool
 	return res0

@@ -63,32 +63,10 @@ func packNamed(buf *bytes.Buffer, typ *types.Named) {
 `, pkg.Mangle(types.Typ[types.String]))
 	} else {
 		switch typ := typ.Underlying().(type) {
-		case *types.Array:
-			typ = types.NewArray(unalias(typ.Elem()), typ.Len())
-			fmt.Fprintf(buf, "\treturn packSEXP%s(p)\n", pkg.Mangle(typ))
-		case *types.Map:
-			typ = types.NewMap(typ.Key(), unalias(typ.Elem()))
-			fmt.Fprintf(buf, "\treturn packSEXP%s(p)\n", pkg.Mangle(typ))
-		case *types.Pointer:
-			typ = types.NewPointer(unalias(typ.Elem()))
-			fmt.Fprintf(buf, "\treturn packSEXP%s(p)\n", pkg.Mangle(typ))
-		case *types.Slice:
-			typ = types.NewSlice(unalias(typ.Elem()))
-			fmt.Fprintf(buf, "\treturn packSEXP%s(p)\n", pkg.Mangle(typ))
-		case *types.Struct:
-			var (
-				fields []*types.Var
-				tags   []string
-			)
-			for i := 0; i < typ.NumFields(); i++ {
-				field := typ.Field(i)
-				fields = append(fields, types.NewVar(field.Pos(), field.Pkg(), field.Name(), unalias(field.Type())))
-				tags = append(tags, typ.Tag(i))
-			}
-			typ = types.NewStruct(fields, tags)
+		case *types.Array, *types.Map, *types.Pointer, *types.Slice, *types.Struct:
 			fmt.Fprintf(buf, "\treturn packSEXP%s(p)\n", pkg.Mangle(typ))
 		default:
-			fmt.Fprintf(buf, "\treturn packSEXP%s(%s(p))\n", pkg.Mangle(typ), unalias(typ))
+			fmt.Fprintf(buf, "\treturn packSEXP%s(%s(p))\n", pkg.Mangle(typ), typ)
 		}
 	}
 }
@@ -321,45 +299,84 @@ func packSlice(buf *bytes.Buffer, typ *types.Slice) {
 		switch elem.Kind() {
 		// TODO(kortschak): Make the fast path available
 		// to []T where T is one of these kinds.
-		case types.Int32:
+		case types.Int32, types.Uint32:
 			// Maximum length array type for this element type.
 			type a [1 << 47]int32
 			fmt.Fprintf(buf, `	r := C.Rf_allocVector(C.INTSXP, C.R_xlen_t(len(p)))
 	C.Rf_protect(r)
-	s := (*[%d]%s)(unsafe.Pointer(C.INTEGER(r)))[:len(p):len(p)]
+	s := (*[%d]%s)(unsafe.Pointer(C.INTEGER(r)))[:len(p)]
 	copy(s, p)
 	C.Rf_unprotect(1)
 	return r
 `, len(&a{}), nameOf(elem))
 			return
-		case types.Uint8:
+		case types.Int, types.Int16, types.Uint, types.Uint16:
+			// Maximum length array type for this element type.
+			type a [1 << 47]int32
+			fmt.Fprintf(buf, `	r := C.Rf_allocVector(C.INTSXP, C.R_xlen_t(len(p)))
+	C.Rf_protect(r)
+	s := (*[%[1]d]%[2]s)(unsafe.Pointer(C.INTEGER(r)))[:len(p)]
+	for i, v := range p {
+		s[i] = %[2]s(v)
+	}
+	C.Rf_unprotect(1)
+	return r
+`, len(&a{}), nameOf(types.Typ[types.Int32]))
+			return
+		case types.Int8, types.Uint8:
 			// Maximum length array type for this element type.
 			type a [1 << 49]byte
 			fmt.Fprintf(buf, `	r := C.Rf_allocVector(C.RAWSXP, C.R_xlen_t(len(p)))
 	C.Rf_protect(r)
-	s := (*[%d]%s)(unsafe.Pointer(C.RAW(r)))[:len(p):len(p)]
+	s := (*[%d]%s)(unsafe.Pointer(C.RAW(r)))[:len(p)]
 	copy(s, p)
 	C.Rf_unprotect(1)
 	return r
 `, len(&a{}), nameOf(elem))
+			return
+		case types.Float32:
+			// Maximum length array type for this element type.
+			type a [1 << 46]float64
+			fmt.Fprintf(buf, `	r := C.Rf_allocVector(C.REALSXP, C.R_xlen_t(len(p)))
+	C.Rf_protect(r)
+	s := (*[%[1]d]%[2]s)(unsafe.Pointer(C.REAL(r)))[:len(p)]
+	for i, v := range p {
+		s[i] = %[2]s(v)
+	}
+	C.Rf_unprotect(1)
+	return r
+`, len(&a{}), nameOf(types.Typ[types.Float64]))
 			return
 		case types.Float64:
 			// Maximum length array type for this element type.
 			type a [1 << 46]float64
 			fmt.Fprintf(buf, `	r := C.Rf_allocVector(C.REALSXP, C.R_xlen_t(len(p)))
 	C.Rf_protect(r)
-	s := (*[%d]%s)(unsafe.Pointer(C.REAL(r)))[:len(p):len(p)]
+	s := (*[%d]%s)(unsafe.Pointer(C.REAL(r)))[:len(p)]
 	copy(s, p)
 	C.Rf_unprotect(1)
 	return r
 `, len(&a{}), nameOf(elem))
+			return
+		case types.Complex64:
+			// Maximum length array type for this element type.
+			type a [1 << 45]complex128
+			fmt.Fprintf(buf, `	r := C.Rf_allocVector(C.CPLXSXP, C.R_xlen_t(len(p)))
+	C.Rf_protect(r)
+	s := (*[%[1]d]%[2]s)(unsafe.Pointer(C.CPLXSXP(r)))[:len(p)]
+	for i, v := range p {
+		s[i] = %[2]s(v)
+	}
+	C.Rf_unprotect(1)
+	return r
+`, len(&a{}), nameOf(types.Typ[types.Complex128]))
 			return
 		case types.Complex128:
 			// Maximum length array type for this element type.
 			type a [1 << 45]complex128
 			fmt.Fprintf(buf, `	r := C.Rf_allocVector(C.CPLXSXP, C.R_xlen_t(len(p)))
 	C.Rf_protect(r)
-	s := (*[%d]%s)(unsafe.Pointer(C.CPLXSXP(r)))[:len(p):len(p)]
+	s := (*[%d]%s)(unsafe.Pointer(C.CPLXSXP(r)))[:len(p)]
 	copy(s, p)
 	C.Rf_unprotect(1)
 	return r
@@ -377,7 +394,7 @@ func packSlice(buf *bytes.Buffer, typ *types.Slice) {
 			//  }
 			fmt.Fprintf(buf, `	r := C.Rf_allocVector(C.LGLSXP, C.R_xlen_t(len(p)))
 	C.Rf_protect(r)
-	s := (*[%d]%s)(unsafe.Pointer(C.LOGICAL(r)))[:len(p):len(p)]
+	s := (*[%d]%s)(unsafe.Pointer(C.LOGICAL(r)))[:len(p)]
 	for i, v := range p {
 		if v {
 			s[i] = 1
@@ -389,12 +406,8 @@ func packSlice(buf *bytes.Buffer, typ *types.Slice) {
 	return r
 `, len(&a{}), nameOf(elem))
 			return
-		}
-	}
-
-	switch {
-	case elem.String() == "string":
-		fmt.Fprint(buf, `	r := C.Rf_allocVector(C.STRSXP, C.R_xlen_t(len(p)))
+		case types.String:
+			fmt.Fprint(buf, `	r := C.Rf_allocVector(C.STRSXP, C.R_xlen_t(len(p)))
 	C.Rf_protect(r)
 	for i, v := range p {
 		s := C.Rf_mkCharLenCE(C._GoStringPtr(string(v)), C.int(len(v)), C.CE_UTF8)
@@ -403,6 +416,11 @@ func packSlice(buf *bytes.Buffer, typ *types.Slice) {
 	C.Rf_unprotect(1)
 	return r
 `)
+			return
+		}
+	}
+
+	switch {
 	case elem.String() == "error":
 		fmt.Fprint(buf, `	r := C.Rf_allocVector(C.STRSXP, C.R_xlen_t(len(p)))
 	C.Rf_protect(r)

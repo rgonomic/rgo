@@ -2,7 +2,7 @@
 
 package int32_slice_out_0
 
-//{"out":["[]int32","int32"]}
+//{"out":["[]int32"]}
 func Test0() []int32 {
 	var res0 []int32
 	return res0

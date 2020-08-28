@@ -138,22 +138,14 @@ func unpackSEXP_types_Array__4_complex64(p C.SEXP) [4]complex64 {
 	return a
 }
 
-func unpackSEXP_types_Basic_complex128(p C.SEXP) complex128 {
-	return complex128(*(*complex128)(unsafe.Pointer(C.COMPLEX(p))))
-}
-
-func unpackSEXP_types_Basic_complex64(p C.SEXP) complex64 {
-	return complex64(unpackSEXP_types_Basic_complex128(p))
-}
-
 func unpackSEXP_types_Slice___complex64(p C.SEXP) []complex64 {
 	if C.Rf_isNull(p) != 0 {
 		return nil
 	}
 	n := C.Rf_xlength(p)
 	r := make([]complex64, n)
-	for i := range r {
-		r[i] = unpackSEXP_types_Basic_complex64(C.VECTOR_ELT(p, C.R_xlen_t(i)))
+	for i, v := range (*[35184372088832]complex128)(unsafe.Pointer(C.COMPLEX(p)))[:n] {
+		r[i] = complex64(v)
 	}
 	return r
 }

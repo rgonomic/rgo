@@ -2,7 +2,7 @@
 
 package complex128_array_out_named_0
 
-//{"out":["[4]complex128","[]complex128","complex128"]}
+//{"out":["[4]complex128","[]complex128"]}
 func Test0() (res0 [4]complex128) {
 	return res0
 }

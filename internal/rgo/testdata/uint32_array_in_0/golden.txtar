@@ -143,11 +143,7 @@ func unpackSEXP_types_Slice___uint32(p C.SEXP) []uint32 {
 		return nil
 	}
 	n := C.Rf_xlength(p)
-	r := make([]uint32, n)
-	for i := range r {
-		r[i] = unpackSEXP_types_Basic_uint32(C.VECTOR_ELT(p, C.R_xlen_t(i)))
-	}
-	return r
+	return (*[140737488355328]uint32)(unsafe.Pointer(C.INTEGER(p)))[:n]
 }
 
 func main() {}

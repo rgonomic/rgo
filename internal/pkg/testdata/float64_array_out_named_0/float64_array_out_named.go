@@ -2,7 +2,7 @@
 
 package float64_array_out_named_0
 
-//{"out":["[4]float64","[]float64","float64"]}
+//{"out":["[4]float64","[]float64"]}
 func Test0() (res0 [4]float64) {
 	return res0
 }

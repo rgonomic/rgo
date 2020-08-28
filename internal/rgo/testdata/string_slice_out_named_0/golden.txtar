@@ -128,11 +128,6 @@ func packSEXP_Test0(res0 []string) C.SEXP {
 	return packSEXP_types_Slice___string(res0)
 }
 
-func packSEXP_types_Basic_string(p string) C.SEXP {
-	s := C.Rf_mkCharLenCE(C._GoStringPtr(p), C.int(len(p)), C.CE_UTF8)
-	return C.ScalarString(s)
-}
-
 func packSEXP_types_Slice___string(p []string) C.SEXP {
 	r := C.Rf_allocVector(C.STRSXP, C.R_xlen_t(len(p)))
 	C.Rf_protect(r)

@@ -138,18 +138,14 @@ func unpackSEXP_types_Array__4_float32(p C.SEXP) [4]float32 {
 	return a
 }
 
-func unpackSEXP_types_Basic_float32(p C.SEXP) float32 {
-	return float32(*C.REAL(p))
-}
-
 func unpackSEXP_types_Slice___float32(p C.SEXP) []float32 {
 	if C.Rf_isNull(p) != 0 {
 		return nil
 	}
 	n := C.Rf_xlength(p)
 	r := make([]float32, n)
-	for i := range r {
-		r[i] = unpackSEXP_types_Basic_float32(C.VECTOR_ELT(p, C.R_xlen_t(i)))
+	for i, v := range (*[70368744177664]float64)(unsafe.Pointer(C.REAL(p)))[:n] {
+		r[i] = float32(v)
 	}
 	return r
 }

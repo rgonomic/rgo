@@ -132,15 +132,12 @@ func packSEXP_types_Array__4_float32(p [4]float32) C.SEXP {
 	return packSEXP_types_Slice___float32(p[:])
 }
 
-func packSEXP_types_Basic_float32(p float32) C.SEXP {
-	return C.ScalarReal(C.double(p))
-}
-
 func packSEXP_types_Slice___float32(p []float32) C.SEXP {
 	r := C.Rf_allocVector(C.REALSXP, C.R_xlen_t(len(p)))
 	C.Rf_protect(r)
+	s := (*[70368744177664]float64)(unsafe.Pointer(C.REAL(r)))[:len(p)]
 	for i, v := range p {
-		C.SET_VECTOR_ELT(r, C.R_xlen_t(i), packSEXP_types_Basic_float32(v))
+		s[i] = float64(v)
 	}
 	C.Rf_unprotect(1)
 	return r

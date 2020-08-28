@@ -2,7 +2,7 @@
 
 package int8_array_out_named_0
 
-//{"out":["[4]int8","[]int8","int8"]}
+//{"out":["[4]int8","[]int8"]}
 func Test0() (res0 [4]int8) {
 	return res0
 }

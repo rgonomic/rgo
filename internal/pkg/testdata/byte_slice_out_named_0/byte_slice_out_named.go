@@ -2,7 +2,7 @@
 
 package byte_slice_out_named_0
 
-//{"out":["[]uint8","uint8"]}
+//{"out":["[]uint8"]}
 func Test0() (res0 []byte) {
 	return res0
 }

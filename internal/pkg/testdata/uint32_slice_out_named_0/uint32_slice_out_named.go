@@ -2,7 +2,7 @@
 
 package uint32_slice_out_named_0
 
-//{"out":["[]uint32","uint32"]}
+//{"out":["[]uint32"]}
 func Test0() (res0 []uint32) {
 	return res0
 }

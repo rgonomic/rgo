@@ -2,6 +2,6 @@
 
 package string_array_in_0
 
-//{"in":["[4]string","[]string","string"]}
+//{"in":["[4]string","[]string"]}
 func Test0(par0 [4]string) {
 }

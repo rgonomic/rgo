@@ -3,5 +3,5 @@ func unpackSEXP_types_Slice___complex128(p C.SEXP) []complex128 {
 		return nil
 	}
 	n := C.Rf_xlength(p)
-	return (*[35184372088832]complex128)(unsafe.Pointer(C.COMPLEX(p)))[:n:n]
+	return (*[35184372088832]complex128)(unsafe.Pointer(C.COMPLEX(p)))[:n]
 }

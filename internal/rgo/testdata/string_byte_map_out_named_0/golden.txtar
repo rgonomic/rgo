@@ -124,8 +124,8 @@ func Wrapped_Test0() C.SEXP {
 	return packSEXP_Test0(_r0)
 }
 
-func packSEXP_Test0(res0 map[string]byte) C.SEXP {
-	return packSEXP_types_Map_map_string_byte(res0)
+func packSEXP_Test0(res0 map[string]uint8) C.SEXP {
+	return packSEXP_types_Map_map_string_uint8(res0)
 }
 
 func packSEXP_types_Basic_string(p string) C.SEXP {

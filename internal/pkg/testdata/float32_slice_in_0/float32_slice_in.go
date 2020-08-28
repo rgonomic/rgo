@@ -2,6 +2,6 @@
 
 package float32_slice_in_0
 
-//{"in":["[]float32","float32"]}
+//{"in":["[]float32"]}
 func Test0(par0 []float32) {
 }

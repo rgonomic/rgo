@@ -126,7 +126,7 @@ func Wrapped_Test0(_R_par0 C.SEXP) C.SEXP {
 		}
 	}()
 
-	_p0 := unpackSEXP_types_Array__4_byte(_R_par0)
+	_p0 := unpackSEXP_types_Array__4_uint8(_R_par0)
 	byte_array_in_0.Test0(_p0)
 	return C.R_NilValue
 }
@@ -143,7 +143,7 @@ func unpackSEXP_types_Slice___uint8(p C.SEXP) []uint8 {
 		return nil
 	}
 	n := C.Rf_xlength(p)
-	return (*[562949953421312]uint8)(unsafe.Pointer(C.RAW(p)))[:n:n]
+	return (*[562949953421312]uint8)(unsafe.Pointer(C.RAW(p)))[:n]
 }
 
 func main() {}

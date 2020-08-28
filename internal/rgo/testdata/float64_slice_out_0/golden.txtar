@@ -128,14 +128,10 @@ func packSEXP_Test0(p0 []float64) C.SEXP {
 	return packSEXP_types_Slice___float64(p0)
 }
 
-func packSEXP_types_Basic_float64(p float64) C.SEXP {
-	return C.ScalarReal(C.double(p))
-}
-
 func packSEXP_types_Slice___float64(p []float64) C.SEXP {
 	r := C.Rf_allocVector(C.REALSXP, C.R_xlen_t(len(p)))
 	C.Rf_protect(r)
-	s := (*[70368744177664]float64)(unsafe.Pointer(C.REAL(r)))[:len(p):len(p)]
+	s := (*[70368744177664]float64)(unsafe.Pointer(C.REAL(r)))[:len(p)]
 	copy(s, p)
 	C.Rf_unprotect(1)
 	return r

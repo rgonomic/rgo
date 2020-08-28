@@ -2,7 +2,7 @@
 
 package float32_array_out_named_0
 
-//{"out":["[4]float32","[]float32","float32"]}
+//{"out":["[4]float32","[]float32"]}
 func Test0() (res0 [4]float32) {
 	return res0
 }

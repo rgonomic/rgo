@@ -15,13 +15,13 @@ func unpackSEXP_types_Struct_struct_F1_byte__rgo___Rname_____F2_byte_(p C.SEXP) 
 	if i < 0 {
 		panic("no list element for field: F1")
 	}
-	r.F1 = unpackSEXP_types_Basic_uint8(C.VECTOR_ELT(p, C.R_xlen_t(i)))
+	r.F1 = unpackSEXP_types_Basic_byte(C.VECTOR_ELT(p, C.R_xlen_t(i)))
 	key_F2 := C.CString("F2")
 	defer C.free(unsafe.Pointer(key_F2))
 	i = C.getListElementIndex(p, key_F2)
 	if i < 0 {
 		panic("no list element for field: F2")
 	}
-	r.F2 = unpackSEXP_types_Basic_uint8(C.VECTOR_ELT(p, C.R_xlen_t(i)))
+	r.F2 = unpackSEXP_types_Basic_byte(C.VECTOR_ELT(p, C.R_xlen_t(i)))
 	return r
 }

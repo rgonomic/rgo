@@ -2,7 +2,7 @@
 
 package uint16_array_out_named_0
 
-//{"out":["[4]uint16","[]uint16","uint16"]}
+//{"out":["[4]uint16","[]uint16"]}
 func Test0() (res0 [4]uint16) {
 	return res0
 }

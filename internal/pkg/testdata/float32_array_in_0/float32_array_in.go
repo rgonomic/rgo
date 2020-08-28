@@ -2,6 +2,6 @@
 
 package float32_array_in_0
 
-//{"in":["[4]float32","[]float32","float32"]}
+//{"in":["[4]float32","[]float32"]}
 func Test0(par0 [4]float32) {
 }

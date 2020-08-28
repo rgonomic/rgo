@@ -26,7 +26,7 @@ export(test_0)
 #'
 #' Test0 does things with [] and returns [struct{F1 rune; F2 rune "rgo:\"Rname\""}].
 #' 
-#' @return A list corresponding to struct{F1 rune; F2 rune "rgo:\"Rname\""}, res0
+#' @return A list corresponding to struct{F1 int32; F2 int32 "rgo:\"Rname\""}, res0
 #' @seelso <https://godoc.org/struct_rune_out_named_0#Test0>
 #' @export
 test_0 <- function() {
@@ -124,8 +124,8 @@ func Wrapped_Test0() C.SEXP {
 	return packSEXP_Test0(_r0)
 }
 
-func packSEXP_Test0(res0 struct{F1 rune; F2 rune "rgo:\"Rname\""}) C.SEXP {
-	return packSEXP_types_Struct_struct_F1_rune__F2_rune__rgo___Rname____(res0)
+func packSEXP_Test0(res0 struct{F1 int32; F2 int32 "rgo:\"Rname\""}) C.SEXP {
+	return packSEXP_types_Struct_struct_F1_int32__F2_int32__rgo___Rname____(res0)
 }
 
 func packSEXP_types_Basic_int32(p int32) C.SEXP {

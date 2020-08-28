@@ -2,7 +2,7 @@
 
 package complex64_slice_out_0
 
-//{"out":["[]complex64","complex64"]}
+//{"out":["[]complex64"]}
 func Test0() []complex64 {
 	var res0 []complex64
 	return res0

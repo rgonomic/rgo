@@ -38,14 +38,14 @@ func Wrapped_ReadFile(_R_filename C.SEXP) C.SEXP {
 	return packSEXP_ReadFile(_r0, _r1)
 }
 
-func packSEXP_ReadFile(p0 []byte, p1 error) C.SEXP {
+func packSEXP_ReadFile(p0 []uint8, p1 error) C.SEXP {
 	r := C.allocList(2)
 	C.Rf_protect(r)
 	names := C.Rf_allocVector(C.STRSXP, 2)
 	C.Rf_protect(names)
 	arg := r
 	C.SET_STRING_ELT(names, 0, C.Rf_mkCharLenCE(C._GoStringPtr("r0"), 2, C.CE_UTF8))
-	C.SETCAR(arg, packSEXP_types_Slice___byte(p0))
+	C.SETCAR(arg, packSEXP_types_Slice___uint8(p0))
 	arg = C.CDR(arg)
 	C.SET_STRING_ELT(names, 1, C.Rf_mkCharLenCE(C._GoStringPtr("r1"), 2, C.CE_UTF8))
 	C.SETCAR(arg, packSEXP_types_Named_error(p1))
@@ -63,10 +63,6 @@ func packSEXP_types_Basic_string(p string) C.SEXP {
 	return C.ScalarString(s)
 }
 
-func packSEXP_types_Basic_uint8(p uint8) C.SEXP {
-	return C.ScalarRaw(C.Rbyte(p))
-}
-
 func packSEXP_types_Named_error(p error) C.SEXP {
 	if p == nil {
 		return C.R_NilValue
@@ -77,7 +73,7 @@ func packSEXP_types_Named_error(p error) C.SEXP {
 func packSEXP_types_Slice___uint8(p []uint8) C.SEXP {
 	r := C.Rf_allocVector(C.RAWSXP, C.R_xlen_t(len(p)))
 	C.Rf_protect(r)
-	s := (*[562949953421312]uint8)(unsafe.Pointer(C.RAW(r)))[:len(p):len(p)]
+	s := (*[562949953421312]uint8)(unsafe.Pointer(C.RAW(r)))[:len(p)]
 	copy(s, p)
 	C.Rf_unprotect(1)
 	return r

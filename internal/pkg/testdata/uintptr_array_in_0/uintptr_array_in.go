@@ -2,6 +2,6 @@
 
 package uintptr_array_in_0
 
-//{"in":["[4]uintptr","[]uintptr","uintptr"]}
+//{"in":["[4]uintptr","[]uintptr"]}
 func Test0(par0 [4]uintptr) {
 }

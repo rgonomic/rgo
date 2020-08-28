@@ -2,7 +2,7 @@
 
 package complex64_array_out_0
 
-//{"out":["[4]complex64","[]complex64","complex64"]}
+//{"out":["[4]complex64","[]complex64"]}
 func Test0() [4]complex64 {
 	var res0 [4]complex64
 	return res0

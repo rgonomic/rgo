@@ -2,7 +2,7 @@
 
 package bool_slice_out_0
 
-//{"out":["[]bool","bool"]}
+//{"out":["[]bool"]}
 func Test0() []bool {
 	var res0 []bool
 	return res0

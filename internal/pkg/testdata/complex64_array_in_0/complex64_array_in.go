@@ -2,6 +2,6 @@
 
 package complex64_array_in_0
 
-//{"in":["[4]complex64","[]complex64","complex128","complex64"]}
+//{"in":["[4]complex64","[]complex64"]}
 func Test0(par0 [4]complex64) {
 }

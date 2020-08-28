@@ -3,5 +3,5 @@ func unpackSEXP_types_Slice___byte(p C.SEXP) []byte {
 		return nil
 	}
 	n := C.Rf_xlength(p)
-	return (*[562949953421312]uint8)(unsafe.Pointer(C.RAW(p)))[:n:n]
+	return (*[562949953421312]byte)(unsafe.Pointer(C.RAW(p)))[:n]
 }

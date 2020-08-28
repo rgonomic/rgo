@@ -2,6 +2,6 @@
 
 package int16_array_in_0
 
-//{"in":["[4]int16","[]int16","int16"]}
+//{"in":["[4]int16","[]int16"]}
 func Test0(par0 [4]int16) {
 }

@@ -151,7 +151,7 @@ func unpackSEXP_types_Slice___float64(p C.SEXP) []float64 {
 		return nil
 	}
 	n := C.Rf_xlength(p)
-	return (*[70368744177664]float64)(unsafe.Pointer(C.REAL(p)))[:n:n]
+	return (*[70368744177664]float64)(unsafe.Pointer(C.REAL(p)))[:n]
 }
 
 func unpackSEXP_types_Slice___string(p C.SEXP) []string {

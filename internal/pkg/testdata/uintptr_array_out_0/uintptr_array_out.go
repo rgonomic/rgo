@@ -2,7 +2,7 @@
 
 package uintptr_array_out_0
 
-//{"out":["[4]uintptr","[]uintptr","uintptr"]}
+//{"out":["[4]uintptr","[]uintptr"]}
 func Test0() [4]uintptr {
 	var res0 [4]uintptr
 	return res0

@@ -2,7 +2,7 @@
 
 package uint8_array_out_0
 
-//{"out":["[4]uint8","[]uint8","uint8"]}
+//{"out":["[4]uint8","[]uint8"]}
 func Test0() [4]uint8 {
 	var res0 [4]uint8
 	return res0

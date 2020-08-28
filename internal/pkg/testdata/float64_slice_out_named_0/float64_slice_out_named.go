@@ -2,7 +2,7 @@
 
 package float64_slice_out_named_0
 
-//{"out":["[]float64","float64"]}
+//{"out":["[]float64"]}
 func Test0() (res0 []float64) {
 	return res0
 }
