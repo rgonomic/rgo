@@ -179,8 +179,8 @@ func typeNames(vars []*types.Var) string {
 }
 
 // nameOf returns the package name-qualified name of t.
-func nameOf(t types.Type) string {
-	return types.TypeString(t, func(pkg *types.Package) string {
+func nameOf(typ types.Type) string {
+	return types.TypeString(unalias(typ), func(pkg *types.Package) string {
 		return pkg.Name()
 	})
 }
@@ -193,4 +193,13 @@ func targetFieldName(s *types.Struct, i int) string {
 		return tag
 	}
 	return s.Field(i).Name()
+}
+
+// unalias returns the unaliased type for typ. This resolves byte to uint8
+// and rune to int32.
+func unalias(typ types.Type) types.Type {
+	if basic, ok := typ.(*types.Basic); ok {
+		return types.Typ[basic.Kind()]
+	}
+	return typ
 }

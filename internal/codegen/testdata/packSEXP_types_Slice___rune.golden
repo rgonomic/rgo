@@ -1,7 +1,7 @@
 func packSEXP_types_Slice___rune(p []rune) C.SEXP {
 	r := C.Rf_allocVector(C.INTSXP, C.R_xlen_t(len(p)))
 	C.Rf_protect(r)
-	s := (*[140737488355328]rune)(unsafe.Pointer(C.INTEGER(r)))[:len(p):len(p)]
+	s := (*[140737488355328]int32)(unsafe.Pointer(C.INTEGER(r)))[:len(p):len(p)]
 	copy(s, p)
 	C.Rf_unprotect(1)
 	return r

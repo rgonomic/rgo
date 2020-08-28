@@ -2,6 +2,6 @@
 
 package byte_array_in_0
 
-//{"in":["[4]byte","[]byte"]}
+//{"in":["[4]uint8","[]uint8"]}
 func Test0(par0 [4]byte) {
 }

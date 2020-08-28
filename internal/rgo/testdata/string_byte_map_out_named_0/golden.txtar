@@ -137,7 +137,7 @@ func packSEXP_types_Basic_uint8(p uint8) C.SEXP {
 	return C.ScalarRaw(C.Rbyte(p))
 }
 
-func packSEXP_types_Map_map_string_byte(p map[string]byte) C.SEXP {
+func packSEXP_types_Map_map_string_uint8(p map[string]uint8) C.SEXP {
 	n := len(p)
 	r := C.Rf_allocVector(C.INTSXP, C.R_xlen_t(n))
 	C.Rf_protect(r)

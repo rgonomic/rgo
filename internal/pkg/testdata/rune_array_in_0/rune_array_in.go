@@ -2,6 +2,6 @@
 
 package rune_array_in_0
 
-//{"in":["[4]rune","[]rune"]}
+//{"in":["[4]int32","[]int32"]}
 func Test0(par0 [4]rune) {
 }

@@ -2,6 +2,6 @@
 
 package string_byte_map_in_0
 
-//{"in":["map[string]byte","string","uint8"]}
+//{"in":["map[string]uint8","string","uint8"]}
 func Test0(par0 map[string]byte) {
 }

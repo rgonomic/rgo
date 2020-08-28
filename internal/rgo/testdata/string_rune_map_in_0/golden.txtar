@@ -137,17 +137,17 @@ func unpackSEXP_types_Basic_string(p C.SEXP) string {
 	return C.R_gostring(p, 0)
 }
 
-func unpackSEXP_types_Map_map_string_rune(p C.SEXP) map[string]rune {
+func unpackSEXP_types_Map_map_string_int32(p C.SEXP) map[string]int32 {
 	if C.Rf_isNull(p) != 0 {
 		return nil
 	}
 	n := int(C.Rf_xlength(p))
-	r := make(map[string]rune, n)
+	r := make(map[string]int32, n)
 	names := C.getAttrib(p, C.R_NamesSymbol)
 	values := (*[140737488355328]int32)(unsafe.Pointer(C.INTEGER(p)))[:n:n]
 	for i, elem := range values {
 		key := string(C.R_gostring(names, C.R_xlen_t(i)))
-		r[key] = rune(elem)
+		r[key] = int32(elem)
 	}
 	return r
 }

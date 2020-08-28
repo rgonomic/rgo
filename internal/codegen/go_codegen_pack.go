@@ -63,10 +63,32 @@ func packNamed(buf *bytes.Buffer, typ *types.Named) {
 `, pkg.Mangle(types.Typ[types.String]))
 	} else {
 		switch typ := typ.Underlying().(type) {
+		case *types.Array:
+			typ = types.NewArray(unalias(typ.Elem()), typ.Len())
+			fmt.Fprintf(buf, "\treturn packSEXP%s(p)\n", pkg.Mangle(typ))
+		case *types.Map:
+			typ = types.NewMap(typ.Key(), unalias(typ.Elem()))
+			fmt.Fprintf(buf, "\treturn packSEXP%s(p)\n", pkg.Mangle(typ))
 		case *types.Pointer:
-			fmt.Fprintf(buf, "\treturn packSEXP%s((%s)(p))\n", pkg.Mangle(typ), typ)
+			typ = types.NewPointer(unalias(typ.Elem()))
+			fmt.Fprintf(buf, "\treturn packSEXP%s(p)\n", pkg.Mangle(typ))
+		case *types.Slice:
+			typ = types.NewSlice(unalias(typ.Elem()))
+			fmt.Fprintf(buf, "\treturn packSEXP%s(p)\n", pkg.Mangle(typ))
+		case *types.Struct:
+			var (
+				fields []*types.Var
+				tags   []string
+			)
+			for i := 0; i < typ.NumFields(); i++ {
+				field := typ.Field(i)
+				fields = append(fields, types.NewVar(field.Pos(), field.Pkg(), field.Name(), unalias(field.Type())))
+				tags = append(tags, typ.Tag(i))
+			}
+			typ = types.NewStruct(fields, tags)
+			fmt.Fprintf(buf, "\treturn packSEXP%s(p)\n", pkg.Mangle(typ))
 		default:
-			fmt.Fprintf(buf, "\treturn packSEXP%s(%s(p))\n", pkg.Mangle(typ), typ)
+			fmt.Fprintf(buf, "\treturn packSEXP%s(%s(p))\n", pkg.Mangle(typ), unalias(typ))
 		}
 	}
 }

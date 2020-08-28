@@ -2,7 +2,7 @@
 
 package rune_slice_out_0
 
-//{"out":["[]rune","int32"]}
+//{"out":["[]int32","int32"]}
 func Test0() []rune {
 	var res0 []rune
 	return res0

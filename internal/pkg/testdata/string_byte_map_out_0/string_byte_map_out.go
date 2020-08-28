@@ -2,7 +2,7 @@
 
 package string_byte_map_out_0
 
-//{"out":["map[string]byte","string","uint8"]}
+//{"out":["map[string]uint8","string","uint8"]}
 func Test0() map[string]byte {
 	var res0 map[string]byte
 	return res0

@@ -132,18 +132,18 @@ func Wrapped_Test0(_R_par0 C.SEXP) C.SEXP {
 }
 
 
-func unpackSEXP_types_Array__4_rune(p C.SEXP) [4]rune {
-	var a [4]rune
-	copy(a[:], unpackSEXP_types_Slice___rune(p))
+func unpackSEXP_types_Array__4_int32(p C.SEXP) [4]int32 {
+	var a [4]int32
+	copy(a[:], unpackSEXP_types_Slice___int32(p))
 	return a
 }
 
-func unpackSEXP_types_Slice___rune(p C.SEXP) []rune {
+func unpackSEXP_types_Slice___int32(p C.SEXP) []int32 {
 	if C.Rf_isNull(p) != 0 {
 		return nil
 	}
 	n := C.Rf_xlength(p)
-	return (*[140737488355328]rune)(unsafe.Pointer(C.INTEGER(p)))[:n:n]
+	return (*[140737488355328]int32)(unsafe.Pointer(C.INTEGER(p)))[:n:n]
 }
 
 func main() {}

@@ -137,14 +137,14 @@ func unpackSEXP_types_Basic_uint8(p C.SEXP) uint8 {
 	return uint8(*C.RAW(p))
 }
 
-func unpackSEXP_types_Map_map_string_byte(p C.SEXP) map[string]byte {
+func unpackSEXP_types_Map_map_string_uint8(p C.SEXP) map[string]uint8 {
 	if C.Rf_isNull(p) != 0 {
 		return nil
 	}
 	n := int(C.Rf_xlength(p))
-	r := make(map[string]byte, n)
+	r := make(map[string]uint8, n)
 	names := C.getAttrib(p, C.R_NamesSymbol)
-	values := (*[562949953421312]byte)(unsafe.Pointer(C.RAW(p)))[:n:n]
+	values := (*[562949953421312]uint8)(unsafe.Pointer(C.RAW(p)))[:n:n]
 	for i, elem := range values {
 		key := string(C.R_gostring(names, C.R_xlen_t(i)))
 		r[key] = elem

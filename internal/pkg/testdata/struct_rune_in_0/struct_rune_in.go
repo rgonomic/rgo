@@ -2,7 +2,7 @@
 
 package struct_rune_in_0
 
-//{"in":["int32","struct{F1 rune; F2 rune \"rgo:\\\"Rname\\\"\"}"]}
+//{"in":["int32","struct{F1 int32; F2 int32 \"rgo:\\\"Rname\\\"\"}"]}
 func Test0(par0 struct {
 	F1 rune
 	F2 rune "rgo:\"Rname\""

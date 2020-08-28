@@ -2,5 +2,5 @@ func packSEXP_types_Pointer__rune(p *rune) C.SEXP {
 	if p == nil {
 		return C.R_NilValue
 	}
-	return packSEXP_types_Basic_rune(*p)
+	return packSEXP_types_Basic_int32(*p)
 }

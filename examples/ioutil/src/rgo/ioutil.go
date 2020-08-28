@@ -74,10 +74,10 @@ func packSEXP_types_Named_error(p error) C.SEXP {
 	return packSEXP_types_Basic_string(p.Error())
 }
 
-func packSEXP_types_Slice___byte(p []byte) C.SEXP {
+func packSEXP_types_Slice___uint8(p []uint8) C.SEXP {
 	r := C.Rf_allocVector(C.RAWSXP, C.R_xlen_t(len(p)))
 	C.Rf_protect(r)
-	s := (*[562949953421312]byte)(unsafe.Pointer(C.RAW(r)))[:len(p):len(p)]
+	s := (*[562949953421312]uint8)(unsafe.Pointer(C.RAW(r)))[:len(p):len(p)]
 	copy(s, p)
 	C.Rf_unprotect(1)
 	return r

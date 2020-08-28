@@ -1,3 +1,3 @@
 func packSEXP_types_Named_path_to_pkg_T(p pkg.T) C.SEXP {
-	return packSEXP_types_Map_map_string_bool(map[string]bool(p))
+	return packSEXP_types_Map_map_string_bool(p)
 }

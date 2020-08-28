@@ -132,17 +132,17 @@ func packSEXP_types_Basic_uint8(p uint8) C.SEXP {
 	return C.ScalarRaw(C.Rbyte(p))
 }
 
-func packSEXP_types_Struct_struct_F1_byte__F2_byte__rgo___Rname____(p struct{F1 byte; F2 byte "rgo:\"Rname\""}) C.SEXP {
+func packSEXP_types_Struct_struct_F1_uint8__F2_uint8__rgo___Rname____(p struct{F1 uint8; F2 uint8 "rgo:\"Rname\""}) C.SEXP {
 	r := C.allocList(2)
 	C.Rf_protect(r)
 	names := C.Rf_allocVector(C.STRSXP, 2)
 	C.Rf_protect(names)
 	arg := r
 	C.SET_STRING_ELT(names, 0, C.Rf_mkCharLenCE(C._GoStringPtr(`F1`), 2, C.CE_UTF8))
-	C.SETCAR(arg, packSEXP_types_Basic_byte(p.F1))
+	C.SETCAR(arg, packSEXP_types_Basic_uint8(p.F1))
 	arg = C.CDR(arg)
 	C.SET_STRING_ELT(names, 1, C.Rf_mkCharLenCE(C._GoStringPtr(`Rname`), 5, C.CE_UTF8))
-	C.SETCAR(arg, packSEXP_types_Basic_byte(p.F2))
+	C.SETCAR(arg, packSEXP_types_Basic_uint8(p.F2))
 	C.setAttrib(r, packSEXP_types_Basic_string(`names`), names)
 	C.Rf_unprotect(2)
 	return r

@@ -24,6 +24,8 @@ var regenerate = flag.Bool("regen", false, "regenerate golden data from current 
 
 var mockPkg = types.NewPackage("path/to/pkg", "pkg")
 
+// builtin byte and rune aliases are included, but will not be seen
+// in normal use since the package analysis resolves these away.
 var sexpFuncGoTests = []struct {
 	typ types.Type
 }{

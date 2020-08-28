@@ -2,7 +2,7 @@
 
 package byte_array_out_0
 
-//{"out":["[4]byte","[]byte","uint8"]}
+//{"out":["[4]uint8","[]uint8","uint8"]}
 func Test0() [4]byte {
 	var res0 [4]byte
 	return res0

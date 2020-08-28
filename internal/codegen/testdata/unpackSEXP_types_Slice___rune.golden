@@ -3,5 +3,5 @@ func unpackSEXP_types_Slice___rune(p C.SEXP) []rune {
 		return nil
 	}
 	n := C.Rf_xlength(p)
-	return (*[140737488355328]rune)(unsafe.Pointer(C.INTEGER(p)))[:n:n]
+	return (*[140737488355328]int32)(unsafe.Pointer(C.INTEGER(p)))[:n:n]
 }

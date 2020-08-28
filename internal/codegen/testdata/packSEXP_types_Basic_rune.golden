@@ -1,3 +1,3 @@
-func packSEXP_types_Basic_rune(p rune) C.SEXP {
+func packSEXP_types_Basic_rune(p int32) C.SEXP {
 	return C.ScalarInteger(C.int(p))
 }

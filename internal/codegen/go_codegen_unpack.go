@@ -55,7 +55,34 @@ func unpackSEXPFuncBodyGo(buf *bytes.Buffer, typ types.Type) {
 }
 
 func unpackNamed(buf *bytes.Buffer, typ *types.Named) {
-	fmt.Fprintf(buf, "\treturn %s(unpackSEXP%s(p))\n", nameOf(typ), pkg.Mangle(typ.Underlying()))
+	switch under := typ.Underlying().(type) {
+	case *types.Array:
+		under = types.NewArray(unalias(under.Elem()), under.Len())
+		fmt.Fprintf(buf, "\treturn unpackSEXP%s(p)\n", pkg.Mangle(under))
+	case *types.Map:
+		under = types.NewMap(under.Key(), unalias(under.Elem()))
+		fmt.Fprintf(buf, "\treturn unpackSEXP%s(p)\n", pkg.Mangle(under))
+	case *types.Pointer:
+		under = types.NewPointer(unalias(under.Elem()))
+		fmt.Fprintf(buf, "\treturn unpackSEXP%s(p)\n", pkg.Mangle(under))
+	case *types.Slice:
+		under = types.NewSlice(unalias(under.Elem()))
+		fmt.Fprintf(buf, "\treturn unpackSEXP%s(p)\n", pkg.Mangle(under))
+	case *types.Struct:
+		var (
+			fields []*types.Var
+			tags   []string
+		)
+		for i := 0; i < under.NumFields(); i++ {
+			field := under.Field(i)
+			fields = append(fields, types.NewVar(field.Pos(), field.Pkg(), field.Name(), unalias(field.Type())))
+			tags = append(tags, under.Tag(i))
+		}
+		under = types.NewStruct(fields, tags)
+		fmt.Fprintf(buf, "\treturn unpackSEXP%s(p)\n", pkg.Mangle(under))
+	default:
+		fmt.Fprintf(buf, "\treturn %s(unpackSEXP%s(p))\n", nameOf(typ), pkg.Mangle(under))
+	}
 }
 
 func unpackArray(buf *bytes.Buffer, typ *types.Array) {

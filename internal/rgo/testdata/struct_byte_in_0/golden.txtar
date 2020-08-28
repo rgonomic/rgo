@@ -133,16 +133,16 @@ func unpackSEXP_types_Basic_uint8(p C.SEXP) uint8 {
 	return uint8(*C.RAW(p))
 }
 
-func unpackSEXP_types_Struct_struct_F1_byte__F2_byte__rgo___Rname____(p C.SEXP) struct{F1 byte; F2 byte "rgo:\"Rname\""} {
+func unpackSEXP_types_Struct_struct_F1_uint8__F2_uint8__rgo___Rname____(p C.SEXP) struct{F1 uint8; F2 uint8 "rgo:\"Rname\""} {
 	switch n := C.Rf_xlength(p); {
 	case n < 2:
-		panic(`missing list element for struct{F1 byte; F2 byte "rgo:\"Rname\""}`)
+		panic(`missing list element for struct{F1 uint8; F2 uint8 "rgo:\"Rname\""}`)
 	case n > 2:
-		err := C.CString(`extra list element ignored for struct{F1 byte; F2 byte "rgo:\"Rname\""}`)
+		err := C.CString(`extra list element ignored for struct{F1 uint8; F2 uint8 "rgo:\"Rname\""}`)
 		C.R_error(err)
 		C.free(unsafe.Pointer(err))
 	}
-	var r struct{F1 byte; F2 byte "rgo:\"Rname\""}
+	var r struct{F1 uint8; F2 uint8 "rgo:\"Rname\""}
 	var i C.int
 	key_F1 := C.CString("F1")
 	defer C.free(unsafe.Pointer(key_F1))
@@ -150,14 +150,14 @@ func unpackSEXP_types_Struct_struct_F1_byte__F2_byte__rgo___Rname____(p C.SEXP) 
 	if i < 0 {
 		panic("no list element for field: F1")
 	}
-	r.F1 = unpackSEXP_types_Basic_byte(C.VECTOR_ELT(p, C.R_xlen_t(i)))
+	r.F1 = unpackSEXP_types_Basic_uint8(C.VECTOR_ELT(p, C.R_xlen_t(i)))
 	key_Rname := C.CString("Rname")
 	defer C.free(unsafe.Pointer(key_Rname))
 	i = C.getListElementIndex(p, key_Rname)
 	if i < 0 {
 		panic("no list element for field: F2")
 	}
-	r.F2 = unpackSEXP_types_Basic_byte(C.VECTOR_ELT(p, C.R_xlen_t(i)))
+	r.F2 = unpackSEXP_types_Basic_uint8(C.VECTOR_ELT(p, C.R_xlen_t(i)))
 	return r
 }
 

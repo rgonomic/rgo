@@ -128,18 +128,18 @@ func packSEXP_Test0(res0 [4]byte) C.SEXP {
 	return packSEXP_types_Array__4_byte(res0)
 }
 
-func packSEXP_types_Array__4_byte(p [4]byte) C.SEXP {
-	return packSEXP_types_Slice___byte(p[:])
+func packSEXP_types_Array__4_uint8(p [4]uint8) C.SEXP {
+	return packSEXP_types_Slice___uint8(p[:])
 }
 
 func packSEXP_types_Basic_uint8(p uint8) C.SEXP {
 	return C.ScalarRaw(C.Rbyte(p))
 }
 
-func packSEXP_types_Slice___byte(p []byte) C.SEXP {
+func packSEXP_types_Slice___uint8(p []uint8) C.SEXP {
 	r := C.Rf_allocVector(C.RAWSXP, C.R_xlen_t(len(p)))
 	C.Rf_protect(r)
-	s := (*[562949953421312]byte)(unsafe.Pointer(C.RAW(r)))[:len(p):len(p)]
+	s := (*[562949953421312]uint8)(unsafe.Pointer(C.RAW(r)))[:len(p):len(p)]
 	copy(s, p)
 	C.Rf_unprotect(1)
 	return r

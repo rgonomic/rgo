@@ -20,6 +20,7 @@ import (
 	"path"
 	"path/filepath"
 	"sort"
+	"strings"
 	"text/template"
 )
 
@@ -235,14 +236,8 @@ func uniq(s []string, extra ...string) []string {
 
 	// Convert basic types to their kind.
 	for i, v := range t {
-		typ := types.Universe.Lookup(v)
-		if typ == nil {
-			continue
-		}
-		switch typ := typ.Type().(type) {
-		case *types.Basic:
-			t[i] = types.Typ[typ.Kind()].String()
-		}
+		t[i] = strings.Replace(v, "byte", "uint8", -1)
+		t[i] = strings.Replace(t[i], "rune", "int32", -1)
 	}
 
 	sort.Strings(t)

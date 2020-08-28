@@ -75,7 +75,7 @@ func unpackSEXP_types_Basic_int(p C.SEXP) int {
 }
 
 func unpackSEXP_types_Named_gonum_org_v1_gonum_blas_blas64_GeneralCols(p C.SEXP) blas64.GeneralCols {
-	return blas64.GeneralCols(unpackSEXP_types_Struct_struct_Rows_int__Cols_int__Data___float64__Stride_int_(p))
+	return unpackSEXP_types_Struct_struct_Rows_int__Cols_int__Data___float64__Stride_int_(p)
 }
 
 func unpackSEXP_types_Slice___float64(p C.SEXP) []float64 {
@@ -149,7 +149,7 @@ func packSEXP_types_Named_error(p error) C.SEXP {
 }
 
 func packSEXP_types_Named_gonum_org_v1_gonum_blas_blas64_GeneralCols(p blas64.GeneralCols) C.SEXP {
-	return packSEXP_types_Struct_struct_Rows_int__Cols_int__Data___float64__Stride_int_(struct{Rows int; Cols int; Data []float64; Stride int}(p))
+	return packSEXP_types_Struct_struct_Rows_int__Cols_int__Data___float64__Stride_int_(p)
 }
 
 func packSEXP_types_Slice___float64(p []float64) C.SEXP {

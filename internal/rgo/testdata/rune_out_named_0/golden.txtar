@@ -125,7 +125,7 @@ func Wrapped_Test0() C.SEXP {
 }
 
 func packSEXP_Test0(res0 rune) C.SEXP {
-	return packSEXP_types_Basic_rune(res0)
+	return packSEXP_types_Basic_int32(res0)
 }
 
 func packSEXP_types_Basic_int32(p int32) C.SEXP {

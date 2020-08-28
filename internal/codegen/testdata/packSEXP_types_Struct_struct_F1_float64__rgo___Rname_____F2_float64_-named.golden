@@ -1,3 +1,3 @@
 func packSEXP_types_Named_path_to_pkg_T(p pkg.T) C.SEXP {
-	return packSEXP_types_Struct_struct_F1_float64__rgo___Rname_____F2_float64_(struct{F1 float64 "rgo:\"Rname\""; F2 float64}(p))
+	return packSEXP_types_Struct_struct_F1_float64__rgo___Rname_____F2_float64_(p)
 }

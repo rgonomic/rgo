@@ -137,7 +137,7 @@ func packSEXP_types_Basic_string(p string) C.SEXP {
 	return C.ScalarString(s)
 }
 
-func packSEXP_types_Map_map_string_rune(p map[string]rune) C.SEXP {
+func packSEXP_types_Map_map_string_int32(p map[string]int32) C.SEXP {
 	n := len(p)
 	r := C.Rf_allocVector(C.INTSXP, C.R_xlen_t(n))
 	C.Rf_protect(r)

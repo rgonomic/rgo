@@ -2,7 +2,7 @@
 
 package struct_byte_in_0
 
-//{"in":["struct{F1 byte; F2 byte \"rgo:\\\"Rname\\\"\"}","uint8"]}
+//{"in":["struct{F1 uint8; F2 uint8 \"rgo:\\\"Rname\\\"\"}","uint8"]}
 func Test0(par0 struct {
 	F1 byte
 	F2 byte "rgo:\"Rname\""
