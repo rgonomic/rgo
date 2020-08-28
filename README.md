@@ -166,6 +166,7 @@ R Matrix values are not currently handled and will need to be destructured to a 
 
 Currently the extraction of type identities is weaker than it should be. This will be improved.
 
+Data exchange between R and Go depends on Cgo calls and so is not free. The exact performance impact depends on the type due to R's baroque type system and its implementation; briefly though, R vectors that have a direct correspondence with Go scalar types or slices will perform the best (`integer` and `int32`/`uint32`, `double` and `float64`, `complex` and `complex128`, and `raw` and `uint8`). To check the likely performance of data exchange, look at the generated Go code in the `src/rgo` directory of the package you are building. The generated code is intended to be reasonably human readable.
 
 ## Input parameter mutation
 
