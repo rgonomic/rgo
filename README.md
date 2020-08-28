@@ -74,7 +74,7 @@ $ rgo build
 ```
 
 Make necessary changes to the DESCRIPTION file.
-If the R package is intended to be packaged license information for dependencies of the Go code will need to be included since Go links statically and the generated .so lib file will be part of the distribution.
+If the R package is intended to be packaged license information for dependencies of the Go code will need to be included since Go links statically and the generated .so lib file will be part of the distribution. `rgo build` will collect all the licenses that it finds in the source module and place them in the LicenseDir directory. You should remove any that are not relevant to the package you are wrapping.
 
 ```
 $ vim DESCRIPTION
