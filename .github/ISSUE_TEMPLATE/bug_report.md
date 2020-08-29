@@ -31,10 +31,8 @@ $ rgo build
 
 ### What version of Go and rgo are you using?
 <!--
-Paste the output of `go version` and if you are installing rgo from source, paste
-the output of `(cd $(go env GOPATH)/src/github.com/rgonomic/rgo && git rev-parse HEAD)`.
-If you are using modules, also paste the output of `grep github.com/rgonomic/rgo go.sum`,
-executed in the root of your dependent module.
+Paste the output of `go version` and `rgo -v version` and if you are installing rgo from
+source, paste the output of `(cd $(go env GOPATH)/src/github.com/rgonomic/rgo && git rev-parse HEAD)`.
 -->
 
 
