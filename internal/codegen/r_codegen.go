@@ -48,7 +48,7 @@ func RCallTemplate(words []string) *template.Template {
 
 // doc returns an R documentation line for the variable v.
 func doc(v *types.Var) string {
-	return fmt.Sprintf("#' @param %s is a %s", v.Name(), rDocFor(v.Type()))
+	return fmt.Sprintf("#' @param %s is %s", v.Name(), article(rDocFor(v.Type()), false))
 }
 
 // seealso returns an @seealso documentation line linking to the fn's
