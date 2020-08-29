@@ -171,6 +171,7 @@ func rTypeOf(typ types.Type) (rtyp string, length int64, nilable bool) {
 			}
 			return basicRtype(etyp), -1, true
 		}
+		return "list", -1, false
 	case *types.Array:
 		elem := typ.Elem()
 		if etyp, ok := elem.(*types.Basic); ok {
@@ -179,6 +180,7 @@ func rTypeOf(typ types.Type) (rtyp string, length int64, nilable bool) {
 			}
 			return basicRtype(etyp), typ.Len(), false
 		}
+		return "list", -1, false
 	case *types.Map:
 		return "vector", -1, true
 	case *types.Struct:

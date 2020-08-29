@@ -32,6 +32,20 @@ var crafted = []pkg{
 			{In: []string{"T", "S1"}, Out: []string{"S1"}},
 		},
 	},
+	{
+		Name: "slice_of_slices",
+		Path: "github.com/rgonomic/rgo/internal/rgo/testdata",
+		Funcs: []fn{
+			{In: []string{"[][]float64"}, Out: []string{"[][]float64"}, Named: false},
+		},
+	},
+	{
+		Name: "map_of_slices",
+		Path: "github.com/rgonomic/rgo/internal/rgo/testdata",
+		Funcs: []fn{
+			{In: []string{"map[string][]float64"}, Out: []string{"map[string][]float64"}, Named: false},
+		},
+	},
 }
 
 type pkg struct {

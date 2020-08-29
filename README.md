@@ -113,10 +113,10 @@ $ R CMD INSTALL .
 | scalar `character`              | `string` (and `error` in returned values)                                          |
 | `character` vector              | `[]string` (and `[]error` in returned values)                                      |
 | fixed length `character` vector | `[n]string` (and `[n]error` in returned values)                                    |
-| unnamed `list`                  | `[]C` (not yet implemented)                                                        |
-| fixed length unnamed `list`     | `[n]C` (not yet implemented)                                                       |
+| unnamed `list`                  | `[]C`                                                                              |
+| fixed length unnamed `list`     | `[n]C`                                                                             |
 | named `vector`                  | `map[string]A`                                                                     |
-| named `list`                    | `map[string]C` (not yet implemented)                                               |
+| named `list`                    | `map[string]C`                                                                     |
 | `list`                          | `struct{...}`                                                                      |
 | `raw`                           | `[]int8`, `[]uint8`/`[]byte`                                                       |
 | fixed length `raw`              | `[n]int8`, `[n]uint8`/`[n]byte`                                                    |

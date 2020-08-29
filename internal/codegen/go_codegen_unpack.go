@@ -186,7 +186,16 @@ func unpackMap(buf *bytes.Buffer, typ *types.Map) {
 			return
 		}
 	}
-	panic(fmt.Sprintf("TODO: unpack map[string]%s", elem))
+
+	fmt.Fprintf(buf, `	n := int(C.Rf_xlength(p))
+	r := make(map[string]%s, n)
+	names := C.getAttrib(p, C.R_NamesSymbol)
+	for i := 0; i < n; i++ {
+		key := string(C.R_gostring(names, C.R_xlen_t(i)))
+		r[key] = unpackSEXP%s(C.VECTOR_ELT(p, C.R_xlen_t(i)))
+	}
+	return r
+`, nameOf(elem), pkg.Mangle(elem))
 }
 
 func unpackPointer(buf *bytes.Buffer, typ *types.Pointer) {
