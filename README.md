@@ -32,7 +32,7 @@ Set up the rgo default configurations and files.
 $ rgo init example.org/path/to/pkg
 ```
 
-Edit the configuration if needed. The `rgo.json` file corresponds to the [following Go struct](https://pkg.go.dev/github.com/rgonomic/rgo/internal/rgo?tab=doc#Config).
+Edit the configuration file, `rgo.json`, if needed. The `rgo.json` file corresponds to the [following Go struct](https://pkg.go.dev/github.com/rgonomic/rgo/internal/rgo?tab=doc#Config).
 ```
 type Config struct {
 	// PkgPath is the package import path for the package
@@ -135,7 +135,7 @@ Pointer types are also handled. Currently pointers are indirected so that mutati
 
 ### Go struct tags
 
-Go struct tags with the name `rgo` may be used to change the R `list` name mapping. For example,
+Go struct tags with the name `rgo` may be used to change the R value's name mapping. For example,
 
 ```
 type GoType struct {
