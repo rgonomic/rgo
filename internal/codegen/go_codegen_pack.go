@@ -266,7 +266,8 @@ func packMap(buf *bytes.Buffer, typ *types.Map) {
 `, rTypeLabelFor(elem), pkg.Mangle(elem))
 
 	default:
-		fmt.Fprintf(buf, `	n := len(p)
+		if canBeNil(elem) {
+			fmt.Fprintf(buf, `	n := len(p)
 	r := C.Rf_allocVector(C.VECSXP, C.R_xlen_t(n))
 	C.Rf_protect(r)
 	names := C.Rf_allocVector(C.STRSXP, C.R_xlen_t(n))
@@ -285,6 +286,23 @@ func packMap(buf *bytes.Buffer, typ *types.Map) {
 	C.Rf_unprotect(2)
 	return r
 `, pkg.Mangle(elem))
+		} else {
+			fmt.Fprintf(buf, `	n := len(p)
+	r := C.Rf_allocVector(C.VECSXP, C.R_xlen_t(n))
+	C.Rf_protect(r)
+	names := C.Rf_allocVector(C.STRSXP, C.R_xlen_t(n))
+	C.Rf_protect(names)
+	var i C.R_xlen_t
+	for k, v := range p {
+		C.SET_STRING_ELT(names, i, C.Rf_mkCharLenCE(C._GoStringPtr(k), C.int(len(k)), C.CE_UTF8))
+		C.SET_VECTOR_ELT(r, i, packSEXP%s(v))
+		i++
+	}
+	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
+	C.Rf_unprotect(2)
+	return r
+`, pkg.Mangle(elem))
+		}
 	}
 }
 
@@ -439,7 +457,8 @@ func packSlice(buf *bytes.Buffer, typ *types.Slice) {
 	return r
 `)
 	default:
-		fmt.Fprintf(buf, `	n := len(p)
+		if canBeNil(elem) {
+			fmt.Fprintf(buf, `	n := len(p)
 	r := C.Rf_allocVector(C.VECSXP, C.R_xlen_t(n))
 	C.Rf_protect(r)
 	for i, v := range p {
@@ -452,6 +471,17 @@ func packSlice(buf *bytes.Buffer, typ *types.Slice) {
 	C.Rf_unprotect(1)
 	return r
 `, pkg.Mangle(elem))
+		} else {
+			fmt.Fprintf(buf, `	n := len(p)
+	r := C.Rf_allocVector(C.VECSXP, C.R_xlen_t(n))
+	C.Rf_protect(r)
+	for i, v := range p {
+		C.SET_VECTOR_ELT(r, C.R_xlen_t(i), packSEXP%s(v))
+	}
+	C.Rf_unprotect(1)
+	return r
+`, pkg.Mangle(elem))
+		}
 	}
 }
 
@@ -491,4 +521,13 @@ func rTypeLabelFor(typ types.Type) string {
 		return fmt.Sprintf("<%s>", typ)
 	}
 	return label
+}
+
+func canBeNil(typ types.Type) bool {
+	switch typ.Underlying().(type) {
+	case *types.Map, *types.Pointer, *types.Slice:
+		return true
+	default:
+		return false
+	}
 }
