@@ -7,7 +7,6 @@ package codegen
 import (
 	"fmt"
 	"go/types"
-	"path"
 	"reflect"
 	"sort"
 	"strings"
@@ -155,9 +154,18 @@ func anonymous(vars []*types.Var, prefix string, typed bool) string {
 		if name == "" {
 			name = fmt.Sprintf("%s%d", prefix, i)
 		}
-		buf.WriteString(fmt.Sprintf("%s %s", name, path.Base(v.Type().String())))
+		buf.WriteString(fmt.Sprintf("%s %s", name, types.TypeString(v.Type(), importedFrom(v.Pkg()))))
 	}
 	return buf.String()
+}
+
+func importedFrom(pkg *types.Package) types.Qualifier {
+	if pkg == nil {
+		return nil
+	}
+	return func(other *types.Package) string {
+		return other.Name()
+	}
 }
 
 // typeNames returns a comma-separated list of the type names corresponding to vars.
