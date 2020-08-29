@@ -26,12 +26,12 @@ export(test_0)
 #'
 #' Test0 does things with [[4]int8] and returns [].
 #' 
-#' @param par0 is a integer vector with 4 elements
+#' @param par0 is a raw vector with 4 elements
 #' @seelso <https://godoc.org/int8_array_in_0#Test0>
 #' @export
 test_0 <- function(par0) {
-	if (!is.integer(par0)) {
-		stop("Argument 'par0' must be of type 'integer'.")
+	if (!is.raw(par0)) {
+		stop("Argument 'par0' must be of type 'raw'.")
 	}
 	if (length(par0) != 4) {
 		stop("Argument 'par0' must have 4 elements.")

@@ -26,7 +26,7 @@ export(test_0)
 #'
 #' Test0 does things with [] and returns [[4]int8].
 #' 
-#' @return An integer vector with 4 elements
+#' @return A raw vector with 4 elements
 #' @seelso <https://godoc.org/int8_array_out_0#Test0>
 #' @export
 test_0 <- function() {

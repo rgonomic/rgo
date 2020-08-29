@@ -166,7 +166,7 @@ func rTypeOf(typ types.Type) (rtyp string, length int64, nilable bool) {
 	case *types.Slice:
 		elem := typ.Elem()
 		if etyp, ok := elem.(*types.Basic); ok {
-			if etyp.Kind() == types.Uint8 {
+			if etyp.Kind() == types.Uint8 || etyp.Kind() == types.Int8 {
 				return "raw", -1, true
 			}
 			return basicRtype(etyp), -1, true
@@ -174,7 +174,7 @@ func rTypeOf(typ types.Type) (rtyp string, length int64, nilable bool) {
 	case *types.Array:
 		elem := typ.Elem()
 		if etyp, ok := elem.(*types.Basic); ok {
-			if etyp.Kind() == types.Uint8 {
+			if etyp.Kind() == types.Uint8 || etyp.Kind() == types.Int8 {
 				return "raw", typ.Len(), false
 			}
 			return basicRtype(etyp), typ.Len(), false

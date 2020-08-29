@@ -96,30 +96,30 @@ $ R CMD INSTALL .
 
 `rgo` has builtin type mappings between Go and R types. These are described here.
 
-| R                               | Go                                                                                         |
-|---------------------------------|--------------------------------------------------------------------------------------------|
-| scalar `integer`                | `int`, `int8`, `int16`, `int32`/`rune`, `uint`, `uint8`/`byte`, `uint16`, `uint32`         |
-| `integer` vector                | `[]int`, `[]int8`, `[]int16`, `[]int32`/`[]rune`, `[]uint`, `[]uint16`, `[]uint32`         |
-| fixed length `integer` vector   | `[n]int`, `[n]int8`, `[n]int16`, `[n]int32`/`[n]rune`, `[n]uint`, `[n]uint16`, `[n]uint32` |
-| scalar `double`                 | `float32`, `float64`                                                                       |
-| `double` vector                 | `[]float32`, `[]float64`                                                                   |
-| fixed length `double` vector    | `[n]float32`, `[n]float64`                                                                 |
-| scalar `complex`                | `complex64`, `complex128`                                                                  |
-| `complex` vector                | `[]complex64`, `[]complex128`                                                              |
-| fixed length `complex` vector   | `[n]complex64`, `[n]complex128`                                                            |
-| scalar `logical`                | `bool`                                                                                     |
-| `logical` vector                | `[]bool`                                                                                   |
-| fixed length `logical` vector   | `[n]bool`                                                                                  |
-| scalar `character`              | `string` (and `error` in returned values)                                                  |
-| `character` vector              | `[]string` (and `[]error` in returned values)                                              |
-| fixed length `character` vector | `[n]string` (and `[n]error` in returned values)                                            |
-| unnamed `list`                  | `[]C` (not yet implemented)                                                                |
-| fixed length unnamed `list`     | `[n]C` (not yet implemented)                                                               |
-| named `vector`                  | `map[string]A`                                                                             |
-| named `list`                    | `map[string]C` (not yet implemented)                                                       |
-| `list`                          | `struct{...}`                                                                              |
-| `raw`                           | `[]uint8`/`[]byte`                                                                         |
-| fixed length `raw`              | `[n]uint8`/`[n]byte`                                                                       |
+| R                               | Go                                                                                 |
+|---------------------------------|------------------------------------------------------------------------------------|
+| scalar `integer`                | `int`, `int8`, `int16`, `int32`/`rune`, `uint`, `uint8`/`byte`, `uint16`, `uint32` |
+| `integer` vector                | `[]int`, `[]int16`, `[]int32`/`[]rune`, `[]uint`, `[]uint16`, `[]uint32`           |
+| fixed length `integer` vector   | `[n]int`, `[n]int16`, `[n]int32`/`[n]rune`, `[n]uint`, `[n]uint16`, `[n]uint32`    |
+| scalar `double`                 | `float32`, `float64`                                                               |
+| `double` vector                 | `[]float32`, `[]float64`                                                           |
+| fixed length `double` vector    | `[n]float32`, `[n]float64`                                                         |
+| scalar `complex`                | `complex64`, `complex128`                                                          |
+| `complex` vector                | `[]complex64`, `[]complex128`                                                      |
+| fixed length `complex` vector   | `[n]complex64`, `[n]complex128`                                                    |
+| scalar `logical`                | `bool`                                                                             |
+| `logical` vector                | `[]bool`                                                                           |
+| fixed length `logical` vector   | `[n]bool`                                                                          |
+| scalar `character`              | `string` (and `error` in returned values)                                          |
+| `character` vector              | `[]string` (and `[]error` in returned values)                                      |
+| fixed length `character` vector | `[n]string` (and `[n]error` in returned values)                                    |
+| unnamed `list`                  | `[]C` (not yet implemented)                                                        |
+| fixed length unnamed `list`     | `[n]C` (not yet implemented)                                                       |
+| named `vector`                  | `map[string]A`                                                                     |
+| named `list`                    | `map[string]C` (not yet implemented)                                               |
+| `list`                          | `struct{...}`                                                                      |
+| `raw`                           | `[]int8`, `[]uint8`/`[]byte`                                                       |
+| fixed length `raw`              | `[n]int8`, `[n]uint8`/`[n]byte`                                                    |
 
 The Go `A` types correspond to R `atomic` types.
 
