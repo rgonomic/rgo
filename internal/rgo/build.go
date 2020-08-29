@@ -15,6 +15,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"os"
 	"path/filepath"
 	"regexp"
 	"text/template"
@@ -53,6 +54,10 @@ func (b *build) Run(ctx context.Context, args ...string) error {
 	}
 	if !ok {
 		return fmt.Errorf(`%s is not within a go module: run "go mod init"`, b.app.wd)
+	}
+	err = os.Chdir(root)
+	if err != nil {
+		return fmt.Errorf("cannot change directory to module root: %w", err)
 	}
 
 	cfg, err := ioutil.ReadFile(filepath.Join(root, "rgo.json"))

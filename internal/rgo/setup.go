@@ -58,6 +58,10 @@ func (s *setup) Run(ctx context.Context, args ...string) error {
 	if !ok {
 		return fmt.Errorf(`%s is not within a go module: run "go mod init"`, root)
 	}
+	err = os.Chdir(root)
+	if err != nil {
+		return fmt.Errorf("cannot change directory to module root: %w", err)
+	}
 	m, err := mod.Module(path)
 	if err != nil {
 		return err
