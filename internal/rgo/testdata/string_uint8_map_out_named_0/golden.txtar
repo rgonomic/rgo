@@ -141,8 +141,10 @@ func packSEXP_types_Map_map_string_uint8(p map[string]uint8) C.SEXP {
 	n := len(p)
 	r := C.Rf_allocVector(C.INTSXP, C.R_xlen_t(n))
 	C.Rf_protect(r)
+	defer C.Rf_unprotect(1)
 	names := C.Rf_allocVector(C.STRSXP, C.R_xlen_t(n))
 	C.Rf_protect(names)
+	defer C.Rf_unprotect(1)
 	s := (*[562949953421312]uint8)(unsafe.Pointer(C.RAW(r)))[:len(p):len(p)]
 	var i C.R_xlen_t
 	for k, v := range p {
@@ -151,7 +153,6 @@ func packSEXP_types_Map_map_string_uint8(p map[string]uint8) C.SEXP {
 	}
 	copy(s, p)
 	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
-	C.Rf_unprotect(2)
 	return r
 }
 

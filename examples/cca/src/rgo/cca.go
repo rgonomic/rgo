@@ -45,8 +45,10 @@ func Wrapped_CCA(_R_x, _R_y, _R_weights C.SEXP) C.SEXP {
 func packSEXP_CCA(ccors []float64, pVecs blas64.GeneralCols, qVecs blas64.GeneralCols, phiVs blas64.GeneralCols, psiVs blas64.GeneralCols, err error) C.SEXP {
 	r := C.allocVector(C.VECSXP, 6)
 	C.Rf_protect(r)
+	defer C.Rf_unprotect(1)
 	names := C.Rf_allocVector(C.STRSXP, 6)
 	C.Rf_protect(names)
+	defer C.Rf_unprotect(1)
 	C.SET_STRING_ELT(names, 0, C.Rf_mkCharLenCE(C._GoStringPtr("ccors"), 5, C.CE_UTF8))
 	C.SET_VECTOR_ELT(r, 0, packSEXP_types_Slice___float64(ccors))
 	C.SET_STRING_ELT(names, 1, C.Rf_mkCharLenCE(C._GoStringPtr("pVecs"), 5, C.CE_UTF8))
@@ -60,7 +62,6 @@ func packSEXP_CCA(ccors []float64, pVecs blas64.GeneralCols, qVecs blas64.Genera
 	C.SET_STRING_ELT(names, 5, C.Rf_mkCharLenCE(C._GoStringPtr("err"), 3, C.CE_UTF8))
 	C.SET_VECTOR_ELT(r, 5, packSEXP_types_Named_error(err))
 	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
-	C.Rf_unprotect(2)
 	return r
 }
 
@@ -145,17 +146,19 @@ func packSEXP_types_Named_gonum_org_v1_gonum_blas_blas64_GeneralCols(p blas64.Ge
 func packSEXP_types_Slice___float64(p []float64) C.SEXP {
 	r := C.Rf_allocVector(C.REALSXP, C.R_xlen_t(len(p)))
 	C.Rf_protect(r)
+	defer C.Rf_unprotect(1)
 	s := (*[70368744177664]float64)(unsafe.Pointer(C.REAL(r)))[:len(p)]
 	copy(s, p)
-	C.Rf_unprotect(1)
 	return r
 }
 
 func packSEXP_types_Struct_struct_Rows_int__Cols_int__Data___float64__Stride_int_(p struct{Rows int; Cols int; Data []float64; Stride int}) C.SEXP {
 	r := C.Rf_allocVector(C.VECSXP, 4)
 	C.Rf_protect(r)
+	defer C.Rf_unprotect(1)
 	names := C.Rf_allocVector(C.STRSXP, 4)
 	C.Rf_protect(names)
+	defer C.Rf_unprotect(1)
 	C.SET_STRING_ELT(names, 0, C.Rf_mkCharLenCE(C._GoStringPtr("Rows"), 4, C.CE_UTF8))
 	C.SET_VECTOR_ELT(r, 0, packSEXP_types_Basic_int(p.Rows))
 	C.SET_STRING_ELT(names, 1, C.Rf_mkCharLenCE(C._GoStringPtr("Cols"), 4, C.CE_UTF8))
@@ -169,7 +172,6 @@ func packSEXP_types_Struct_struct_Rows_int__Cols_int__Data___float64__Stride_int
 	C.SET_STRING_ELT(names, 3, C.Rf_mkCharLenCE(C._GoStringPtr("Stride"), 6, C.CE_UTF8))
 	C.SET_VECTOR_ELT(r, 3, packSEXP_types_Basic_int(p.Stride))
 	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
-	C.Rf_unprotect(2)
 	return r
 }
 

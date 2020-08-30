@@ -41,14 +41,15 @@ func Wrapped_ReadFile(_R_filename C.SEXP) C.SEXP {
 func packSEXP_ReadFile(p0 []uint8, p1 error) C.SEXP {
 	r := C.allocVector(C.VECSXP, 2)
 	C.Rf_protect(r)
+	defer C.Rf_unprotect(1)
 	names := C.Rf_allocVector(C.STRSXP, 2)
 	C.Rf_protect(names)
+	defer C.Rf_unprotect(1)
 	C.SET_STRING_ELT(names, 0, C.Rf_mkCharLenCE(C._GoStringPtr("r0"), 2, C.CE_UTF8))
 	C.SET_VECTOR_ELT(r, 0, packSEXP_types_Slice___uint8(p0))
 	C.SET_STRING_ELT(names, 1, C.Rf_mkCharLenCE(C._GoStringPtr("r1"), 2, C.CE_UTF8))
 	C.SET_VECTOR_ELT(r, 1, packSEXP_types_Named_error(p1))
 	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
-	C.Rf_unprotect(2)
 	return r
 }
 
@@ -71,9 +72,9 @@ func packSEXP_types_Named_error(p error) C.SEXP {
 func packSEXP_types_Slice___uint8(p []uint8) C.SEXP {
 	r := C.Rf_allocVector(C.RAWSXP, C.R_xlen_t(len(p)))
 	C.Rf_protect(r)
+	defer C.Rf_unprotect(1)
 	s := (*[562949953421312]uint8)(unsafe.Pointer(C.RAW(r)))[:len(p)]
 	copy(s, p)
-	C.Rf_unprotect(1)
 	return r
 }
 

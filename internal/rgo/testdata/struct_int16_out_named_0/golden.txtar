@@ -135,14 +135,15 @@ func packSEXP_types_Basic_int16(p int16) C.SEXP {
 func packSEXP_types_Struct_struct_F1_int16__F2_int16__rgo___Rname____(p struct{F1 int16; F2 int16 "rgo:\"Rname\""}) C.SEXP {
 	r := C.Rf_allocVector(C.VECSXP, 2)
 	C.Rf_protect(r)
+	defer C.Rf_unprotect(1)
 	names := C.Rf_allocVector(C.STRSXP, 2)
 	C.Rf_protect(names)
+	defer C.Rf_unprotect(1)
 	C.SET_STRING_ELT(names, 0, C.Rf_mkCharLenCE(C._GoStringPtr("F1"), 2, C.CE_UTF8))
 	C.SET_VECTOR_ELT(r, 0, packSEXP_types_Basic_int16(p.F1))
 	C.SET_STRING_ELT(names, 1, C.Rf_mkCharLenCE(C._GoStringPtr("Rname"), 5, C.CE_UTF8))
 	C.SET_VECTOR_ELT(r, 1, packSEXP_types_Basic_int16(p.F2))
 	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
-	C.Rf_unprotect(2)
 	return r
 }
 

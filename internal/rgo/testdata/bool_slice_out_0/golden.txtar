@@ -131,6 +131,7 @@ func packSEXP_Test0(p0 []bool) C.SEXP {
 func packSEXP_types_Slice___bool(p []bool) C.SEXP {
 	r := C.Rf_allocVector(C.LGLSXP, C.R_xlen_t(len(p)))
 	C.Rf_protect(r)
+	defer C.Rf_unprotect(1)
 	s := (*[140737488355328]bool)(unsafe.Pointer(C.LOGICAL(r)))[:len(p)]
 	for i, v := range p {
 		if v {
@@ -139,7 +140,6 @@ func packSEXP_types_Slice___bool(p []bool) C.SEXP {
 			s[i] = 0
 		}
 	}
-	C.Rf_unprotect(1)
 	return r
 }
 

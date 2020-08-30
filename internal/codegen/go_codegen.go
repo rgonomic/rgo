@@ -75,12 +75,13 @@ func Wrapped_{{$func.Name}}({{go "_R_" $params}}) C.SEXP {
 {{- $p := index $results 0}}	return packSEXP{{mangle $p.Type}}({{if $p.Name}}{{$p.Name}}{{else}}p0{{end -}})
 {{- else}}{{$resultNeedsList = true}}	r := C.allocVector(C.VECSXP, {{len $results}})
 	C.Rf_protect(r)
+	defer C.Rf_unprotect(1)
 	names := C.Rf_allocVector(C.STRSXP, {{len $results}})
 	C.Rf_protect(names)
+	defer C.Rf_unprotect(1)
 {{range $i, $p := $results}}{{$res := printf "r%d" $i}}{{if $p.Name}}{{$res = $p.Name}}{{end}}	C.SET_STRING_ELT(names, {{$i}}, C.Rf_mkCharLenCE(C._GoStringPtr("{{$res}}"), {{len $res}}, C.CE_UTF8))
 	C.SET_VECTOR_ELT(r, {{$i}}, packSEXP{{mangle $p.Type}}({{if $p.Name}}{{$p.Name}}{{else}}p{{$i}}{{end}}))
 {{end}}	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
-	C.Rf_unprotect(2)
 	return r{{end}}
 }
 {{end}}{{end}}

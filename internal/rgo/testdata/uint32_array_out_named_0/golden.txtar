@@ -135,9 +135,9 @@ func packSEXP_types_Array__4_uint32(p [4]uint32) C.SEXP {
 func packSEXP_types_Slice___uint32(p []uint32) C.SEXP {
 	r := C.Rf_allocVector(C.INTSXP, C.R_xlen_t(len(p)))
 	C.Rf_protect(r)
+	defer C.Rf_unprotect(1)
 	s := (*[140737488355328]uint32)(unsafe.Pointer(C.INTEGER(r)))[:len(p)]
 	copy(s, p)
-	C.Rf_unprotect(1)
 	return r
 }
 

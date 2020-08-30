@@ -157,6 +157,7 @@ func packSEXP_types_Slice_____float64(p [][]float64) C.SEXP {
 	n := len(p)
 	r := C.Rf_allocVector(C.VECSXP, C.R_xlen_t(n))
 	C.Rf_protect(r)
+	defer C.Rf_unprotect(1)
 	for i, v := range p {
 		if v == nil {
 			C.SET_VECTOR_ELT(r, C.R_xlen_t(i), C.R_NilValue)
@@ -164,16 +165,15 @@ func packSEXP_types_Slice_____float64(p [][]float64) C.SEXP {
 			C.SET_VECTOR_ELT(r, C.R_xlen_t(i), packSEXP_types_Slice___float64(v))
 		}
 	}
-	C.Rf_unprotect(1)
 	return r
 }
 
 func packSEXP_types_Slice___float64(p []float64) C.SEXP {
 	r := C.Rf_allocVector(C.REALSXP, C.R_xlen_t(len(p)))
 	C.Rf_protect(r)
+	defer C.Rf_unprotect(1)
 	s := (*[70368744177664]float64)(unsafe.Pointer(C.REAL(r)))[:len(p)]
 	copy(s, p)
-	C.Rf_unprotect(1)
 	return r
 }
 

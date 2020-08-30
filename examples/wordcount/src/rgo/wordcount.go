@@ -259,8 +259,10 @@ func packSEXP_types_Map_map_string_github_com_rgonomic_rgo_examples_wordcount_Wo
 	n := len(p)
 	r := C.Rf_allocVector(C.VECSXP, C.R_xlen_t(n))
 	C.Rf_protect(r)
+	defer C.Rf_unprotect(1)
 	names := C.Rf_allocVector(C.STRSXP, C.R_xlen_t(n))
 	C.Rf_protect(names)
+	defer C.Rf_unprotect(1)
 	var i C.R_xlen_t
 	for k, v := range p {
 		C.SET_STRING_ELT(names, i, C.Rf_mkCharLenCE(C._GoStringPtr(k), C.int(len(k)), C.CE_UTF8))
@@ -268,7 +270,6 @@ func packSEXP_types_Map_map_string_github_com_rgonomic_rgo_examples_wordcount_Wo
 		i++
 	}
 	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
-	C.Rf_unprotect(2)
 	return r
 }
 
@@ -276,8 +277,10 @@ func packSEXP_types_Map_map_string_int(p map[string]int) C.SEXP {
 	n := len(p)
 	r := C.Rf_allocVector(C.INTSXP, C.R_xlen_t(n))
 	C.Rf_protect(r)
+	defer C.Rf_unprotect(1)
 	names := C.Rf_allocVector(C.STRSXP, C.R_xlen_t(n))
 	C.Rf_protect(names)
+	defer C.Rf_unprotect(1)
 	s := (*[140737488355328]int32)(unsafe.Pointer(C.INTEGER(r)))[:len(p):len(p)]
 	var i C.R_xlen_t
 	for k, v := range p {
@@ -286,7 +289,6 @@ func packSEXP_types_Map_map_string_int(p map[string]int) C.SEXP {
 		i++
 	}
 	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
-	C.Rf_unprotect(2)
 	return r
 }
 
@@ -302,49 +304,51 @@ func packSEXP_types_Slice___github_com_rgonomic_rgo_examples_wordcount_Word(p []
 	n := len(p)
 	r := C.Rf_allocVector(C.VECSXP, C.R_xlen_t(n))
 	C.Rf_protect(r)
+	defer C.Rf_unprotect(1)
 	for i, v := range p {
 		C.SET_VECTOR_ELT(r, C.R_xlen_t(i), packSEXP_types_Named_github_com_rgonomic_rgo_examples_wordcount_Word(v))
 	}
-	C.Rf_unprotect(1)
 	return r
 }
 
 func packSEXP_types_Slice___string(p []string) C.SEXP {
 	r := C.Rf_allocVector(C.STRSXP, C.R_xlen_t(len(p)))
 	C.Rf_protect(r)
+	defer C.Rf_unprotect(1)
 	for i, v := range p {
 		s := C.Rf_mkCharLenCE(C._GoStringPtr(string(v)), C.int(len(v)), C.CE_UTF8)
 		C.SET_STRING_ELT(r, C.R_xlen_t(i), s)
 	}
-	C.Rf_unprotect(1)
 	return r
 }
 
 func packSEXP_types_Struct_struct_Count_int__rgo___count_____Length_int__rgo___length____(p struct{Count int "rgo:\"count\""; Length int "rgo:\"length\""}) C.SEXP {
 	r := C.Rf_allocVector(C.VECSXP, 2)
 	C.Rf_protect(r)
+	defer C.Rf_unprotect(1)
 	names := C.Rf_allocVector(C.STRSXP, 2)
 	C.Rf_protect(names)
+	defer C.Rf_unprotect(1)
 	C.SET_STRING_ELT(names, 0, C.Rf_mkCharLenCE(C._GoStringPtr("count"), 5, C.CE_UTF8))
 	C.SET_VECTOR_ELT(r, 0, packSEXP_types_Basic_int(p.Count))
 	C.SET_STRING_ELT(names, 1, C.Rf_mkCharLenCE(C._GoStringPtr("length"), 6, C.CE_UTF8))
 	C.SET_VECTOR_ELT(r, 1, packSEXP_types_Basic_int(p.Length))
 	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
-	C.Rf_unprotect(2)
 	return r
 }
 
 func packSEXP_types_Struct_struct_Text_string__rgo___word_____Length_int__rgo___length____(p struct{Text string "rgo:\"word\""; Length int "rgo:\"length\""}) C.SEXP {
 	r := C.Rf_allocVector(C.VECSXP, 2)
 	C.Rf_protect(r)
+	defer C.Rf_unprotect(1)
 	names := C.Rf_allocVector(C.STRSXP, 2)
 	C.Rf_protect(names)
+	defer C.Rf_unprotect(1)
 	C.SET_STRING_ELT(names, 0, C.Rf_mkCharLenCE(C._GoStringPtr("word"), 4, C.CE_UTF8))
 	C.SET_VECTOR_ELT(r, 0, packSEXP_types_Basic_string(p.Text))
 	C.SET_STRING_ELT(names, 1, C.Rf_mkCharLenCE(C._GoStringPtr("length"), 6, C.CE_UTF8))
 	C.SET_VECTOR_ELT(r, 1, packSEXP_types_Basic_int(p.Length))
 	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
-	C.Rf_unprotect(2)
 	return r
 }
 
