@@ -40,8 +40,8 @@ func RCallTemplate(words []string) *template.Template {
 {{end}}{{returns $func.Signature.Results}}{{seelso $pkg $func.Func}}
 #' @export
 {{snake $func.Func.Name}} <- function({{names false $params}}) {
-	{{range $p := $params}}{{typecheck $p}}
-	{{end}}.Call("{{snake $func.Func.Name}}"{{names true $params}}, PACKAGE = "{{base $pkg.Path}}")
+{{range $p := $params}}{{typecheck $p -}}
+{{- end}}	.Call("{{snake $func.Func.Name}}"{{names true $params}}, PACKAGE = "{{base $pkg.Path}}")
 }{{end}}
 `))
 }
@@ -129,26 +129,32 @@ func article(noun string, capital bool) string {
 }
 
 func typeCheck(p *types.Var) string {
-	rtyp, length, nilable := rTypeOf(p.Type())
+	typ := p.Type()
+	if typ, ok := typ.(*types.Basic); ok && typ.Kind() == types.UnsafePointer {
+		return ""
+	}
+	rtyp, length, nilable := rTypeOf(typ)
 	var check string
 	if nilable {
-		check = fmt.Sprintf(`if (!is.%[1]s(%[2]s) && !is.null(%[2]s)) {
+		check = fmt.Sprintf(`	if (!is.%[1]s(%[2]s) && !is.null(%[2]s)) {
 		stop("Argument '%[2]s' must be of type '%[1]s' or NULL.")
-	}`, rtyp, p.Name())
+	}
+`, rtyp, p.Name())
 	} else {
-		check = fmt.Sprintf(`if (!is.%[1]s(%[2]s)) {
+		check = fmt.Sprintf(`	if (!is.%[1]s(%[2]s)) {
 		stop("Argument '%[2]s' must be of type '%[1]s'.")
-	}`, rtyp, p.Name())
+	}
+`, rtyp, p.Name())
 	}
 	if length > 0 {
 		var plural string
 		if length != 1 {
 			plural = "s"
 		}
-		check += fmt.Sprintf(`
-	if (length(%[1]s) != %[2]d) {
+		check += fmt.Sprintf(`	if (length(%[1]s) != %[2]d) {
 		stop("Argument '%[1]s' must have %d element%s.")
-	}`, p.Name(), length, plural)
+	}
+`, p.Name(), length, plural)
 	}
 	return check
 }
@@ -201,7 +207,9 @@ func basicRtype(typ *types.Basic) string {
 		return "double"
 	case info&types.IsComplex != 0:
 		return "complex"
+	case typ.Kind() == types.UnsafePointer:
+		return "SEXP"
 	default:
-		panic(fmt.Sprintf("unhandled type: %s", typ))
+		panic(fmt.Sprintf("unhandled type: %#v", typ))
 	}
 }

@@ -88,6 +88,8 @@ func unpackBasic(buf *bytes.Buffer, typ *types.Basic) {
 		fmt.Fprintf(buf, "\treturn %s(unpackSEXP%s(p))\n", nameOf(typ), pkg.Mangle(types.Typ[types.Complex128]))
 	case types.String:
 		fmt.Fprintln(buf, "\treturn C.R_gostring(p, 0)")
+	case types.UnsafePointer:
+		fmt.Fprintln(buf, "\treturn unsafe.Pointer(p)")
 	default:
 		panic(fmt.Sprintf("unhandled type: %s", typ))
 	}

@@ -95,6 +95,8 @@ func packBasic(buf *bytes.Buffer, typ *types.Basic) {
 	case types.String:
 		fmt.Fprintln(buf, `	s := C.Rf_mkCharLenCE(C._GoStringPtr(p), C.int(len(p)), C.CE_UTF8)
 	return C.ScalarString(s)`)
+	case types.UnsafePointer:
+		fmt.Fprintln(buf, "\treturn C.SEXP(p)")
 	default:
 		panic(fmt.Sprintf("unhandled type: %s", typ))
 	}
