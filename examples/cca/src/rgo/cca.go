@@ -152,23 +152,23 @@ func packSEXP_types_Slice___float64(p []float64) C.SEXP {
 }
 
 func packSEXP_types_Struct_struct_Rows_int__Cols_int__Data___float64__Stride_int_(p struct{Rows int; Cols int; Data []float64; Stride int}) C.SEXP {
-	r := C.allocList(4)
+	r := C.Rf_allocVector(C.VECSXP, 4)
 	C.Rf_protect(r)
 	names := C.Rf_allocVector(C.STRSXP, 4)
 	C.Rf_protect(names)
-	arg := r
-	C.SET_STRING_ELT(names, 0, C.Rf_mkCharLenCE(C._GoStringPtr(`Rows`), 4, C.CE_UTF8))
-	C.SETCAR(arg, packSEXP_types_Basic_int(p.Rows))
-	arg = C.CDR(arg)
-	C.SET_STRING_ELT(names, 1, C.Rf_mkCharLenCE(C._GoStringPtr(`Cols`), 4, C.CE_UTF8))
-	C.SETCAR(arg, packSEXP_types_Basic_int(p.Cols))
-	arg = C.CDR(arg)
-	C.SET_STRING_ELT(names, 2, C.Rf_mkCharLenCE(C._GoStringPtr(`Data`), 4, C.CE_UTF8))
-	C.SETCAR(arg, packSEXP_types_Slice___float64(p.Data))
-	arg = C.CDR(arg)
-	C.SET_STRING_ELT(names, 3, C.Rf_mkCharLenCE(C._GoStringPtr(`Stride`), 6, C.CE_UTF8))
-	C.SETCAR(arg, packSEXP_types_Basic_int(p.Stride))
-	C.setAttrib(r, packSEXP_types_Basic_string(`names`), names)
+	C.SET_STRING_ELT(names, 0, C.Rf_mkCharLenCE(C._GoStringPtr("Rows"), 4, C.CE_UTF8))
+	C.SET_VECTOR_ELT(r, 0, packSEXP_types_Basic_int(p.Rows))
+	C.SET_STRING_ELT(names, 1, C.Rf_mkCharLenCE(C._GoStringPtr("Cols"), 4, C.CE_UTF8))
+	C.SET_VECTOR_ELT(r, 1, packSEXP_types_Basic_int(p.Cols))
+	C.SET_STRING_ELT(names, 2, C.Rf_mkCharLenCE(C._GoStringPtr("Data"), 4, C.CE_UTF8))
+	if v == nil {
+		C.SET_VECTOR_ELT(r, 2, C.R_NilValue)
+	} else {
+		C.SET_VECTOR_ELT(r, 2, packSEXP_types_Slice___float64(p.Data))
+	}
+	C.SET_STRING_ELT(names, 3, C.Rf_mkCharLenCE(C._GoStringPtr("Stride"), 6, C.CE_UTF8))
+	C.SET_VECTOR_ELT(r, 3, packSEXP_types_Basic_int(p.Stride))
+	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
 	C.Rf_unprotect(2)
 	return r
 }

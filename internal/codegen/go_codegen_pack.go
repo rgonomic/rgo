@@ -487,19 +487,32 @@ func packSlice(buf *bytes.Buffer, typ *types.Slice) {
 
 func packStruct(buf *bytes.Buffer, typ *types.Struct) {
 	n := typ.NumFields()
-	fmt.Fprintf(buf, "\tr := C.allocList(%d)\n\tC.Rf_protect(r)\n", n)
-	fmt.Fprintf(buf, "\tnames := C.Rf_allocVector(C.STRSXP, %d)\n\tC.Rf_protect(names)\n", n)
-	fmt.Fprintln(buf, "\targ := r")
+	fmt.Fprintf(buf, `	r := C.Rf_allocVector(C.VECSXP, %[1]d)
+	C.Rf_protect(r)
+	names := C.Rf_allocVector(C.STRSXP, %[1]d)
+	C.Rf_protect(names)
+`, n)
 	for i := 0; i < n; i++ {
 		f := typ.Field(i)
 		rName := targetFieldName(typ, i)
-		fmt.Fprintf(buf, "\tC.SET_STRING_ELT(names, %d, C.Rf_mkCharLenCE(C._GoStringPtr(`%s`), %d, C.CE_UTF8))\n", i, rName, len(rName))
-		fmt.Fprintf(buf, "\tC.SETCAR(arg, packSEXP%s(p.%s))\n", pkg.Mangle(f.Type()), f.Name())
-		if i < n-1 {
-			fmt.Fprintln(buf, "\targ = C.CDR(arg)")
+		elem := f.Type()
+		fmt.Fprintf(buf, `	C.SET_STRING_ELT(names, %[1]d, C.Rf_mkCharLenCE(C._GoStringPtr("%[2]s"), %[3]d, C.CE_UTF8))
+`, i, rName, len(rName))
+		if canBeNil(elem) {
+			fmt.Fprintf(buf, `	if v == nil {
+		C.SET_VECTOR_ELT(r, %[1]d, C.R_NilValue)
+	} else {
+		C.SET_VECTOR_ELT(r, %[1]d, packSEXP%[2]s(p.%[3]s))
+	}
+`, i, pkg.Mangle(elem), f.Name())
+		} else {
+			fmt.Fprintf(buf, `	C.SET_VECTOR_ELT(r, %[1]d, packSEXP%[2]s(p.%[3]s))
+`, i, pkg.Mangle(elem), f.Name())
 		}
 	}
-	fmt.Fprintln(buf, "\tC.setAttrib(r, packSEXP_types_Basic_string(`names`), names)\n\tC.Rf_unprotect(2)\n\treturn r")
+	fmt.Fprintln(buf, `	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
+	C.Rf_unprotect(2)
+	return r`)
 }
 
 var typeLabelTable = map[string]string{

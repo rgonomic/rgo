@@ -1,15 +1,13 @@
 func packSEXP_types_Struct_struct_F1_int32__rgo___Rname_____F2_int32_(p struct{F1 int32 "rgo:\"Rname\""; F2 int32}) C.SEXP {
-	r := C.allocList(2)
+	r := C.Rf_allocVector(C.VECSXP, 2)
 	C.Rf_protect(r)
 	names := C.Rf_allocVector(C.STRSXP, 2)
 	C.Rf_protect(names)
-	arg := r
-	C.SET_STRING_ELT(names, 0, C.Rf_mkCharLenCE(C._GoStringPtr(`Rname`), 5, C.CE_UTF8))
-	C.SETCAR(arg, packSEXP_types_Basic_int32(p.F1))
-	arg = C.CDR(arg)
-	C.SET_STRING_ELT(names, 1, C.Rf_mkCharLenCE(C._GoStringPtr(`F2`), 2, C.CE_UTF8))
-	C.SETCAR(arg, packSEXP_types_Basic_int32(p.F2))
-	C.setAttrib(r, packSEXP_types_Basic_string(`names`), names)
+	C.SET_STRING_ELT(names, 0, C.Rf_mkCharLenCE(C._GoStringPtr("Rname"), 5, C.CE_UTF8))
+	C.SET_VECTOR_ELT(r, 0, packSEXP_types_Basic_int32(p.F1))
+	C.SET_STRING_ELT(names, 1, C.Rf_mkCharLenCE(C._GoStringPtr("F2"), 2, C.CE_UTF8))
+	C.SET_VECTOR_ELT(r, 1, packSEXP_types_Basic_int32(p.F2))
+	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
 	C.Rf_unprotect(2)
 	return r
 }
