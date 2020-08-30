@@ -129,6 +129,9 @@ func packSEXP_Test0(res0 []uint32) C.SEXP {
 }
 
 func packSEXP_types_Slice___uint32(p []uint32) C.SEXP {
+	if p == nil {
+		return C.R_NilValue
+	}
 	r := C.Rf_allocVector(C.INTSXP, C.R_xlen_t(len(p)))
 	C.Rf_protect(r)
 	defer C.Rf_unprotect(1)

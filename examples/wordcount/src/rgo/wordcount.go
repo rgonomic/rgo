@@ -256,6 +256,9 @@ func packSEXP_types_Basic_string(p string) C.SEXP {
 }
 
 func packSEXP_types_Map_map_string_github_com_rgonomic_rgo_examples_wordcount_WordStats(p map[string]wordcount.WordStats) C.SEXP {
+	if p == nil {
+		return C.R_NilValue
+	}
 	n := len(p)
 	r := C.Rf_allocVector(C.VECSXP, C.R_xlen_t(n))
 	C.Rf_protect(r)
@@ -274,6 +277,9 @@ func packSEXP_types_Map_map_string_github_com_rgonomic_rgo_examples_wordcount_Wo
 }
 
 func packSEXP_types_Map_map_string_int(p map[string]int) C.SEXP {
+	if p == nil {
+		return C.R_NilValue
+	}
 	n := len(p)
 	r := C.Rf_allocVector(C.INTSXP, C.R_xlen_t(n))
 	C.Rf_protect(r)
@@ -301,6 +307,9 @@ func packSEXP_types_Named_github_com_rgonomic_rgo_examples_wordcount_WordStats(p
 }
 
 func packSEXP_types_Slice___github_com_rgonomic_rgo_examples_wordcount_Word(p []wordcount.Word) C.SEXP {
+	if p == nil {
+		return C.R_NilValue
+	}
 	n := len(p)
 	r := C.Rf_allocVector(C.VECSXP, C.R_xlen_t(n))
 	C.Rf_protect(r)
@@ -312,6 +321,9 @@ func packSEXP_types_Slice___github_com_rgonomic_rgo_examples_wordcount_Word(p []
 }
 
 func packSEXP_types_Slice___string(p []string) C.SEXP {
+	if p == nil {
+		return C.R_NilValue
+	}
 	r := C.Rf_allocVector(C.STRSXP, C.R_xlen_t(len(p)))
 	C.Rf_protect(r)
 	defer C.Rf_unprotect(1)

@@ -165,6 +165,9 @@ func packSEXP_types_Basic_string(p string) C.SEXP {
 }
 
 func packSEXP_types_Map_map_string___float64(p map[string][]float64) C.SEXP {
+	if p == nil {
+		return C.R_NilValue
+	}
 	n := len(p)
 	r := C.Rf_allocVector(C.VECSXP, C.R_xlen_t(n))
 	C.Rf_protect(r)
@@ -175,11 +178,7 @@ func packSEXP_types_Map_map_string___float64(p map[string][]float64) C.SEXP {
 	var i C.R_xlen_t
 	for k, v := range p {
 		C.SET_STRING_ELT(names, i, C.Rf_mkCharLenCE(C._GoStringPtr(k), C.int(len(k)), C.CE_UTF8))
-		if v == nil {
-			C.SET_VECTOR_ELT(r, i, C.R_NilValue)
-		} else {
-			C.SET_VECTOR_ELT(r, i, packSEXP_types_Slice___float64(v))
-		}
+		C.SET_VECTOR_ELT(r, i, packSEXP_types_Slice___float64(v))
 		i++
 	}
 	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
@@ -187,6 +186,9 @@ func packSEXP_types_Map_map_string___float64(p map[string][]float64) C.SEXP {
 }
 
 func packSEXP_types_Slice___float64(p []float64) C.SEXP {
+	if p == nil {
+		return C.R_NilValue
+	}
 	r := C.Rf_allocVector(C.REALSXP, C.R_xlen_t(len(p)))
 	C.Rf_protect(r)
 	defer C.Rf_unprotect(1)

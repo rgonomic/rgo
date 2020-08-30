@@ -73,6 +73,9 @@ func unpackSEXP_types_Slice___float64(p C.SEXP) []float64 {
 }
 
 func packSEXP_types_Slice___float64(p []float64) C.SEXP {
+	if p == nil {
+		return C.R_NilValue
+	}
 	r := C.Rf_allocVector(C.REALSXP, C.R_xlen_t(len(p)))
 	C.Rf_protect(r)
 	defer C.Rf_unprotect(1)

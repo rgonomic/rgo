@@ -154,21 +154,23 @@ func unpackSEXP_types_Slice___float64(p C.SEXP) []float64 {
 }
 
 func packSEXP_types_Slice_____float64(p [][]float64) C.SEXP {
+	if p == nil {
+		return C.R_NilValue
+	}
 	n := len(p)
 	r := C.Rf_allocVector(C.VECSXP, C.R_xlen_t(n))
 	C.Rf_protect(r)
 	defer C.Rf_unprotect(1)
 	for i, v := range p {
-		if v == nil {
-			C.SET_VECTOR_ELT(r, C.R_xlen_t(i), C.R_NilValue)
-		} else {
-			C.SET_VECTOR_ELT(r, C.R_xlen_t(i), packSEXP_types_Slice___float64(v))
-		}
+		C.SET_VECTOR_ELT(r, C.R_xlen_t(i), packSEXP_types_Slice___float64(v))
 	}
 	return r
 }
 
 func packSEXP_types_Slice___float64(p []float64) C.SEXP {
+	if p == nil {
+		return C.R_NilValue
+	}
 	r := C.Rf_allocVector(C.REALSXP, C.R_xlen_t(len(p)))
 	C.Rf_protect(r)
 	defer C.Rf_unprotect(1)

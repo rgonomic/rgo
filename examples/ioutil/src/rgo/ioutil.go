@@ -70,6 +70,9 @@ func packSEXP_types_Named_error(p error) C.SEXP {
 }
 
 func packSEXP_types_Slice___uint8(p []uint8) C.SEXP {
+	if p == nil {
+		return C.R_NilValue
+	}
 	r := C.Rf_allocVector(C.RAWSXP, C.R_xlen_t(len(p)))
 	C.Rf_protect(r)
 	defer C.Rf_unprotect(1)

@@ -138,6 +138,9 @@ func packSEXP_types_Basic_string(p string) C.SEXP {
 }
 
 func packSEXP_types_Map_map_string_complex64(p map[string]complex64) C.SEXP {
+	if p == nil {
+		return C.R_NilValue
+	}
 	n := len(p)
 	r := C.Rf_allocVector(C.CPLXSXP, C.R_xlen_t(n))
 	C.Rf_protect(r)

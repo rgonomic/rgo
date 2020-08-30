@@ -133,6 +133,9 @@ func packSEXP_types_Array__4_string(p [4]string) C.SEXP {
 }
 
 func packSEXP_types_Slice___string(p []string) C.SEXP {
+	if p == nil {
+		return C.R_NilValue
+	}
 	r := C.Rf_allocVector(C.STRSXP, C.R_xlen_t(len(p)))
 	C.Rf_protect(r)
 	defer C.Rf_unprotect(1)

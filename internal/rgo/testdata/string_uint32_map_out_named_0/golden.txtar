@@ -138,6 +138,9 @@ func packSEXP_types_Basic_uint32(p uint32) C.SEXP {
 }
 
 func packSEXP_types_Map_map_string_uint32(p map[string]uint32) C.SEXP {
+	if p == nil {
+		return C.R_NilValue
+	}
 	n := len(p)
 	r := C.Rf_allocVector(C.INTSXP, C.R_xlen_t(n))
 	C.Rf_protect(r)

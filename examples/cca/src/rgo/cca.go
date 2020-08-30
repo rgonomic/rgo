@@ -144,6 +144,9 @@ func packSEXP_types_Named_gonum_org_v1_gonum_blas_blas64_GeneralCols(p blas64.Ge
 }
 
 func packSEXP_types_Slice___float64(p []float64) C.SEXP {
+	if p == nil {
+		return C.R_NilValue
+	}
 	r := C.Rf_allocVector(C.REALSXP, C.R_xlen_t(len(p)))
 	C.Rf_protect(r)
 	defer C.Rf_unprotect(1)
@@ -164,11 +167,7 @@ func packSEXP_types_Struct_struct_Rows_int__Cols_int__Data___float64__Stride_int
 	C.SET_STRING_ELT(names, 1, C.Rf_mkCharLenCE(C._GoStringPtr("Cols"), 4, C.CE_UTF8))
 	C.SET_VECTOR_ELT(r, 1, packSEXP_types_Basic_int(p.Cols))
 	C.SET_STRING_ELT(names, 2, C.Rf_mkCharLenCE(C._GoStringPtr("Data"), 4, C.CE_UTF8))
-	if p.Data == nil {
-		C.SET_VECTOR_ELT(r, 2, C.R_NilValue)
-	} else {
-		C.SET_VECTOR_ELT(r, 2, packSEXP_types_Slice___float64(p.Data))
-	}
+	C.SET_VECTOR_ELT(r, 2, packSEXP_types_Slice___float64(p.Data))
 	C.SET_STRING_ELT(names, 3, C.Rf_mkCharLenCE(C._GoStringPtr("Stride"), 6, C.CE_UTF8))
 	C.SET_VECTOR_ELT(r, 3, packSEXP_types_Basic_int(p.Stride))
 	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
