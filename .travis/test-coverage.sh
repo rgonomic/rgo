@@ -34,7 +34,7 @@ testCover() {
 echo "mode: ${MODE}" > $ACC_OUT
 
 # Run test coverage on all directories.
-find . -type d -not -path '*testdata*' | while read d; do testCover $d || exit; done
+find . -type d -not -path '*testdata*' -and -not -path '*examples*' | while read d; do testCover $d || exit; done
 
 # Upload the coverage profile to coveralls.io
 [ -n "$COVERALLS_TOKEN" ] && ( goveralls -coverprofile=$ACC_OUT || echo -e '\n\e[31mCoveralls failed.\n' )
