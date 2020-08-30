@@ -168,6 +168,8 @@ Currently the extraction of type identities is weaker than it should be. This wi
 
 Data exchange between R and Go depends on Cgo calls and so is not free. The exact performance impact depends on the type due to R's baroque type system and its implementation; briefly though, R vectors that have a direct correspondence with Go scalar types or slices will perform the best (`integer` and `int32`/`uint32`, `double` and `float64`, `complex` and `complex128`, and `raw` and `int8`/`uint8`). To check the likely performance of data exchange, look at the generated Go code in the `src/rgo` directory of the package you are building. The generated code is intended to be reasonably human readable.
 
+R does not know how to unload so libraries, so once loaded it is there until the session is restarted.
+
 ## Input parameter mutation
 
 For types that have direct memory layout equivalents between Go and R (`raw` and`[]int8`/`[]uint8`, `integer` and `[]int32`/`[]uint32`, `double` and `[]float64`, and `complex` and`[]complex128`) the vector is passed directly to Go. This means that the Go code can mutate elements. This needs to be considered when writing Go code that works on slices to avoid unwanted mutation of R values that are passed to Go. It can also be used for allocation free work on R vectors. Values passed back to R from Go are copied to satisfy Go's runtime restrictions on pointer passing.
