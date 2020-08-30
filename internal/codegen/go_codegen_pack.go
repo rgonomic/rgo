@@ -499,7 +499,7 @@ func packStruct(buf *bytes.Buffer, typ *types.Struct) {
 		fmt.Fprintf(buf, `	C.SET_STRING_ELT(names, %[1]d, C.Rf_mkCharLenCE(C._GoStringPtr("%[2]s"), %[3]d, C.CE_UTF8))
 `, i, rName, len(rName))
 		if canBeNil(elem) {
-			fmt.Fprintf(buf, `	if v == nil {
+			fmt.Fprintf(buf, `	if p.%[3]s == nil {
 		C.SET_VECTOR_ELT(r, %[1]d, C.R_NilValue)
 	} else {
 		C.SET_VECTOR_ELT(r, %[1]d, packSEXP%[2]s(p.%[3]s))

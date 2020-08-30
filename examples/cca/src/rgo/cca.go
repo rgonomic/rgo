@@ -161,7 +161,7 @@ func packSEXP_types_Struct_struct_Rows_int__Cols_int__Data___float64__Stride_int
 	C.SET_STRING_ELT(names, 1, C.Rf_mkCharLenCE(C._GoStringPtr("Cols"), 4, C.CE_UTF8))
 	C.SET_VECTOR_ELT(r, 1, packSEXP_types_Basic_int(p.Cols))
 	C.SET_STRING_ELT(names, 2, C.Rf_mkCharLenCE(C._GoStringPtr("Data"), 4, C.CE_UTF8))
-	if v == nil {
+	if p.Data == nil {
 		C.SET_VECTOR_ELT(r, 2, C.R_NilValue)
 	} else {
 		C.SET_VECTOR_ELT(r, 2, packSEXP_types_Slice___float64(p.Data))
