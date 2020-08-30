@@ -75,6 +75,9 @@ GoString R_gostring(SEXP x, R_xlen_t i) {
 int getListElementIndex(SEXP list, const char *str) {
 	int index = -1;
 	SEXP names = getAttrib(list, R_NamesSymbol);
+	if (!isString(names)) {
+		return index;
+	}
 	for (int i = 0; i < length(list); i++) {
 		if (strcmp(CHAR(STRING_ELT(names, i)), str) == 0) {
 			index = i;
@@ -144,6 +147,9 @@ func unpackSEXP_types_Map_map_string_int16(p C.SEXP) map[string]int16 {
 	n := int(C.Rf_xlength(p))
 	r := make(map[string]int16, n)
 	names := C.getAttrib(p, C.R_NamesSymbol)
+	if names == C.R_NilValue {
+		panic("no names attribute for map keys")
+	}
 	values := (*[140737488355328]int32)(unsafe.Pointer(C.INTEGER(p)))[:n:n]
 	for i, elem := range values {
 		key := string(C.R_gostring(names, C.R_xlen_t(i)))

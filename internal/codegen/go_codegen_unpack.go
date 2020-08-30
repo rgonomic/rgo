@@ -109,6 +109,9 @@ func unpackMap(buf *bytes.Buffer, typ *types.Map) {
 			fmt.Fprintf(buf, `	n := int(C.Rf_xlength(p))
 	r := make(map[string]%[2]s, n)
 	names := C.getAttrib(p, C.R_NamesSymbol)
+	if names == C.R_NilValue {
+		panic("no names attribute for map keys")
+	}
 	values := (*[%[1]d]int32)(unsafe.Pointer(C.INTEGER(p)))[:n:n]
 	for i, elem := range values {
 		key := string(C.R_gostring(names, C.R_xlen_t(i)))
@@ -122,6 +125,9 @@ func unpackMap(buf *bytes.Buffer, typ *types.Map) {
 			type a [1 << 49]byte
 			fmt.Fprintf(buf, `	n := int(C.Rf_xlength(p))
 	r := make(map[string]%[2]s, n)
+	if names == C.R_NilValue {
+		panic("no names attribute for map keys")
+	}
 	names := C.getAttrib(p, C.R_NamesSymbol)
 	values := (*[%[1]d]%[2]s)(unsafe.Pointer(C.RAW(p)))[:n:n]
 	for i, elem := range values {
@@ -137,6 +143,9 @@ func unpackMap(buf *bytes.Buffer, typ *types.Map) {
 			fmt.Fprintf(buf, `	n := int(C.Rf_xlength(p))
 	r := make(map[string]%[2]s, n)
 	names := C.getAttrib(p, C.R_NamesSymbol)
+	if names == C.R_NilValue {
+		panic("no names attribute for map keys")
+	}
 	values := (*[%[1]d]float64)(unsafe.Pointer(C.REAL(p)))[:n:n]
 	for i, elem := range values {
 		key := string(C.R_gostring(names, C.R_xlen_t(i)))
@@ -151,6 +160,9 @@ func unpackMap(buf *bytes.Buffer, typ *types.Map) {
 			fmt.Fprintf(buf, `	n := int(C.Rf_xlength(p))
 	r := make(map[string]%[2]s, n)
 	names := C.getAttrib(p, C.R_NamesSymbol)
+	if names == C.R_NilValue {
+		panic("no names attribute for map keys")
+	}
 	values := (*[%[1]d]complex128)(unsafe.Pointer(C.COMPLEX(p)))[:n:n]
 	for i, elem := range values {
 		key := string(C.R_gostring(names, C.R_xlen_t(i)))
@@ -165,6 +177,9 @@ func unpackMap(buf *bytes.Buffer, typ *types.Map) {
 			fmt.Fprintf(buf, `	n := int(C.Rf_xlength(p))
 	r := make(map[string]%[2]s, n)
 	names := C.getAttrib(p, C.R_NamesSymbol)
+	if names == C.R_NilValue {
+		panic("no names attribute for map keys")
+	}
 	values := (*[%[1]d]int32)(unsafe.Pointer(C.LOGICAL(p)))[:n:n]
 	for i, elem := range values {
 		key := string(C.R_gostring(names, C.R_xlen_t(i)))
@@ -177,6 +192,9 @@ func unpackMap(buf *bytes.Buffer, typ *types.Map) {
 			fmt.Fprintf(buf, `	n := int(C.Rf_xlength(p))
 	r := make(map[string]%[1]s, n)
 	names := C.getAttrib(p, C.R_NamesSymbol)
+	if names == C.R_NilValue {
+		panic("no names attribute for map keys")
+	}
 	for i := 0; i < n; i++ {
 		key := string(C.R_gostring(names, C.R_xlen_t(i)))
 		r[key] = %[1]s(C.R_gostring(p, C.R_xlen_t(i)))
@@ -190,6 +208,9 @@ func unpackMap(buf *bytes.Buffer, typ *types.Map) {
 	fmt.Fprintf(buf, `	n := int(C.Rf_xlength(p))
 	r := make(map[string]%s, n)
 	names := C.getAttrib(p, C.R_NamesSymbol)
+	if names == C.R_NilValue {
+		panic("no names attribute for map keys")
+	}
 	for i := 0; i < n; i++ {
 		key := string(C.R_gostring(names, C.R_xlen_t(i)))
 		r[key] = unpackSEXP%s(C.VECTOR_ELT(p, C.R_xlen_t(i)))
@@ -331,7 +352,7 @@ func unpackStruct(buf *bytes.Buffer, typ *types.Struct) {
 	defer C.free(unsafe.Pointer(key_%[1]s))
 	i = C.getListElementIndex(p, key_%[1]s)
 	if i < 0 {
-		panic("no list element for field: %[2]s")
+		panic("no list element name for field: %[2]s")
 	}
 	r.%[2]s = unpackSEXP%s(C.VECTOR_ELT(p, C.R_xlen_t(i)))
 `, targetFieldName(typ, i), f.Name(), pkg.Mangle(f.Type()))

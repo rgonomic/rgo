@@ -75,6 +75,9 @@ GoString R_gostring(SEXP x, R_xlen_t i) {
 int getListElementIndex(SEXP list, const char *str) {
 	int index = -1;
 	SEXP names = getAttrib(list, R_NamesSymbol);
+	if (!isString(names)) {
+		return index;
+	}
 	for (int i = 0; i < length(list); i++) {
 		if (strcmp(CHAR(STRING_ELT(names, i)), str) == 0) {
 			index = i;
@@ -148,14 +151,14 @@ func unpackSEXP_types_Struct_struct_F1_int8__F2_int8__rgo___Rname____(p C.SEXP) 
 	defer C.free(unsafe.Pointer(key_F1))
 	i = C.getListElementIndex(p, key_F1)
 	if i < 0 {
-		panic("no list element for field: F1")
+		panic("no list element name for field: F1")
 	}
 	r.F1 = unpackSEXP_types_Basic_int8(C.VECTOR_ELT(p, C.R_xlen_t(i)))
 	key_Rname := C.CString("Rname")
 	defer C.free(unsafe.Pointer(key_Rname))
 	i = C.getListElementIndex(p, key_Rname)
 	if i < 0 {
-		panic("no list element for field: F2")
+		panic("no list element name for field: F2")
 	}
 	r.F2 = unpackSEXP_types_Basic_int8(C.VECTOR_ELT(p, C.R_xlen_t(i)))
 	return r

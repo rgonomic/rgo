@@ -4,6 +4,9 @@ func unpackSEXP_types_Map_map_string_uint8(p C.SEXP) map[string]uint8 {
 	}
 	n := int(C.Rf_xlength(p))
 	r := make(map[string]uint8, n)
+	if names == C.R_NilValue {
+		panic("no names attribute for map keys")
+	}
 	names := C.getAttrib(p, C.R_NamesSymbol)
 	values := (*[562949953421312]uint8)(unsafe.Pointer(C.RAW(p)))[:n:n]
 	for i, elem := range values {

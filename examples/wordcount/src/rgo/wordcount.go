@@ -151,6 +151,9 @@ func unpackSEXP_types_Map_map_string_github_com_rgonomic_rgo_examples_wordcount_
 	n := int(C.Rf_xlength(p))
 	r := make(map[string]wordcount.WordStats, n)
 	names := C.getAttrib(p, C.R_NamesSymbol)
+	if names == C.R_NilValue {
+		panic("no names attribute for map keys")
+	}
 	for i := 0; i < n; i++ {
 		key := string(C.R_gostring(names, C.R_xlen_t(i)))
 		r[key] = unpackSEXP_types_Named_github_com_rgonomic_rgo_examples_wordcount_WordStats(C.VECTOR_ELT(p, C.R_xlen_t(i)))
@@ -205,14 +208,14 @@ func unpackSEXP_types_Struct_struct_Count_int__rgo___count_____Length_int__rgo__
 	defer C.free(unsafe.Pointer(key_count))
 	i = C.getListElementIndex(p, key_count)
 	if i < 0 {
-		panic("no list element for field: Count")
+		panic("no list element name for field: Count")
 	}
 	r.Count = unpackSEXP_types_Basic_int(C.VECTOR_ELT(p, C.R_xlen_t(i)))
 	key_length := C.CString("length")
 	defer C.free(unsafe.Pointer(key_length))
 	i = C.getListElementIndex(p, key_length)
 	if i < 0 {
-		panic("no list element for field: Length")
+		panic("no list element name for field: Length")
 	}
 	r.Length = unpackSEXP_types_Basic_int(C.VECTOR_ELT(p, C.R_xlen_t(i)))
 	return r
@@ -233,14 +236,14 @@ func unpackSEXP_types_Struct_struct_Text_string__rgo___word_____Length_int__rgo_
 	defer C.free(unsafe.Pointer(key_word))
 	i = C.getListElementIndex(p, key_word)
 	if i < 0 {
-		panic("no list element for field: Text")
+		panic("no list element name for field: Text")
 	}
 	r.Text = unpackSEXP_types_Basic_string(C.VECTOR_ELT(p, C.R_xlen_t(i)))
 	key_length := C.CString("length")
 	defer C.free(unsafe.Pointer(key_length))
 	i = C.getListElementIndex(p, key_length)
 	if i < 0 {
-		panic("no list element for field: Length")
+		panic("no list element name for field: Length")
 	}
 	r.Length = unpackSEXP_types_Basic_int(C.VECTOR_ELT(p, C.R_xlen_t(i)))
 	return r

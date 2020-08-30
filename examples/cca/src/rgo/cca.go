@@ -96,28 +96,28 @@ func unpackSEXP_types_Struct_struct_Rows_int__Cols_int__Data___float64__Stride_i
 	defer C.free(unsafe.Pointer(key_Rows))
 	i = C.getListElementIndex(p, key_Rows)
 	if i < 0 {
-		panic("no list element for field: Rows")
+		panic("no list element name for field: Rows")
 	}
 	r.Rows = unpackSEXP_types_Basic_int(C.VECTOR_ELT(p, C.R_xlen_t(i)))
 	key_Cols := C.CString("Cols")
 	defer C.free(unsafe.Pointer(key_Cols))
 	i = C.getListElementIndex(p, key_Cols)
 	if i < 0 {
-		panic("no list element for field: Cols")
+		panic("no list element name for field: Cols")
 	}
 	r.Cols = unpackSEXP_types_Basic_int(C.VECTOR_ELT(p, C.R_xlen_t(i)))
 	key_Data := C.CString("Data")
 	defer C.free(unsafe.Pointer(key_Data))
 	i = C.getListElementIndex(p, key_Data)
 	if i < 0 {
-		panic("no list element for field: Data")
+		panic("no list element name for field: Data")
 	}
 	r.Data = unpackSEXP_types_Slice___float64(C.VECTOR_ELT(p, C.R_xlen_t(i)))
 	key_Stride := C.CString("Stride")
 	defer C.free(unsafe.Pointer(key_Stride))
 	i = C.getListElementIndex(p, key_Stride)
 	if i < 0 {
-		panic("no list element for field: Stride")
+		panic("no list element name for field: Stride")
 	}
 	r.Stride = unpackSEXP_types_Basic_int(C.VECTOR_ELT(p, C.R_xlen_t(i)))
 	return r

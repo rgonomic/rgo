@@ -5,6 +5,9 @@ func unpackSEXP_types_Map_map_string_string(p C.SEXP) map[string]string {
 	n := int(C.Rf_xlength(p))
 	r := make(map[string]string, n)
 	names := C.getAttrib(p, C.R_NamesSymbol)
+	if names == C.R_NilValue {
+		panic("no names attribute for map keys")
+	}
 	for i := 0; i < n; i++ {
 		key := string(C.R_gostring(names, C.R_xlen_t(i)))
 		r[key] = string(C.R_gostring(p, C.R_xlen_t(i)))
