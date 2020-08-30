@@ -158,14 +158,14 @@ func Analyse(path, allowed string, verbose bool) (*Info, error) {
 
 // TODO(kortschak): Handle recursive type definitions correctly.
 
-func checkType(typ, named types.Type, warnRefs bool) error {
+func checkType(typ, named types.Type, parameters bool) error {
 	switch typ := typ.(type) {
 	case *types.Named:
-		return checkType(typ.Underlying(), typ, warnRefs)
+		return checkType(typ.Underlying(), typ, parameters)
 
 	case *types.Array:
 		elem := typ.Elem()
-		return checkType(elem, elem, warnRefs)
+		return checkType(elem, elem, parameters)
 
 	case *types.Basic:
 		switch kind := typ.Kind(); kind {
@@ -198,18 +198,18 @@ func checkType(typ, named types.Type, warnRefs bool) error {
 			return fmt.Errorf("unhandled non-string keyed map type %s (%s)", named, typ)
 		}
 		elem := typ.Elem()
-		err := checkType(elem, elem, warnRefs)
+		err := checkType(elem, elem, parameters)
 		if err != nil {
 			return err
 		}
 
 	case *types.Pointer:
 		elem := typ.Elem()
-		err := checkType(elem, elem, warnRefs)
+		err := checkType(elem, elem, parameters)
 		if err != nil {
 			return err
 		}
-		if !warnRefs {
+		if !parameters {
 			break
 		}
 		if typ == named {
@@ -226,11 +226,11 @@ func checkType(typ, named types.Type, warnRefs bool) error {
 
 	case *types.Slice:
 		elem := typ.Elem()
-		err := checkType(elem, elem, warnRefs)
+		err := checkType(elem, elem, parameters)
 		if err != nil {
 			return err
 		}
-		if !warnRefs {
+		if !parameters {
 			break
 		}
 		if typ == named {
@@ -242,7 +242,7 @@ func checkType(typ, named types.Type, warnRefs bool) error {
 	case *types.Struct:
 		for i := 0; i < typ.NumFields(); i++ {
 			f := typ.Field(i).Type()
-			err := checkType(f, f, warnRefs)
+			err := checkType(f, f, parameters)
 			if err != nil {
 				return err
 			}
@@ -250,8 +250,12 @@ func checkType(typ, named types.Type, warnRefs bool) error {
 
 	case *types.Tuple:
 		for i := 0; i < typ.Len(); i++ {
-			f := typ.At(i).Type()
-			err := checkType(f, f, warnRefs)
+			f := typ.At(i)
+			if parameters && (f.Name() == "" || f.Name() == "_") {
+				return fmt.Errorf("unhandled function with blank parameter name %q", f)
+			}
+			typ := f.Type()
+			err := checkType(typ, typ, parameters)
 			if err != nil {
 				return err
 			}
