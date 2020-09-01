@@ -22,8 +22,8 @@ import (
 	"github.com/rgonomic/rgo/examples/sexp"
 )
 
-//export Wrapped_PrintSEXPHeader
-func Wrapped_PrintSEXPHeader(_R_sexp C.SEXP) C.SEXP {
+//export Wrapped_PrintSEXP
+func Wrapped_PrintSEXP(_R_p C.SEXP) C.SEXP {
 	defer func() {
 		r := recover()
 		if r != nil {
@@ -33,12 +33,12 @@ func Wrapped_PrintSEXPHeader(_R_sexp C.SEXP) C.SEXP {
 		}
 	}()
 
-	_p0 := unpackSEXP_types_Basic_unsafe_Pointer(_R_sexp)
-	_r0 := sexp.PrintSEXPHeader(_p0)
-	return packSEXP_PrintSEXPHeader(_r0)
+	_p0 := unpackSEXP_types_Basic_unsafe_Pointer(_R_p)
+	_r0 := sexp.PrintSEXP(_p0)
+	return packSEXP_PrintSEXP(_r0)
 }
 
-func packSEXP_PrintSEXPHeader(p0 unsafe.Pointer) C.SEXP {
+func packSEXP_PrintSEXP(p0 unsafe.Pointer) C.SEXP {
 	return packSEXP_types_Basic_unsafe_Pointer(p0)
 }
 

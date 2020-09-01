@@ -2,15 +2,15 @@
 
 #' @useDynLib sexp
 
-#' print_sexp_header
+#' print_sexp
 #'
-#' PrintSEXPHeader prints the header of the SEXP value passed to it in
-#' Go syntax and returns it unaltered.
+#' PrintSEXP prints the SEXP value passed to it and returns it unaltered.
+#' If the value is an atomic vector, its contents are printed.
 #' 
-#' @param sexp is a scalar SEXP
+#' @param p is a scalar SEXP
 #' @return A scalar SEXP
-#' @seelso <https://godoc.org/github.com/rgonomic/rgo/examples/sexp#PrintSEXPHeader>
+#' @seelso <https://godoc.org/github.com/rgonomic/rgo/examples/sexp#PrintSEXP>
 #' @export
-print_sexp_header <- function(sexp) {
-	.Call("print_sexp_header", sexp, PACKAGE = "sexp")
+print_sexp <- function(p) {
+	.Call("print_sexp", p, PACKAGE = "sexp")
 }
