@@ -34,6 +34,6 @@ int getListElementIndex(SEXP list, const char *str) {
 	return index;
 }
 
-SEXP print_sexp_header(SEXP sexp) {
-	return Wrapped_PrintSEXPHeader(sexp);
+SEXP print_sexp(SEXP p) {
+	return Wrapped_PrintSEXP(p);
 }
