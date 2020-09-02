@@ -83,19 +83,89 @@ func (i Info) mask(offset, bits int) uint64 {
 // Type is the SEXPTYPE enum defined in Rinternals.h.
 type Type byte
 
-// Value is an SEXP value.
-type Value struct {
-	sexprec
-}
-
 // Info returns the information field of the SEXP value.
-func (v *Value) Info() Info {
+func (v *sexprec) Info() Info {
 	return *(*Info)(unsafe.Pointer(&v.Sxpinfo))
 }
 
 // Attributes returns the attributes of the SEXP value.
 func (v *sexprec) Attributes() *Value {
 	return (*Value)(unsafe.Pointer(&v.Attrib))
+}
+
+// Info returns the information field of the SEXP value.
+func (v *vector_sexprec) Info() Info {
+	return *(*Info)(unsafe.Pointer(&v.Sxpinfo))
+}
+
+// Attributes returns the attributes of the SEXP value.
+func (v *vector_sexprec) Attributes() *Value {
+	return (*Value)(unsafe.Pointer(&v.Attrib))
+}
+
+// Info returns the information field of the SEXP value.
+func (v *list_sexprec) Info() Info {
+	return *(*Info)(unsafe.Pointer(&v.Sxpinfo))
+}
+
+// Attributes returns the attributes of the SEXP value.
+func (v *list_sexprec) Attributes() *Value {
+	return (*Value)(unsafe.Pointer(&v.Attrib))
+}
+
+// Info returns the information field of the SEXP value.
+func (v *env_sexprec) Info() Info {
+	return *(*Info)(unsafe.Pointer(&v.Sxpinfo))
+}
+
+// Attributes returns the attributes of the SEXP value.
+func (v *env_sexprec) Attributes() *Value {
+	return (*Value)(unsafe.Pointer(&v.Attrib))
+}
+
+// Info returns the information field of the SEXP value.
+func (v *prom_sexprec) Info() Info {
+	return *(*Info)(unsafe.Pointer(&v.Sxpinfo))
+}
+
+// Attributes returns the attributes of the SEXP value.
+func (v *prom_sexprec) Attributes() *Value {
+	return (*Value)(unsafe.Pointer(&v.Attrib))
+}
+
+// Info returns the information field of the SEXP value.
+func (v *clo_sexprec) Info() Info {
+	return *(*Info)(unsafe.Pointer(&v.Sxpinfo))
+}
+
+// Attributes returns the attributes of the SEXP value.
+func (v *clo_sexprec) Attributes() *Value {
+	return (*Value)(unsafe.Pointer(&v.Attrib))
+}
+
+// Info returns the information field of the SEXP value.
+func (v *prim_sexprec) Info() Info {
+	return *(*Info)(unsafe.Pointer(&v.Sxpinfo))
+}
+
+// Attributes returns the attributes of the SEXP value.
+func (v *prim_sexprec) Attributes() *Value {
+	return (*Value)(unsafe.Pointer(&v.Attrib))
+}
+
+// Info returns the information field of the SEXP value.
+func (v *sym_sexprec) Info() Info {
+	return *(*Info)(unsafe.Pointer(&v.Sxpinfo))
+}
+
+// Attributes returns the attributes of the SEXP value.
+func (v *sym_sexprec) Attributes() *Value {
+	return (*Value)(unsafe.Pointer(&v.Attrib))
+}
+
+// Value is an SEXP value.
+type Value struct {
+	sexprec
 }
 
 // Interface returns a Go value corresponding to the SEXP type specified
@@ -105,21 +175,21 @@ func (v *Value) Interface() interface{} {
 	case NILSXP:
 		return v
 	case SYMSXP:
-		return (*sym_sexprec)(unsafe.Pointer(v))
+		return (*Symbol)(unsafe.Pointer(v))
 	case LISTSXP:
-		return (*list_sexprec)(unsafe.Pointer(v))
+		return (*List)(unsafe.Pointer(v))
 	case CLOSXP:
-		return (*clo_sexprec)(unsafe.Pointer(v))
+		return (*Closure)(unsafe.Pointer(v))
 	case ENVSXP:
-		return (*env_sexprec)(unsafe.Pointer(v))
+		return (*Environment)(unsafe.Pointer(v))
 	case PROMSXP:
-		return (*prom_sexprec)(unsafe.Pointer(v))
+		return (*Promise)(unsafe.Pointer(v))
 	case LANGSXP:
-		return (*list_sexprec)(unsafe.Pointer(v))
+		return (*Lang)(unsafe.Pointer(v))
 	case SPECIALSXP:
-		return (*prim_sexprec)(unsafe.Pointer(v))
+		return (*Special)(unsafe.Pointer(v))
 	case BUILTINSXP:
-		return (*prim_sexprec)(unsafe.Pointer(v))
+		return (*Builtin)(unsafe.Pointer(v))
 	case CHARSXP:
 		return (*Character)(unsafe.Pointer(v))
 	case LGLSXP:
@@ -133,19 +203,19 @@ func (v *Value) Interface() interface{} {
 	case STRSXP:
 		return (*String)(unsafe.Pointer(v))
 	case DOTSXP:
-		return (*list_sexprec)(unsafe.Pointer(v))
+		return (*Dot)(unsafe.Pointer(v))
 	case ANYSXP:
 		return v
 	case VECSXP:
 		return (*Vector)(unsafe.Pointer(v))
 	case EXPRSXP:
-		return (*vector_sexprec)(unsafe.Pointer(v))
+		return (*Expression)(unsafe.Pointer(v))
 	case BCODESXP:
 		return v
 	case EXTPTRSXP:
 		return v
 	case WEAKREFSXP:
-		return (*vector_sexprec)(unsafe.Pointer(v))
+		return (*WeakReference)(unsafe.Pointer(v))
 	case RAWSXP:
 		return (*Raw)(unsafe.Pointer(v))
 	case S4SXP:
@@ -173,11 +243,6 @@ func (v *vector_sexprec) base() unsafe.Pointer {
 
 func add(addr unsafe.Pointer, offset uintptr) unsafe.Pointer {
 	return unsafe.Pointer(uintptr(addr) + offset)
-}
-
-// Attributes returns the attributes of the SEXP value.
-func (v *vector_sexprec) Attributes() *Value {
-	return (*Value)(unsafe.Pointer(&v.Attrib))
 }
 
 // Integer is an R integer vector.
@@ -272,4 +337,186 @@ type Vector struct {
 func (v *Vector) Vector() []*Value {
 	n := v.Len()
 	return (*[1 << 30]*Value)(v.base())[:n:n]
+}
+
+// Expression is an R expression.
+type Expression struct {
+	vector_sexprec
+}
+
+// Expression returns a slice corresponding to the R expression.
+func (v *Expression) Vector() []*Value {
+	n := v.Len()
+	return (*[1 << 30]*Value)(v.base())[:n:n]
+}
+
+// WeakReference is an R weak reference.
+type WeakReference struct {
+	vector_sexprec
+}
+
+// WeakReference returns the four elements of an R weak reference.
+func (v *WeakReference) Vector() []*Value {
+	n := v.Len()
+	return (*[1 << 30]*Value)(v.base())[:n:n]
+}
+
+// List is an R linked list.
+type List struct {
+	list_sexprec
+}
+
+// Head returns the first element of the list (CAR/lisp in R terminology).
+func (v *List) Head() *Value {
+	return (*Value)(unsafe.Pointer(v.List_sxp.Carval))
+}
+
+// Tail returns the remaining elements of the list (CDR/lisp in R terminology).
+func (v *List) Tail() *Value {
+	return (*Value)(unsafe.Pointer(v.List_sxp.Cdrval))
+}
+
+// Tag returns the list's tag value.
+func (v *List) Tag() *Value {
+	return (*Value)(unsafe.Pointer(v.List_sxp.Tagval))
+}
+
+// Lang is an R language object.
+type Lang struct {
+	list_sexprec
+}
+
+// Head returns the first element of the list (CAR/lisp in R terminology).
+func (v *Lang) Head() *Value {
+	return (*Value)(unsafe.Pointer(v.List_sxp.Carval))
+}
+
+// Tail returns the remaining elements of the list (CDR/lisp in R terminology).
+func (v *Lang) Tail() *Value {
+	return (*Value)(unsafe.Pointer(v.List_sxp.Cdrval))
+}
+
+// Tag returns the object's tag value.
+func (v *Lang) Tag() *Value {
+	return (*Value)(unsafe.Pointer(v.List_sxp.Tagval))
+}
+
+// Dot is an R pairlist of promises.
+type Dot struct {
+	list_sexprec
+}
+
+// Head returns the first element of the list (CAR/lisp in R terminology).
+func (v *Dot) Head() *Value {
+	return (*Value)(unsafe.Pointer(v.List_sxp.Carval))
+}
+
+// Tail returns the remaining elements of the list (CDR/lisp in R terminology).
+func (v *Dot) Tail() *Value {
+	return (*Value)(unsafe.Pointer(v.List_sxp.Cdrval))
+}
+
+// Tag returns the object's tag value.
+func (v *Dot) Tag() *Value {
+	return (*Value)(unsafe.Pointer(v.List_sxp.Tagval))
+}
+
+// Symbol is an R name value.
+type Symbol struct {
+	sym_sexprec
+}
+
+// Value returns the value of the symbol.
+func (v *Symbol) Value() *Value {
+	return (*Value)(unsafe.Pointer(v.Sym_sxp.Value))
+}
+
+// Name returns the name of the symbol
+func (v *Symbol) Name() *Character {
+	return (*Character)(unsafe.Pointer(v.Sym_sxp.Pname))
+}
+
+// Internal returns a pointer if the symbol is a .Internal function.
+func (v *Symbol) Internal() *Value {
+	return (*Value)(unsafe.Pointer(v.Sym_sxp.Internal))
+}
+
+// Promise is an R promise.
+type Promise struct {
+	prom_sexprec
+}
+
+// Value is value of the promise.
+func (v *Promise) Value() *Value {
+	return (*Value)(unsafe.Pointer(v.Prom_sxp.Value))
+}
+
+// Expression is the expression to be evaluated.
+func (v *Promise) Expression() *Value {
+	return (*Value)(unsafe.Pointer(v.Prom_sxp.Expr))
+}
+
+// Environment returns the environment in which to evaluate the expression.
+func (v *Promise) Environment() *Value {
+	return (*Value)(unsafe.Pointer(v.Prom_sxp.Env))
+}
+
+// Closure is an R closure.
+type Closure struct {
+	clo_sexprec
+}
+
+// Formals returns the formal arguments of the function.
+func (v *Closure) Formals() *Value {
+	return (*Value)(unsafe.Pointer(v.Clos_sxp.Formals))
+}
+
+// Body returns the body of the function.
+func (v *Closure) Body() *Value {
+	return (*Value)(unsafe.Pointer(v.Clos_sxp.Body))
+}
+
+// Environment returns the environment in which to evaluate the function.
+func (v *Closure) Environment() *Value {
+	return (*Value)(unsafe.Pointer(v.Clos_sxp.Env))
+}
+
+// Environment is a current execution environment.
+type Environment struct {
+	env_sexprec
+}
+
+// Frame returns the current frame.
+func (v *Environment) Frame() *Value {
+	return (*Value)(unsafe.Pointer(v.Env_sxp.Frame))
+}
+
+// Enclosing returns the enclosing environment.
+func (v *Environment) Enclosing() *Value {
+	return (*Value)(unsafe.Pointer(v.Env_sxp.Enclos))
+}
+
+// HashTable returns the environment's hash table.
+func (v *Environment) HashTable() *Value {
+	return (*Value)(unsafe.Pointer(v.Env_sxp.Hashtab))
+}
+
+// Builtin is an R language built-in function.
+type Builtin struct {
+	prim_sexprec
+}
+
+// Offset returns the offset into the table of language primitives.
+func (v *Builtin) Offset() int32 {
+	return v.Prim_sxp.Offset
+}
+
+// Special is an R language built-in function.
+type Special struct {
+	prim_sexprec
+}
+
+// Offset returns the offset into the table of language primitives.
+func (v *Special) Offset() int32 {
+	return v.Prim_sxp.Offset
 }
