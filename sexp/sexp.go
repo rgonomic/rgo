@@ -16,6 +16,9 @@ type Info uint64
 // the R sxpinfo_struct type definition has changed.
 // If this happens, definition of Info needs to be brought back in line
 // with sxpinfo_struct in Rinternals.h.
+//
+// This changed from 32 bits in R commit 14db4328 (svn revision 73243),
+// so we do not work with R code prior to that.
 var _ = [1]struct{}{}[int(unsafe.Sizeof(sxpinfo{}))-int(unsafe.Sizeof(Info(0)))]
 
 const (
@@ -85,82 +88,117 @@ type Type byte
 
 // Info returns the information field of the SEXP value.
 func (v *sexprec) Info() Info {
-	return *(*Info)(unsafe.Pointer(&v.Sxpinfo))
+	return *(*Info)(unsafe.Pointer(&v.sxpinfo))
 }
 
 // Attributes returns the attributes of the SEXP value.
 func (v *sexprec) Attributes() *Value {
-	return (*Value)(unsafe.Pointer(&v.Attrib))
+	return (*Value)(unsafe.Pointer(&v.attrib))
+}
+
+// Pointer returns an unsafe pointer to the SEXP value.
+func (v *sexprec) Pointer() unsafe.Pointer {
+	return unsafe.Pointer(v)
 }
 
 // Info returns the information field of the SEXP value.
 func (v *vector_sexprec) Info() Info {
-	return *(*Info)(unsafe.Pointer(&v.Sxpinfo))
+	return *(*Info)(unsafe.Pointer(&v.sxpinfo))
 }
 
 // Attributes returns the attributes of the SEXP value.
 func (v *vector_sexprec) Attributes() *Value {
-	return (*Value)(unsafe.Pointer(&v.Attrib))
+	return (*Value)(unsafe.Pointer(&v.attrib))
+}
+
+// Pointer returns an unsafe pointer to the SEXP value.
+func (v *vector_sexprec) Pointer() unsafe.Pointer {
+	return unsafe.Pointer(v)
 }
 
 // Info returns the information field of the SEXP value.
 func (v *list_sexprec) Info() Info {
-	return *(*Info)(unsafe.Pointer(&v.Sxpinfo))
+	return *(*Info)(unsafe.Pointer(&v.sxpinfo))
 }
 
 // Attributes returns the attributes of the SEXP value.
 func (v *list_sexprec) Attributes() *Value {
-	return (*Value)(unsafe.Pointer(&v.Attrib))
+	return (*Value)(unsafe.Pointer(&v.attrib))
+}
+
+// Pointer returns an unsafe pointer to the SEXP value.
+func (v *list_sexprec) Pointer() unsafe.Pointer {
+	return unsafe.Pointer(v)
 }
 
 // Info returns the information field of the SEXP value.
 func (v *env_sexprec) Info() Info {
-	return *(*Info)(unsafe.Pointer(&v.Sxpinfo))
+	return *(*Info)(unsafe.Pointer(&v.sxpinfo))
 }
 
 // Attributes returns the attributes of the SEXP value.
 func (v *env_sexprec) Attributes() *Value {
-	return (*Value)(unsafe.Pointer(&v.Attrib))
+	return (*Value)(unsafe.Pointer(&v.attrib))
+}
+
+// Pointer returns an unsafe pointer to the SEXP value.
+func (v *env_sexprec) Pointer() unsafe.Pointer {
+	return unsafe.Pointer(v)
 }
 
 // Info returns the information field of the SEXP value.
 func (v *prom_sexprec) Info() Info {
-	return *(*Info)(unsafe.Pointer(&v.Sxpinfo))
+	return *(*Info)(unsafe.Pointer(&v.sxpinfo))
 }
 
 // Attributes returns the attributes of the SEXP value.
 func (v *prom_sexprec) Attributes() *Value {
-	return (*Value)(unsafe.Pointer(&v.Attrib))
+	return (*Value)(unsafe.Pointer(&v.attrib))
+}
+
+// Pointer returns an unsafe pointer to the SEXP value.
+func (v *prom_sexprec) Pointer() unsafe.Pointer {
+	return unsafe.Pointer(v)
 }
 
 // Info returns the information field of the SEXP value.
 func (v *clo_sexprec) Info() Info {
-	return *(*Info)(unsafe.Pointer(&v.Sxpinfo))
+	return *(*Info)(unsafe.Pointer(&v.sxpinfo))
 }
 
 // Attributes returns the attributes of the SEXP value.
 func (v *clo_sexprec) Attributes() *Value {
-	return (*Value)(unsafe.Pointer(&v.Attrib))
+	return (*Value)(unsafe.Pointer(&v.attrib))
 }
 
 // Info returns the information field of the SEXP value.
 func (v *prim_sexprec) Info() Info {
-	return *(*Info)(unsafe.Pointer(&v.Sxpinfo))
+	return *(*Info)(unsafe.Pointer(&v.sxpinfo))
 }
 
 // Attributes returns the attributes of the SEXP value.
 func (v *prim_sexprec) Attributes() *Value {
-	return (*Value)(unsafe.Pointer(&v.Attrib))
+	return (*Value)(unsafe.Pointer(&v.attrib))
+}
+
+// Pointer returns an unsafe pointer to the SEXP value.
+func (v *prim_sexprec) Pointer() unsafe.Pointer {
+	return unsafe.Pointer(v)
 }
 
 // Info returns the information field of the SEXP value.
 func (v *sym_sexprec) Info() Info {
-	return *(*Info)(unsafe.Pointer(&v.Sxpinfo))
+	return *(*Info)(unsafe.Pointer(&v.sxpinfo))
 }
 
 // Attributes returns the attributes of the SEXP value.
 func (v *sym_sexprec) Attributes() *Value {
-	return (*Value)(unsafe.Pointer(&v.Attrib))
+	return (*Value)(unsafe.Pointer(&v.attrib))
+}
+
+// Pointer returns an unsafe pointer to the SEXP value.
+func (v *sym_sexprec) Pointer() unsafe.Pointer {
+	return unsafe.Pointer(v)
 }
 
 // Value is an SEXP value.
@@ -233,7 +271,7 @@ func (v *Value) Interface() interface{} {
 
 // Len returns the number of elements in the vector.
 func (v *vector_sexprec) Len() int {
-	return int(v.Vecsxp.Length)
+	return int(v.vecsxp.length)
 }
 
 // base returns the address of the first element of the vector.
@@ -250,6 +288,24 @@ type Integer struct {
 	vector_sexprec
 }
 
+// NewInteger returns an integer vector with length n.
+//
+// The allocation is made by the R runtime. The returned value may need to
+// call its Protect method.
+func NewInteger(n int) *Integer {
+	return (*Integer)(allocateVector(INTSXP, n))
+}
+
+// Protect protects the SEXP value and returns it.
+func (v *Integer) Protect() *Integer {
+	return (*Integer)(protect(unsafe.Pointer(v)))
+}
+
+// Unprotect unprotects the SEXP. It is equivalent to UNPROTECT(1).
+func (v *Integer) Unprotect() {
+	unprotect(1)
+}
+
 // Vector returns a slice corresponding to the R vector.
 func (v *Integer) Vector() []int32 {
 	n := v.Len()
@@ -259,6 +315,24 @@ func (v *Integer) Vector() []int32 {
 // Logical is an R logical vector.
 type Logical struct {
 	vector_sexprec
+}
+
+// NewLogical returns a logical vector with length n.
+//
+// The allocation is made by the R runtime. The returned value may need to
+// call its Protect method.
+func NewLogical(n int) *Logical {
+	return (*Logical)(allocateVector(LGLSXP, n))
+}
+
+// Protect protects the SEXP value and returns it.
+func (v *Logical) Protect() *Logical {
+	return (*Logical)(protect(unsafe.Pointer(v)))
+}
+
+// Unprotect unprotects the SEXP. It is equivalent to UNPROTECT(1).
+func (v *Logical) Unprotect() {
+	unprotect(1)
 }
 
 // Vector returns a slice corresponding to the R vector.
@@ -272,6 +346,24 @@ type Real struct {
 	vector_sexprec
 }
 
+// NewReal returns a real vector with length n.
+//
+// The allocation is made by the R runtime. The returned value may need to
+// call its Protect method.
+func NewReal(n int) *Real {
+	return (*Real)(allocateVector(REALSXP, n))
+}
+
+// Protect protects the SEXP value and returns it.
+func (v *Real) Protect() *Real {
+	return (*Real)(protect(unsafe.Pointer(v)))
+}
+
+// Unprotect unprotects the SEXP. It is equivalent to UNPROTECT(1).
+func (v *Real) Unprotect() {
+	unprotect(1)
+}
+
 // Vector returns a slice corresponding to the R vector.
 func (v *Real) Vector() []float64 {
 	n := v.Len()
@@ -281,6 +373,24 @@ func (v *Real) Vector() []float64 {
 // Complex is an R complex vector.
 type Complex struct {
 	vector_sexprec
+}
+
+// NewComplex returns a complex vector with length n.
+//
+// The allocation is made by the R runtime. The returned value may need to
+// call its Protect method.
+func NewComplex(n int) *Complex {
+	return (*Complex)(allocateVector(CPLXSXP, n))
+}
+
+// Protect protects the SEXP value and returns it.
+func (v *Complex) Protect() *Complex {
+	return (*Complex)(protect(unsafe.Pointer(v)))
+}
+
+// Unprotect unprotects the SEXP. It is equivalent to UNPROTECT(1).
+func (v *Complex) Unprotect() {
+	unprotect(1)
 }
 
 // Vector returns a slice corresponding to the R vector.
@@ -294,6 +404,24 @@ type String struct {
 	vector_sexprec
 }
 
+// NewString returns a character vector with length n.
+//
+// The allocation is made by the R runtime. The returned value may need to
+// call its Protect method.
+func NewString(n int) *String {
+	return (*String)(allocateVector(STRSXP, n))
+}
+
+// Protect protects the SEXP value and returns it.
+func (v *String) Protect() *String {
+	return (*String)(protect(unsafe.Pointer(v)))
+}
+
+// Unprotect unprotects the SEXP. It is equivalent to UNPROTECT(1).
+func (v *String) Unprotect() {
+	unprotect(1)
+}
+
 // Vector returns a slice corresponding to the R vector.
 func (v *String) Vector() []*Character {
 	n := v.Len()
@@ -303,6 +431,24 @@ func (v *String) Vector() []*Character {
 // Character is the R representation of a string.
 type Character struct {
 	vector_sexprec
+}
+
+// NewCharacter returns a scalar string corresponding to s.
+//
+// The allocation is made by the R runtime. The returned value may need to
+// call its Protect method.
+func NewCharacter(s string) *Character {
+	return (*Character)(allocateString(s))
+}
+
+// Protect protects the SEXP value and returns it.
+func (v *Character) Protect() *Character {
+	return (*Character)(protect(unsafe.Pointer(v)))
+}
+
+// Unprotect unprotects the SEXP. It is equivalent to UNPROTECT(1).
+func (v *Character) Unprotect() {
+	unprotect(1)
 }
 
 // Bytes returns the bytes held by the R SEXP value.
@@ -322,6 +468,24 @@ type Raw struct {
 	vector_sexprec
 }
 
+// NewRaw returns a raw vector with length n.
+//
+// The allocation is made by the R runtime. The returned value may need to
+// call its Protect method.
+func NewRaw(n int) *Raw {
+	return (*Raw)(allocateVector(RAWSXP, n))
+}
+
+// Protect protects the SEXP value and returns it.
+func (v *Raw) Protect() *Raw {
+	return (*Raw)(protect(unsafe.Pointer(v)))
+}
+
+// Unprotect unprotects the SEXP. It is equivalent to UNPROTECT(1).
+func (v *Raw) Unprotect() {
+	unprotect(1)
+}
+
 // Bytes returns the bytes held by the R SEXP value.
 func (v *Raw) Bytes() []byte {
 	n := v.Len()
@@ -331,6 +495,24 @@ func (v *Raw) Bytes() []byte {
 // Vector is a generic R vector.
 type Vector struct {
 	vector_sexprec
+}
+
+// NewVector returns a generic vector with length n.
+//
+// The allocation is made by the R runtime. The returned value may need to
+// call its Protect method.
+func NewVector(n int) *Vector {
+	return (*Vector)(allocateVector(VECSXP, n))
+}
+
+// Protect protects the SEXP value and returns it.
+func (v *Vector) Protect() *Vector {
+	return (*Vector)(protect(unsafe.Pointer(v)))
+}
+
+// Unprotect unprotects the SEXP. It is equivalent to UNPROTECT(1).
+func (v *Vector) Unprotect() {
+	unprotect(1)
 }
 
 // Vector returns a slice corresponding to the R vector.
@@ -366,19 +548,34 @@ type List struct {
 	list_sexprec
 }
 
+// NewList returns a list with length n.
+func NewList(n int) *List {
+	return (*List)(allocateList(n))
+}
+
+// Protect protects the SEXP value and returns it.
+func (v *List) Protect() *List {
+	return (*List)(protect(unsafe.Pointer(v)))
+}
+
+// Unprotect unprotects the SEXP. It is equivalent to UNPROTECT(1).
+func (v *List) Unprotect() {
+	unprotect(1)
+}
+
 // Head returns the first element of the list (CAR/lisp in R terminology).
 func (v *List) Head() *Value {
-	return (*Value)(unsafe.Pointer(v.List_sxp.Carval))
+	return (*Value)(unsafe.Pointer(v.list_sxp.carval))
 }
 
 // Tail returns the remaining elements of the list (CDR/lisp in R terminology).
 func (v *List) Tail() *Value {
-	return (*Value)(unsafe.Pointer(v.List_sxp.Cdrval))
+	return (*Value)(unsafe.Pointer(v.list_sxp.cdrval))
 }
 
 // Tag returns the list's tag value.
 func (v *List) Tag() *Value {
-	return (*Value)(unsafe.Pointer(v.List_sxp.Tagval))
+	return (*Value)(unsafe.Pointer(v.list_sxp.tagval))
 }
 
 // Lang is an R language object.
@@ -388,17 +585,17 @@ type Lang struct {
 
 // Head returns the first element of the list (CAR/lisp in R terminology).
 func (v *Lang) Head() *Value {
-	return (*Value)(unsafe.Pointer(v.List_sxp.Carval))
+	return (*Value)(unsafe.Pointer(v.list_sxp.carval))
 }
 
 // Tail returns the remaining elements of the list (CDR/lisp in R terminology).
 func (v *Lang) Tail() *Value {
-	return (*Value)(unsafe.Pointer(v.List_sxp.Cdrval))
+	return (*Value)(unsafe.Pointer(v.list_sxp.cdrval))
 }
 
 // Tag returns the object's tag value.
 func (v *Lang) Tag() *Value {
-	return (*Value)(unsafe.Pointer(v.List_sxp.Tagval))
+	return (*Value)(unsafe.Pointer(v.list_sxp.tagval))
 }
 
 // Dot is an R pairlist of promises.
@@ -408,17 +605,17 @@ type Dot struct {
 
 // Head returns the first element of the list (CAR/lisp in R terminology).
 func (v *Dot) Head() *Value {
-	return (*Value)(unsafe.Pointer(v.List_sxp.Carval))
+	return (*Value)(unsafe.Pointer(v.list_sxp.carval))
 }
 
 // Tail returns the remaining elements of the list (CDR/lisp in R terminology).
 func (v *Dot) Tail() *Value {
-	return (*Value)(unsafe.Pointer(v.List_sxp.Cdrval))
+	return (*Value)(unsafe.Pointer(v.list_sxp.cdrval))
 }
 
 // Tag returns the object's tag value.
 func (v *Dot) Tag() *Value {
-	return (*Value)(unsafe.Pointer(v.List_sxp.Tagval))
+	return (*Value)(unsafe.Pointer(v.list_sxp.tagval))
 }
 
 // Symbol is an R name value.
@@ -428,17 +625,17 @@ type Symbol struct {
 
 // Value returns the value of the symbol.
 func (v *Symbol) Value() *Value {
-	return (*Value)(unsafe.Pointer(v.Sym_sxp.Value))
+	return (*Value)(unsafe.Pointer(v.sym_sxp.value))
 }
 
 // Name returns the name of the symbol
 func (v *Symbol) Name() *Character {
-	return (*Character)(unsafe.Pointer(v.Sym_sxp.Pname))
+	return (*Character)(unsafe.Pointer(v.sym_sxp.pname))
 }
 
 // Internal returns a pointer if the symbol is a .Internal function.
 func (v *Symbol) Internal() *Value {
-	return (*Value)(unsafe.Pointer(v.Sym_sxp.Internal))
+	return (*Value)(unsafe.Pointer(v.sym_sxp.internal))
 }
 
 // Promise is an R promise.
@@ -448,17 +645,17 @@ type Promise struct {
 
 // Value is value of the promise.
 func (v *Promise) Value() *Value {
-	return (*Value)(unsafe.Pointer(v.Prom_sxp.Value))
+	return (*Value)(unsafe.Pointer(v.prom_sxp.value))
 }
 
 // Expression is the expression to be evaluated.
 func (v *Promise) Expression() *Value {
-	return (*Value)(unsafe.Pointer(v.Prom_sxp.Expr))
+	return (*Value)(unsafe.Pointer(v.prom_sxp.expr))
 }
 
 // Environment returns the environment in which to evaluate the expression.
 func (v *Promise) Environment() *Value {
-	return (*Value)(unsafe.Pointer(v.Prom_sxp.Env))
+	return (*Value)(unsafe.Pointer(v.prom_sxp.env))
 }
 
 // Closure is an R closure.
@@ -468,17 +665,17 @@ type Closure struct {
 
 // Formals returns the formal arguments of the function.
 func (v *Closure) Formals() *Value {
-	return (*Value)(unsafe.Pointer(v.Clos_sxp.Formals))
+	return (*Value)(unsafe.Pointer(v.clos_sxp.formals))
 }
 
 // Body returns the body of the function.
 func (v *Closure) Body() *Value {
-	return (*Value)(unsafe.Pointer(v.Clos_sxp.Body))
+	return (*Value)(unsafe.Pointer(v.clos_sxp.body))
 }
 
 // Environment returns the environment in which to evaluate the function.
 func (v *Closure) Environment() *Value {
-	return (*Value)(unsafe.Pointer(v.Clos_sxp.Env))
+	return (*Value)(unsafe.Pointer(v.clos_sxp.env))
 }
 
 // Environment is a current execution environment.
@@ -488,17 +685,17 @@ type Environment struct {
 
 // Frame returns the current frame.
 func (v *Environment) Frame() *Value {
-	return (*Value)(unsafe.Pointer(v.Env_sxp.Frame))
+	return (*Value)(unsafe.Pointer(v.env_sxp.frame))
 }
 
 // Enclosing returns the enclosing environment.
 func (v *Environment) Enclosing() *Value {
-	return (*Value)(unsafe.Pointer(v.Env_sxp.Enclos))
+	return (*Value)(unsafe.Pointer(v.env_sxp.enclos))
 }
 
 // HashTable returns the environment's hash table.
 func (v *Environment) HashTable() *Value {
-	return (*Value)(unsafe.Pointer(v.Env_sxp.Hashtab))
+	return (*Value)(unsafe.Pointer(v.env_sxp.hashtab))
 }
 
 // Builtin is an R language built-in function.
@@ -508,7 +705,7 @@ type Builtin struct {
 
 // Offset returns the offset into the table of language primitives.
 func (v *Builtin) Offset() int32 {
-	return v.Prim_sxp.Offset
+	return int32(v.prim_sxp.offset)
 }
 
 // Special is an R language built-in function.
@@ -518,5 +715,5 @@ type Special struct {
 
 // Offset returns the offset into the table of language primitives.
 func (v *Special) Offset() int32 {
-	return v.Prim_sxp.Offset
+	return int32(v.prim_sxp.offset)
 }
