@@ -1,17 +1,22 @@
 sudo: no
 
+dist: bionic
+
 language: go
 go:
   - 1.15.x
-  - 1.14.x
   
 env:
-  - GO111MODULE=on
+  - GO111MODULE=on CGO_LDFLAGS_ALLOW="-Wl,-Bsymbolic-functions"
 
 install:
   - go get github.com/mattn/goveralls
+  - sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
+  - echo "deb https://cloud.r-project.org/bin/linux/ubuntu bionic-cran40/" | sudo tee -a /etc/apt/sources.list
+  - sudo apt-get -qq update
+  - sudo apt-get -y install r-base-dev
 
 script:
-  - go test -v ./...
-  - go test -v -race ./...
+  - go test ./...
+  - go test -race ./...
   - if [[ $TRAVIS_SECURE_ENV_VARS = "true" ]]; then bash .travis/test-coverage.sh; fi

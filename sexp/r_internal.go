@@ -1,11 +1,14 @@
-//go:generate bash -c "go tool cgo -godefs -- $(pkg-config --cflags libR) generate.go | gofmt > cgo_types.go"
-//go:generate rm -rf _obj
-
-// +build generate
+// Copyright ©2020 The rgonomic Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
 
 package sexp
 
+import "unsafe"
+
 /*
+#cgo pkg-config: libR
+
 #define USE_RINTERNALS
 #include <R.h>
 #include <Rinternals.h>
@@ -16,39 +19,31 @@ typedef struct SEXPREC sexprec;
 
 typedef struct VECTOR_SEXPREC vector_sexprec;
 
-typedef struct vecsxp_struct  vecsxp_struct;
-
-typedef struct primsxp_struct primsxp_struct;
 typedef struct prim_sexprec {
     SEXPREC_HEADER;
     struct primsxp_struct prim_sxp;
 } prim_sexprec;
 
-typedef struct symsxp_struct  symsxp_struct;
 typedef struct sym_sexprec {
     SEXPREC_HEADER;
     struct symsxp_struct sym_sxp;
 } sym_sexprec;
 
-typedef struct listsxp_struct listsxp_struct;
 typedef struct list_sexprec {
     SEXPREC_HEADER;
     struct listsxp_struct list_sxp;
 } list_sexprec;
 
-typedef struct envsxp_struct  envsxp_struct;
 typedef struct env_sexprec {
     SEXPREC_HEADER;
     struct envsxp_struct env_sxp;
 } env_sexprec;
 
-typedef struct closxp_struct  closxp_struct;
 typedef struct clo_sexprec {
     SEXPREC_HEADER;
     struct closxp_struct clos_sxp;
 } clo_sexprec;
 
-typedef struct promsxp_struct promsxp_struct;
 typedef struct prom_sexprec {
     SEXPREC_HEADER;
     struct promsxp_struct prom_sxp;
@@ -60,40 +55,19 @@ type sxpinfo C.sxpinfo_struct
 
 type sexprec C.sexprec
 
-type (
-	vector_sexprec C.vector_sexprec
-	vecsxp         C.vecsxp_struct
-)
+type vector_sexprec C.vector_sexprec
 
-type (
-	prim_sexprec C.prim_sexprec
-	primsxp      C.primsxp_struct
-)
+type prim_sexprec C.prim_sexprec
 
-type (
-	sym_sexprec C.sym_sexprec
-	symsxp      C.symsxp_struct
-)
+type sym_sexprec C.sym_sexprec
 
-type (
-	list_sexprec C.list_sexprec
-	listsxp      C.listsxp_struct
-)
+type list_sexprec C.list_sexprec
 
-type (
-	env_sexprec C.env_sexprec
-	envsxp      C.envsxp_struct
-)
+type env_sexprec C.env_sexprec
 
-type (
-	clo_sexprec C.clo_sexprec
-	closxp      C.closxp_struct
-)
+type clo_sexprec C.clo_sexprec
 
-type (
-	prom_sexprec C.prom_sexprec
-	promsxp      C.promsxp_struct
-)
+type prom_sexprec C.prom_sexprec
 
 const (
 	NILSXP     Type = C.NILSXP     // nil = NULL
@@ -105,7 +79,7 @@ const (
 	LANGSXP    Type = C.LANGSXP    // language constructs (special lists)
 	SPECIALSXP Type = C.SPECIALSXP // special forms
 	BUILTINSXP Type = C.BUILTINSXP // builtin non-special forms
-	CHARSXP    Type = C.CHARSXP    // "scalar" string type (internal only
+	CHARSXP    Type = C.CHARSXP    // "scalar" string type (internal only)
 	LGLSXP     Type = C.LGLSXP     // logical vectors
 	INTSXP     Type = C.INTSXP     // integer vectors
 	REALSXP    Type = C.REALSXP    // real variables
@@ -124,3 +98,35 @@ const (
 	FREESXP    Type = C.FREESXP    // node released by GC
 	FUNSXP     Type = C.FUNSXP     // Closure or Builtin
 )
+
+var (
+	// NilValue is the R_NilValue as a *Value type. It must not be altered.
+	NilValue *Value = asValue(C.R_NilValue)
+
+	// UnboundValue is the R_UnboundValue as a *Value type. It must not be altered.
+	UnboundValue *Value = asValue(C.R_UnboundValue)
+)
+
+func asValue(sexp C.SEXP) *Value {
+	return (*Value)(unsafe.Pointer(sexp))
+}
+
+func allocateList(n int) unsafe.Pointer {
+	return unsafe.Pointer(C.Rf_allocList(C.int(n)))
+}
+
+func allocateString(s string) unsafe.Pointer {
+	return unsafe.Pointer(C.Rf_mkCharLenCE(C._GoStringPtr(s), C.int(len(s)), C.CE_UTF8))
+}
+
+func allocateVector(typ Type, n int) unsafe.Pointer {
+	return unsafe.Pointer(C.Rf_allocVector(C.SEXPTYPE(typ), C.R_xlen_t(n)))
+}
+
+func protect(sexp unsafe.Pointer) unsafe.Pointer {
+	return unsafe.Pointer(C.Rf_protect((C.SEXP)(sexp)))
+}
+
+func unprotect(n int) {
+	C.Rf_unprotect(C.int(n))
+}
