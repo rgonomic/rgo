@@ -5,6 +5,8 @@ github.com/pkg/diff v0.0.0-20200101054644-e8890afd1f15/go.mod h1:zO8QMzTeZd5cpnI
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/rgonomic/rgo v0.0.0-20200902033056-7a5cc4d3dbff h1:m0YN+D87qWYCTZMDW0SeSFqt0CTmmD5WfBYWg1qgS3c=
 github.com/rgonomic/rgo v0.0.0-20200902033056-7a5cc4d3dbff/go.mod h1:wUkm6JrGFhy4Ck5HSeevf0LuVutHUyCsC8YIGcFF5vs=
+github.com/rgonomic/rgo v0.0.0-20200902040511-3372cad11030 h1:DasgYmVMq69s/mCX+lDt3E2Ue+pLaejonD69XQ+vvBo=
+github.com/rgonomic/rgo v0.0.0-20200902040511-3372cad11030/go.mod h1:wUkm6JrGFhy4Ck5HSeevf0LuVutHUyCsC8YIGcFF5vs=
 github.com/sergi/go-diff v1.0.0/go.mod h1:0CfEIISq7TuYL3j771MWULgwwjU+GofnZX9QAmXWZgo=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.4.0/go.mod h1:j7eGeouHqKxXV5pUuKE4zz7dFj8WfuZ+81PSLYec5m4=
