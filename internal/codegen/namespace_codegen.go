@@ -4,9 +4,7 @@
 
 package codegen
 
-import (
-	"text/template"
-)
+import "text/template"
 
 func NamespaceTemplate(words []string) *template.Template {
 	return template.Must(template.New("NAMESPACE").Funcs(template.FuncMap{
