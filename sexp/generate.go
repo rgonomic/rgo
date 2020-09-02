@@ -96,31 +96,31 @@ type (
 )
 
 const (
-	NILSXP     SEXPType = C.NILSXP     // nil = NULL
-	SYMSXP     SEXPType = C.SYMSXP     // symbols
-	LISTSXP    SEXPType = C.LISTSXP    // lists of dotted pairs
-	CLOSXP     SEXPType = C.CLOSXP     // closures
-	ENVSXP     SEXPType = C.ENVSXP     // environments
-	PROMSXP    SEXPType = C.PROMSXP    // promises: [un]evaluated closure arguments
-	LANGSXP    SEXPType = C.LANGSXP    // language constructs (special lists)
-	SPECIALSXP SEXPType = C.SPECIALSXP // special forms
-	BUILTINSXP SEXPType = C.BUILTINSXP // builtin non-special forms
-	CHARSXP    SEXPType = C.CHARSXP    // "scalar" string type (internal only
-	LGLSXP     SEXPType = C.LGLSXP     // logical vectors
-	INTSXP     SEXPType = C.INTSXP     // integer vectors
-	REALSXP    SEXPType = C.REALSXP    // real variables
-	CPLXSXP    SEXPType = C.CPLXSXP    // complex variables
-	STRSXP     SEXPType = C.STRSXP     // string vectors
-	DOTSXP     SEXPType = C.DOTSXP     // dot-dot-dot object
-	ANYSXP     SEXPType = C.ANYSXP     // make "any" args work
-	VECSXP     SEXPType = C.VECSXP     // generic vectors
-	EXPRSXP    SEXPType = C.EXPRSXP    // expressions vectors
-	BCODESXP   SEXPType = C.BCODESXP   // byte code
-	EXTPTRSXP  SEXPType = C.EXTPTRSXP  // external pointer
-	WEAKREFSXP SEXPType = C.WEAKREFSXP // weak reference
-	RAWSXP     SEXPType = C.RAWSXP     // raw bytes
-	S4SXP      SEXPType = C.S4SXP      // S4 non-vector
-	NEWSXP     SEXPType = C.NEWSXP     // fresh node created in new page
-	FREESXP    SEXPType = C.FREESXP    // node released by GC
-	FUNSXP     SEXPType = C.FUNSXP     // Closure or Builtin
+	NILSXP     Type = C.NILSXP     // nil = NULL
+	SYMSXP     Type = C.SYMSXP     // symbols
+	LISTSXP    Type = C.LISTSXP    // lists of dotted pairs
+	CLOSXP     Type = C.CLOSXP     // closures
+	ENVSXP     Type = C.ENVSXP     // environments
+	PROMSXP    Type = C.PROMSXP    // promises: [un]evaluated closure arguments
+	LANGSXP    Type = C.LANGSXP    // language constructs (special lists)
+	SPECIALSXP Type = C.SPECIALSXP // special forms
+	BUILTINSXP Type = C.BUILTINSXP // builtin non-special forms
+	CHARSXP    Type = C.CHARSXP    // "scalar" string type (internal only
+	LGLSXP     Type = C.LGLSXP     // logical vectors
+	INTSXP     Type = C.INTSXP     // integer vectors
+	REALSXP    Type = C.REALSXP    // real variables
+	CPLXSXP    Type = C.CPLXSXP    // complex variables
+	STRSXP     Type = C.STRSXP     // string vectors
+	DOTSXP     Type = C.DOTSXP     // dot-dot-dot object
+	ANYSXP     Type = C.ANYSXP     // make "any" args work
+	VECSXP     Type = C.VECSXP     // generic vectors
+	EXPRSXP    Type = C.EXPRSXP    // expressions vectors
+	BCODESXP   Type = C.BCODESXP   // byte code
+	EXTPTRSXP  Type = C.EXTPTRSXP  // external pointer
+	WEAKREFSXP Type = C.WEAKREFSXP // weak reference
+	RAWSXP     Type = C.RAWSXP     // raw bytes
+	S4SXP      Type = C.S4SXP      // S4 non-vector
+	NEWSXP     Type = C.NEWSXP     // fresh node created in new page
+	FREESXP    Type = C.FREESXP    // node released by GC
+	FUNSXP     Type = C.FUNSXP     // Closure or Builtin
 )

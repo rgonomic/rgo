@@ -60,7 +60,7 @@ func (i Info) String() string {
 	)
 }
 
-func (i Info) Type() SEXPType { return SEXPType(i.mask(typ, typeBits)) }
+func (i Info) Type() Type     { return Type(i.mask(typ, typeBits)) }
 func (i Info) IsScalar() bool { return i.mask(scalar, 1) != 0 }
 func (i Info) IsObject() bool { return i.mask(obj, 1) != 0 }
 func (i Info) IsAltRep() bool { return i.mask(alt, 1) != 0 }
@@ -78,9 +78,10 @@ func (i Info) mask(offset, bits int) uint64 {
 	return (uint64(i) >> offset) & (^uint64(0) >> (64 - bits))
 }
 
-// SEXPType is the SEXPTYPE enum defined in Rinternals.h.
-//go:generate stringer -type=SEXPType
-type SEXPType byte
+//go:generate stringer -type=Type
+
+// Type is the SEXPTYPE enum defined in Rinternals.h.
+type Type byte
 
 // Value is an SEXP value.
 type Value struct {
