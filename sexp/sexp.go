@@ -93,7 +93,7 @@ func (v *sexprec) Info() Info {
 
 // Attributes returns the attributes of the SEXP value.
 func (v *sexprec) Attributes() *Value {
-	return (*Value)(unsafe.Pointer(&v.attrib))
+	return (*Value)(unsafe.Pointer(v.attrib))
 }
 
 // Pointer returns an unsafe pointer to the SEXP value.
@@ -108,7 +108,7 @@ func (v *vector_sexprec) Info() Info {
 
 // Attributes returns the attributes of the SEXP value.
 func (v *vector_sexprec) Attributes() *Value {
-	return (*Value)(unsafe.Pointer(&v.attrib))
+	return (*Value)(unsafe.Pointer(v.attrib))
 }
 
 // Pointer returns an unsafe pointer to the SEXP value.
@@ -123,7 +123,7 @@ func (v *list_sexprec) Info() Info {
 
 // Attributes returns the attributes of the SEXP value.
 func (v *list_sexprec) Attributes() *Value {
-	return (*Value)(unsafe.Pointer(&v.attrib))
+	return (*Value)(unsafe.Pointer(v.attrib))
 }
 
 // Pointer returns an unsafe pointer to the SEXP value.
@@ -138,7 +138,7 @@ func (v *env_sexprec) Info() Info {
 
 // Attributes returns the attributes of the SEXP value.
 func (v *env_sexprec) Attributes() *Value {
-	return (*Value)(unsafe.Pointer(&v.attrib))
+	return (*Value)(unsafe.Pointer(v.attrib))
 }
 
 // Pointer returns an unsafe pointer to the SEXP value.
@@ -153,7 +153,7 @@ func (v *prom_sexprec) Info() Info {
 
 // Attributes returns the attributes of the SEXP value.
 func (v *prom_sexprec) Attributes() *Value {
-	return (*Value)(unsafe.Pointer(&v.attrib))
+	return (*Value)(unsafe.Pointer(v.attrib))
 }
 
 // Pointer returns an unsafe pointer to the SEXP value.
@@ -168,7 +168,7 @@ func (v *clo_sexprec) Info() Info {
 
 // Attributes returns the attributes of the SEXP value.
 func (v *clo_sexprec) Attributes() *Value {
-	return (*Value)(unsafe.Pointer(&v.attrib))
+	return (*Value)(unsafe.Pointer(v.attrib))
 }
 
 // Info returns the information field of the SEXP value.
@@ -178,7 +178,7 @@ func (v *prim_sexprec) Info() Info {
 
 // Attributes returns the attributes of the SEXP value.
 func (v *prim_sexprec) Attributes() *Value {
-	return (*Value)(unsafe.Pointer(&v.attrib))
+	return (*Value)(unsafe.Pointer(v.attrib))
 }
 
 // Pointer returns an unsafe pointer to the SEXP value.
@@ -193,7 +193,7 @@ func (v *sym_sexprec) Info() Info {
 
 // Attributes returns the attributes of the SEXP value.
 func (v *sym_sexprec) Attributes() *Value {
-	return (*Value)(unsafe.Pointer(&v.attrib))
+	return (*Value)(unsafe.Pointer(v.attrib))
 }
 
 // Pointer returns an unsafe pointer to the SEXP value.
