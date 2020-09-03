@@ -91,6 +91,11 @@ func (v *sexprec) Info() Info {
 	return *(*Info)(unsafe.Pointer(&v.sxpinfo))
 }
 
+// Value returns the generic state of the SEXP value.
+func (v *sexprec) Value() *Value {
+	return (*Value)(unsafe.Pointer(v))
+}
+
 // Attributes returns the attributes of the SEXP value.
 func (v *sexprec) Attributes() *Value {
 	return (*Value)(unsafe.Pointer(v.attrib))
@@ -104,6 +109,11 @@ func (v *sexprec) Pointer() unsafe.Pointer {
 // Info returns the information field of the SEXP value.
 func (v *vector_sexprec) Info() Info {
 	return *(*Info)(unsafe.Pointer(&v.sxpinfo))
+}
+
+// Value returns the generic state of the SEXP value.
+func (v *vector_sexprec) Value() *Value {
+	return (*Value)(unsafe.Pointer(v))
 }
 
 // Attributes returns the attributes of the SEXP value.
@@ -121,6 +131,11 @@ func (v *list_sexprec) Info() Info {
 	return *(*Info)(unsafe.Pointer(&v.sxpinfo))
 }
 
+// Value returns the generic state of the SEXP value.
+func (v *list_sexprec) Value() *Value {
+	return (*Value)(unsafe.Pointer(v))
+}
+
 // Attributes returns the attributes of the SEXP value.
 func (v *list_sexprec) Attributes() *Value {
 	return (*Value)(unsafe.Pointer(v.attrib))
@@ -134,6 +149,11 @@ func (v *list_sexprec) Pointer() unsafe.Pointer {
 // Info returns the information field of the SEXP value.
 func (v *env_sexprec) Info() Info {
 	return *(*Info)(unsafe.Pointer(&v.sxpinfo))
+}
+
+// Value returns the generic state of the SEXP value.
+func (v *env_sexprec) Value() *Value {
+	return (*Value)(unsafe.Pointer(v))
 }
 
 // Attributes returns the attributes of the SEXP value.
@@ -151,6 +171,11 @@ func (v *prom_sexprec) Info() Info {
 	return *(*Info)(unsafe.Pointer(&v.sxpinfo))
 }
 
+// Value returns the generic state of the SEXP value.
+func (v *prom_sexprec) Value() *Value {
+	return (*Value)(unsafe.Pointer(v))
+}
+
 // Attributes returns the attributes of the SEXP value.
 func (v *prom_sexprec) Attributes() *Value {
 	return (*Value)(unsafe.Pointer(v.attrib))
@@ -166,6 +191,11 @@ func (v *clo_sexprec) Info() Info {
 	return *(*Info)(unsafe.Pointer(&v.sxpinfo))
 }
 
+// Value returns the generic state of the SEXP value.
+func (v *clo_sexprec) Value() *Value {
+	return (*Value)(unsafe.Pointer(v))
+}
+
 // Attributes returns the attributes of the SEXP value.
 func (v *clo_sexprec) Attributes() *Value {
 	return (*Value)(unsafe.Pointer(v.attrib))
@@ -174,6 +204,11 @@ func (v *clo_sexprec) Attributes() *Value {
 // Info returns the information field of the SEXP value.
 func (v *prim_sexprec) Info() Info {
 	return *(*Info)(unsafe.Pointer(&v.sxpinfo))
+}
+
+// Value returns the generic state of the SEXP value.
+func (v *prim_sexprec) Value() *Value {
+	return (*Value)(unsafe.Pointer(v))
 }
 
 // Attributes returns the attributes of the SEXP value.
@@ -189,6 +224,11 @@ func (v *prim_sexprec) Pointer() unsafe.Pointer {
 // Info returns the information field of the SEXP value.
 func (v *sym_sexprec) Info() Info {
 	return *(*Info)(unsafe.Pointer(&v.sxpinfo))
+}
+
+// Value returns the generic state of the SEXP value.
+func (v *sym_sexprec) Value() *Value {
+	return (*Value)(unsafe.Pointer(v))
 }
 
 // Attributes returns the attributes of the SEXP value.
@@ -624,7 +664,7 @@ type Symbol struct {
 }
 
 // Value returns the value of the symbol.
-func (v *Symbol) Value() *Value {
+func (v *Symbol) SymbolValue() *Value {
 	return (*Value)(unsafe.Pointer(v.sym_sxp.value))
 }
 
