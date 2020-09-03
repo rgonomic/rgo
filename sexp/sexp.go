@@ -673,6 +673,12 @@ func (v *Symbol) Name() *Character {
 	return (*Character)(unsafe.Pointer(v.sym_sxp.pname))
 }
 
+// String returns a Go string of the symbol name.
+// The returned string is allocated by the Go runtime.
+func (v *Symbol) String() string {
+	return v.Name().String()
+}
+
 // Internal returns a pointer if the symbol is a .Internal function.
 func (v *Symbol) Internal() *Value {
 	return (*Value)(unsafe.Pointer(v.sym_sxp.internal))
