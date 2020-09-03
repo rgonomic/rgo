@@ -14,3 +14,21 @@
 print_sexp <- function(p) {
 	.Call("print_sexp", p, PACKAGE = "sexp")
 }
+
+#' gophers
+#'
+#' Gophers returns n gophers.
+#' 
+#' @param n is a scalar integer
+#' @return A scalar SEXP
+#' @seelso <https://godoc.org/github.com/rgonomic/rgo/examples/sexp#Gophers>
+#' @export
+gophers <- function(n) {
+	if (!is.integer(n)) {
+		stop("Argument 'n' must be of type 'integer'.")
+	}
+	if (length(n) != 1) {
+		stop("Argument 'n' must have 1 element.")
+	}
+	.Call("gophers", n, PACKAGE = "sexp")
+}

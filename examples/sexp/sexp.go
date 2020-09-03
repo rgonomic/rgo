@@ -32,3 +32,14 @@ func PrintSEXP(p unsafe.Pointer) unsafe.Pointer {
 	}
 	return p
 }
+
+// Gophers returns n gophers.
+func Gophers(n int) unsafe.Pointer {
+	c := sexp.NewString(n).Protect()
+	defer c.Unprotect()
+	vec := c.Vector()
+	for i := range vec {
+		vec[i] = sexp.NewCharacter(fmt.Sprintf("Gopher %d", i+1))
+	}
+	return c.Pointer()
+}

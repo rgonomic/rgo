@@ -2,3 +2,4 @@
 
 useDynLib(sexp)
 export(print_sexp)
+export(gophers)

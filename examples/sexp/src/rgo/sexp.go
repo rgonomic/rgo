@@ -42,6 +42,30 @@ func packSEXP_PrintSEXP(p0 unsafe.Pointer) C.SEXP {
 	return packSEXP_types_Basic_unsafe_Pointer(p0)
 }
 
+//export Wrapped_Gophers
+func Wrapped_Gophers(_R_n C.SEXP) C.SEXP {
+	defer func() {
+		r := recover()
+		if r != nil {
+			err := C.CString(fmt.Sprint(r))
+			C.R_error(err)
+			C.free(unsafe.Pointer(err))
+		}
+	}()
+
+	_p0 := unpackSEXP_types_Basic_int(_R_n)
+	_r0 := sexp.Gophers(_p0)
+	return packSEXP_Gophers(_r0)
+}
+
+func packSEXP_Gophers(p0 unsafe.Pointer) C.SEXP {
+	return packSEXP_types_Basic_unsafe_Pointer(p0)
+}
+
+func unpackSEXP_types_Basic_int(p C.SEXP) int {
+	return int(*C.INTEGER(p))
+}
+
 func unpackSEXP_types_Basic_unsafe_Pointer(p C.SEXP) unsafe.Pointer {
 	return unsafe.Pointer(p)
 }

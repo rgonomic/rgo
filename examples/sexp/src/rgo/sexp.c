@@ -37,3 +37,7 @@ int getListElementIndex(SEXP list, const char *str) {
 SEXP print_sexp(SEXP p) {
 	return Wrapped_PrintSEXP(p);
 }
+
+SEXP gophers(SEXP n) {
+	return Wrapped_Gophers(n);
+}
