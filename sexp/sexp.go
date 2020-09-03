@@ -12,8 +12,8 @@ import (
 // Info corresponds to the sxpinfo_struct type defined in Rinternals.h.
 type Info uint64
 
-// An "invalid array index" compiler error after go generate means that
-// the R sxpinfo_struct type definition has changed.
+// An "invalid array index" compiler error means that the R sxpinfo_struct
+// type definition has changed.
 // If this happens, definition of Info needs to be brought back in line
 // with sxpinfo_struct in Rinternals.h.
 //
