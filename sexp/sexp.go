@@ -15,6 +15,31 @@ func IsNull(v *Value) bool {
 	return v.Info().Type() == NILSXP
 }
 
+// Names returns the names of the Value.
+func Names(v *Value) *String {
+	if v, ok := v.Interface().(*List); ok {
+		tags := v.tags()
+		c := NewString(len(tags)).Protect()
+		defer c.Unprotect()
+		vec := c.Vector()
+		for i := range vec {
+			vec[i] = NewCharacter(tags[i])
+		}
+		return c
+	}
+
+	attr := v.Attributes()
+	if IsNull(attr) {
+		return nil
+	}
+	names := attr.Interface().(*List).Get([]byte("names"))
+	found, ok := names.Interface().(*List)
+	if !ok {
+		return nil
+	}
+	return found.Head().Interface().(*String)
+}
+
 // Info corresponds to the sxpinfo_struct type defined in Rinternals.h.
 type Info uint64
 
