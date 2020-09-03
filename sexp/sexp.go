@@ -5,9 +5,15 @@
 package sexp
 
 import (
+	"bytes"
 	"fmt"
 	"unsafe"
 )
+
+// IsNull returned whether the Value is the R NULL value.
+func IsNull(v *Value) bool {
+	return v.Info().Type() == NILSXP
+}
 
 // Info corresponds to the sxpinfo_struct type defined in Rinternals.h.
 type Info uint64
@@ -616,6 +622,47 @@ func (v *List) Tail() *Value {
 // Tag returns the list's tag value.
 func (v *List) Tag() *Value {
 	return (*Value)(unsafe.Pointer(v.list_sxp.tagval))
+}
+
+// Get returns the the Value associated with the given tag in the list.
+func (v *List) Get(tag []byte) *Value {
+	curr := v
+	for !IsNull(curr.Value()) {
+		t := curr.Tag().Value()
+		if !IsNull(t) {
+			sym := t.Interface().(*Symbol)
+			if bytes.Equal(sym.Name().Bytes(), tag) {
+				return (*Value)(curr.Pointer())
+			}
+		}
+		tail := curr.Tail()
+		if tail, ok := tail.Value().Interface().(*List); ok {
+			curr = (*List)(tail.Pointer())
+			continue
+		}
+		break
+	}
+	return NilValue
+}
+
+// tags returns all the tags for the list.
+func (v *List) tags() []string {
+	var tags []string
+	curr := v
+	for !IsNull(curr.Value()) {
+		t := curr.Tag().Value()
+		if !IsNull(t) {
+			tag := t.Interface().(*Symbol).String()
+			tags = append(tags, tag)
+		}
+		tail := curr.Tail()
+		if tail, ok := tail.Value().Interface().(*List); ok {
+			curr = (*List)(tail.Pointer())
+			continue
+		}
+		break
+	}
+	return tags
 }
 
 // Lang is an R language object.
