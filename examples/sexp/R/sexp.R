@@ -4,8 +4,9 @@
 
 #' print_sexp
 #'
-#' PrintSEXP prints the SEXP value passed to it and returns it unaltered.
-#' If the value is an atomic vector, its contents are printed.
+#' PrintSEXP prints the SEXP value passed to it along with any names it has
+#' and returns it unaltered. If the value is an atomic vector, its contents
+#' are printed.
 #' 
 #' @param p is a scalar SEXP
 #' @return A scalar SEXP
