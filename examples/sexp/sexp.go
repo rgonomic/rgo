@@ -7,29 +7,31 @@ import (
 	"github.com/rgonomic/rgo/sexp"
 )
 
-// PrintSEXP prints the SEXP value passed to it and returns it unaltered.
-// If the value is an atomic vector, its contents are printed.
+// PrintSEXP prints the SEXP value passed to it along with any names it has
+// and returns it unaltered. If the value is an atomic vector, its contents
+// are printed.
 func PrintSEXP(p unsafe.Pointer) unsafe.Pointer {
 	sxp := (*sexp.Value)(p)
 	info := sxp.Info()
 	switch sxp := sxp.Interface().(type) {
 	case *sexp.Integer:
-		fmt.Printf("%s %#v\n", info, sxp.Vector())
+		fmt.Printf("%s values:%#v", info, sxp.Vector())
 	case *sexp.Logical:
-		fmt.Printf("%s %#v\n", info, sxp.Vector())
+		fmt.Printf("%s values:%#v", info, sxp.Vector())
 	case *sexp.Real:
-		fmt.Printf("%s %#v\n", info, sxp.Vector())
+		fmt.Printf("%s values:%#v", info, sxp.Vector())
 	case *sexp.Complex:
-		fmt.Printf("%s %#v\n", info, sxp.Vector())
+		fmt.Printf("%s values:%#v", info, sxp.Vector())
 	case *sexp.String:
-		fmt.Printf("%s %q\n", info, sxp.Vector())
+		fmt.Printf("%s values:%q", info, sxp.Vector())
 	case *sexp.Character:
-		fmt.Printf("%s %s\n", info, sxp)
+		fmt.Printf("%s values:%s", info, sxp)
 	case *sexp.Raw:
-		fmt.Printf("%s %#v\n", info, sxp.Bytes())
+		fmt.Printf("%s values:%#v", info, sxp.Bytes())
 	default:
-		fmt.Println(info)
+		fmt.Print(info)
 	}
+	fmt.Printf(" names:%v\n", sxp.Value().Names().Vector())
 	return p
 }
 
