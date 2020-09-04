@@ -2,8 +2,8 @@ github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSs
 github.com/google/licensecheck v0.0.0-20200805042302-c54f297c3b57/go.mod h1:ORkR35t/JjW+emNKtfJDII0zlciG9JgbT7SmsohlHmY=
 github.com/pkg/diff v0.0.0-20200101054644-e8890afd1f15/go.mod h1:zO8QMzTeZd5cpnIkz/Gn6iK0jDfGicM1nynOkkPIl28=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
-github.com/rgonomic/rgo v0.0.0-20200904020425-1c453607522b h1:x/gcJVBQrwyhiC0TD3sPgNc7n81B2aAm6h7h5vlqg3k=
-github.com/rgonomic/rgo v0.0.0-20200904020425-1c453607522b/go.mod h1:wUkm6JrGFhy4Ck5HSeevf0LuVutHUyCsC8YIGcFF5vs=
+github.com/rgonomic/rgo v0.0.0-20200904100031-82045faaf217 h1:kYdkDFi8k2ELQthCHhobGq/EqvUaWioSwjqfb/Uza6w=
+github.com/rgonomic/rgo v0.0.0-20200904100031-82045faaf217/go.mod h1:wUkm6JrGFhy4Ck5HSeevf0LuVutHUyCsC8YIGcFF5vs=
 github.com/sergi/go-diff v1.0.0/go.mod h1:0CfEIISq7TuYL3j771MWULgwwjU+GofnZX9QAmXWZgo=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.4.0/go.mod h1:j7eGeouHqKxXV5pUuKE4zz7dFj8WfuZ+81PSLYec5m4=
