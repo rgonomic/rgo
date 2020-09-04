@@ -6,8 +6,74 @@ package sexp
 
 import (
 	"fmt"
+	"math"
 	"unsafe"
 )
+
+// IsNA returns whether f is an NA value.
+func IsNA(f float64) bool {
+	payload, ok := naNPayload(f)
+	return ok && payload == 1954
+}
+
+// NA returns the R real NA value.
+func NA() float64 {
+	return naNWith(1954)
+}
+
+// IsComplexNA returns whether c is an NA value. This is true if either
+// of the parts of c is NA.
+func IsComplexNA(c complex128) bool {
+	return IsNA(real(c)) || IsNA(imag(c))
+}
+
+// ComplexNA returns the R complex NA value. The value returned is NA+0i.
+func ComplexNA() complex128 {
+	return complex(NA(), 0)
+}
+
+const (
+	nanBits = 0x7ff8000000000000
+	nanMask = 0xfff8000000000000
+)
+
+// naNWith returns an IEEE 754 "quiet not-a-number" value with the
+// payload specified in the low 51 bits of payload.
+// The NaN returned by math.NaN has a bit pattern equal to naNWith(1).
+func naNWith(payload uint64) float64 {
+	return math.Float64frombits(nanBits | (payload &^ nanMask))
+}
+
+// naNPayload returns the lowest 51 bits payload of an IEEE 754 "quiet
+// not-a-number". For values of f other than quiet-NaN, naNPayload
+// returns zero and false.
+func naNPayload(f float64) (payload uint64, ok bool) {
+	b := math.Float64bits(f)
+	if b&nanBits != nanBits {
+		return 0, false
+	}
+	return b &^ nanMask, true
+}
+
+// IsIntegerNA returns whether i is an NA value.
+func IsIntegerNA(i int32) bool {
+	return i == r_NaInt
+}
+
+// IntegerNA returns the R integer NA value.
+func IntegerNA() int32 {
+	return r_NaInt
+}
+
+// IsLogicalNA returns whether b is an NA value.
+func IsLogicalNA(b int32) bool {
+	return b == r_NaInt
+}
+
+// LogicalNA returns the R logical NA value.
+func LogicalNA() int32 {
+	return r_NaInt
+}
 
 //go:generate go run generate_types.go
 

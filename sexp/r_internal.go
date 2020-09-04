@@ -107,6 +107,8 @@ var (
 	UnboundValue *Value = asValue(C.R_UnboundValue)
 )
 
+var r_NaInt = int32(C.R_NaInt)
+
 func asValue(sexp C.SEXP) *Value {
 	return (*Value)(unsafe.Pointer(sexp))
 }
