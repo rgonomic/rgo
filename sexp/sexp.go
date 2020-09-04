@@ -9,6 +9,8 @@ import (
 	"unsafe"
 )
 
+//go:generate go run generate_types.go
+
 // Pointer returns an unsafe pointer to the SEXP value.
 func (v *sexprec) Pointer() unsafe.Pointer {
 	return unsafe.Pointer(v)
@@ -36,6 +38,11 @@ func (v *prom_sexprec) Pointer() unsafe.Pointer {
 
 // Pointer returns an unsafe pointer to the SEXP value.
 func (v *prim_sexprec) Pointer() unsafe.Pointer {
+	return unsafe.Pointer(v)
+}
+
+// Pointer returns an unsafe pointer to the SEXP value.
+func (v *sym_sexprec) Pointer() unsafe.Pointer {
 	return unsafe.Pointer(v)
 }
 
@@ -89,7 +96,8 @@ func (v *Value) IsNull() bool {
 }
 
 // Interface returns a Go value corresponding to the SEXP type specified
-// in the SEXP info field.
+// in the SEXP info field. If the receiver is nil, the R NilValue will be
+// returned.
 func (v *Value) Interface() interface{} {
 	if v == nil {
 		return NilValue
