@@ -18,7 +18,7 @@ print_sexp <- function(p) {
 
 #' gophers
 #'
-#' Gophers returns n gophers.
+#' Gophers returns n gophers with name attributes.
 #' 
 #' @param n is a scalar integer
 #' @return A scalar SEXP

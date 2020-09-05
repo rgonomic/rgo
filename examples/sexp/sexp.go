@@ -35,13 +35,21 @@ func PrintSEXP(p unsafe.Pointer) unsafe.Pointer {
 	return p
 }
 
-// Gophers returns n gophers.
+// Gophers returns n gophers with name attributes.
 func Gophers(n int) unsafe.Pointer {
 	c := sexp.NewString(n).Protect()
 	defer c.Unprotect()
+	names := sexp.NewString(n).Protect()
+	defer names.Unprotect()
+
 	vec := c.Vector()
+	namesVec := names.Vector()
 	for i := range vec {
 		vec[i] = sexp.NewCharacter(fmt.Sprintf("Gopher %d", i+1))
+		namesVec[i] = sexp.NewCharacter(fmt.Sprintf("Name_%d", i+1))
 	}
-	return c.Pointer()
+
+	sxp := c.Value()
+	sxp.SetNames(names)
+	return sxp.Export()
 }

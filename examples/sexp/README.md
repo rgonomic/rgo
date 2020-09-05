@@ -80,40 +80,63 @@ $b
 New SEXP values can be created with the sexp package, for example, a vector of strings.
 
 ```
-// Gophers returns n gophers.
+// Gophers returns n gophers with name attributes.
 func Gophers(n int) unsafe.Pointer {
 	c := sexp.NewString(n).Protect()
 	defer c.Unprotect()
+	names := sexp.NewString(n).Protect()
+	defer names.Unprotect()
+
 	vec := c.Vector()
+	namesVec := names.Vector()
 	for i := range vec {
 		vec[i] = sexp.NewCharacter(fmt.Sprintf("Gopher %d", i+1))
+		namesVec[i] = sexp.NewCharacter(fmt.Sprintf("Name_%d", i+1))
 	}
-	return c.Pointer()
+
+	sxp := c.Value()
+	sxp.SetNames(names)
+	return sxp.Export()
 }
 ```
 
 ```
-> sexp::gophers(1L)
-[1] "Gopher 1"
-> sexp::gophers(100L)
-  [1] "Gopher 1"   "Gopher 2"   "Gopher 3"   "Gopher 4"   "Gopher 5"  
-  [6] "Gopher 6"   "Gopher 7"   "Gopher 8"   "Gopher 9"   "Gopher 10" 
- [11] "Gopher 11"  "Gopher 12"  "Gopher 13"  "Gopher 14"  "Gopher 15" 
- [16] "Gopher 16"  "Gopher 17"  "Gopher 18"  "Gopher 19"  "Gopher 20" 
- [21] "Gopher 21"  "Gopher 22"  "Gopher 23"  "Gopher 24"  "Gopher 25" 
- [26] "Gopher 26"  "Gopher 27"  "Gopher 28"  "Gopher 29"  "Gopher 30" 
- [31] "Gopher 31"  "Gopher 32"  "Gopher 33"  "Gopher 34"  "Gopher 35" 
- [36] "Gopher 36"  "Gopher 37"  "Gopher 38"  "Gopher 39"  "Gopher 40" 
- [41] "Gopher 41"  "Gopher 42"  "Gopher 43"  "Gopher 44"  "Gopher 45" 
- [46] "Gopher 46"  "Gopher 47"  "Gopher 48"  "Gopher 49"  "Gopher 50" 
- [51] "Gopher 51"  "Gopher 52"  "Gopher 53"  "Gopher 54"  "Gopher 55" 
- [56] "Gopher 56"  "Gopher 57"  "Gopher 58"  "Gopher 59"  "Gopher 60" 
- [61] "Gopher 61"  "Gopher 62"  "Gopher 63"  "Gopher 64"  "Gopher 65" 
- [66] "Gopher 66"  "Gopher 67"  "Gopher 68"  "Gopher 69"  "Gopher 70" 
- [71] "Gopher 71"  "Gopher 72"  "Gopher 73"  "Gopher 74"  "Gopher 75" 
- [76] "Gopher 76"  "Gopher 77"  "Gopher 78"  "Gopher 79"  "Gopher 80" 
- [81] "Gopher 81"  "Gopher 82"  "Gopher 83"  "Gopher 84"  "Gopher 85" 
- [86] "Gopher 86"  "Gopher 87"  "Gopher 88"  "Gopher 89"  "Gopher 90" 
- [91] "Gopher 91"  "Gopher 92"  "Gopher 93"  "Gopher 94"  "Gopher 95" 
- [96] "Gopher 96"  "Gopher 97"  "Gopher 98"  "Gopher 99"  "Gopher 100"
+> gophers(1L)
+    Name_1 
+"Gopher 1" 
+> gophers(100L)
+      Name_1       Name_2       Name_3       Name_4       Name_5       Name_6 
+  "Gopher 1"   "Gopher 2"   "Gopher 3"   "Gopher 4"   "Gopher 5"   "Gopher 6" 
+      Name_7       Name_8       Name_9      Name_10      Name_11      Name_12 
+  "Gopher 7"   "Gopher 8"   "Gopher 9"  "Gopher 10"  "Gopher 11"  "Gopher 12" 
+     Name_13      Name_14      Name_15      Name_16      Name_17      Name_18 
+ "Gopher 13"  "Gopher 14"  "Gopher 15"  "Gopher 16"  "Gopher 17"  "Gopher 18" 
+     Name_19      Name_20      Name_21      Name_22      Name_23      Name_24 
+ "Gopher 19"  "Gopher 20"  "Gopher 21"  "Gopher 22"  "Gopher 23"  "Gopher 24" 
+     Name_25      Name_26      Name_27      Name_28      Name_29      Name_30 
+ "Gopher 25"  "Gopher 26"  "Gopher 27"  "Gopher 28"  "Gopher 29"  "Gopher 30" 
+     Name_31      Name_32      Name_33      Name_34      Name_35      Name_36 
+ "Gopher 31"  "Gopher 32"  "Gopher 33"  "Gopher 34"  "Gopher 35"  "Gopher 36" 
+     Name_37      Name_38      Name_39      Name_40      Name_41      Name_42 
+ "Gopher 37"  "Gopher 38"  "Gopher 39"  "Gopher 40"  "Gopher 41"  "Gopher 42" 
+     Name_43      Name_44      Name_45      Name_46      Name_47      Name_48 
+ "Gopher 43"  "Gopher 44"  "Gopher 45"  "Gopher 46"  "Gopher 47"  "Gopher 48" 
+     Name_49      Name_50      Name_51      Name_52      Name_53      Name_54 
+ "Gopher 49"  "Gopher 50"  "Gopher 51"  "Gopher 52"  "Gopher 53"  "Gopher 54" 
+     Name_55      Name_56      Name_57      Name_58      Name_59      Name_60 
+ "Gopher 55"  "Gopher 56"  "Gopher 57"  "Gopher 58"  "Gopher 59"  "Gopher 60" 
+     Name_61      Name_62      Name_63      Name_64      Name_65      Name_66 
+ "Gopher 61"  "Gopher 62"  "Gopher 63"  "Gopher 64"  "Gopher 65"  "Gopher 66" 
+     Name_67      Name_68      Name_69      Name_70      Name_71      Name_72 
+ "Gopher 67"  "Gopher 68"  "Gopher 69"  "Gopher 70"  "Gopher 71"  "Gopher 72" 
+     Name_73      Name_74      Name_75      Name_76      Name_77      Name_78 
+ "Gopher 73"  "Gopher 74"  "Gopher 75"  "Gopher 76"  "Gopher 77"  "Gopher 78" 
+     Name_79      Name_80      Name_81      Name_82      Name_83      Name_84 
+ "Gopher 79"  "Gopher 80"  "Gopher 81"  "Gopher 82"  "Gopher 83"  "Gopher 84" 
+     Name_85      Name_86      Name_87      Name_88      Name_89      Name_90 
+ "Gopher 85"  "Gopher 86"  "Gopher 87"  "Gopher 88"  "Gopher 89"  "Gopher 90" 
+     Name_91      Name_92      Name_93      Name_94      Name_95      Name_96 
+ "Gopher 91"  "Gopher 92"  "Gopher 93"  "Gopher 94"  "Gopher 95"  "Gopher 96" 
+     Name_97      Name_98      Name_99     Name_100 
+ "Gopher 97"  "Gopher 98"  "Gopher 99" "Gopher 100" 
 ```
