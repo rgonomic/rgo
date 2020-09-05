@@ -77,41 +77,6 @@ func LogicalNA() int32 {
 
 //go:generate go run generate_types.go
 
-// Pointer returns an unsafe pointer to the SEXP value.
-func (v *sexprec) Pointer() unsafe.Pointer {
-	return unsafe.Pointer(v)
-}
-
-// Pointer returns an unsafe pointer to the SEXP value.
-func (v *vector_sexprec) Pointer() unsafe.Pointer {
-	return unsafe.Pointer(v)
-}
-
-// Pointer returns an unsafe pointer to the SEXP value.
-func (v *list_sexprec) Pointer() unsafe.Pointer {
-	return unsafe.Pointer(v)
-}
-
-// Pointer returns an unsafe pointer to the SEXP value.
-func (v *env_sexprec) Pointer() unsafe.Pointer {
-	return unsafe.Pointer(v)
-}
-
-// Pointer returns an unsafe pointer to the SEXP value.
-func (v *prom_sexprec) Pointer() unsafe.Pointer {
-	return unsafe.Pointer(v)
-}
-
-// Pointer returns an unsafe pointer to the SEXP value.
-func (v *prim_sexprec) Pointer() unsafe.Pointer {
-	return unsafe.Pointer(v)
-}
-
-// Pointer returns an unsafe pointer to the SEXP value.
-func (v *sym_sexprec) Pointer() unsafe.Pointer {
-	return unsafe.Pointer(v)
-}
-
 // Value is an SEXP value.
 type Value struct {
 	sexprec

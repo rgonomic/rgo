@@ -81,6 +81,8 @@ func (i Info) mask(offset, bits int) uint64 {
 	return (uint64(i) >> offset) & (^uint64(0) >> (64 - bits))
 }
 
+//go:generate bash -c "go tool cgo -godefs -- $(pkg-config --cflags libR) sxptypes.go | gofmt > cgo_types.go"
+//go:generate rm -rf _obj
 //go:generate stringer -type=Type
 
 // Type is the SEXPTYPE enum defined in Rinternals.h.

@@ -37,6 +37,11 @@ func (v *List) Unprotect() {
 	unprotect(1)
 }
 
+// Pointer returns an unsafe pointer to the SEXP value.
+func (v *List) Pointer() unsafe.Pointer {
+	return unsafe.Pointer(v)
+}
+
 // Info returns the information field of the SEXP value.
 func (v *List) Info() Info {
 	if v == nil {
@@ -144,6 +149,11 @@ type Lang struct {
 	list_sexprec
 }
 
+// Pointer returns an unsafe pointer to the SEXP value.
+func (v *Lang) Pointer() unsafe.Pointer {
+	return unsafe.Pointer(v)
+}
+
 // Info returns the information field of the SEXP value.
 func (v *Lang) Info() Info {
 	if v == nil {
@@ -210,6 +220,11 @@ type Dot struct {
 	list_sexprec
 }
 
+// Pointer returns an unsafe pointer to the SEXP value.
+func (v *Dot) Pointer() unsafe.Pointer {
+	return unsafe.Pointer(v)
+}
+
 // Info returns the information field of the SEXP value.
 func (v *Dot) Info() Info {
 	if v == nil {
@@ -274,6 +289,11 @@ func (v *Dot) Tag() *Symbol {
 // Symbol is an R name value.
 type Symbol struct {
 	sym_sexprec
+}
+
+// Pointer returns an unsafe pointer to the SEXP value.
+func (v *Symbol) Pointer() unsafe.Pointer {
+	return unsafe.Pointer(v)
 }
 
 // Info returns the information field of the SEXP value.

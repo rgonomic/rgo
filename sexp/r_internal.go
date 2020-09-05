@@ -69,36 +69,6 @@ type clo_sexprec C.clo_sexprec
 
 type prom_sexprec C.prom_sexprec
 
-const (
-	NILSXP     Type = C.NILSXP     // nil = NULL
-	SYMSXP     Type = C.SYMSXP     // symbols
-	LISTSXP    Type = C.LISTSXP    // lists of dotted pairs
-	CLOSXP     Type = C.CLOSXP     // closures
-	ENVSXP     Type = C.ENVSXP     // environments
-	PROMSXP    Type = C.PROMSXP    // promises: [un]evaluated closure arguments
-	LANGSXP    Type = C.LANGSXP    // language constructs (special lists)
-	SPECIALSXP Type = C.SPECIALSXP // special forms
-	BUILTINSXP Type = C.BUILTINSXP // builtin non-special forms
-	CHARSXP    Type = C.CHARSXP    // "scalar" string type (internal only)
-	LGLSXP     Type = C.LGLSXP     // logical vectors
-	INTSXP     Type = C.INTSXP     // integer vectors
-	REALSXP    Type = C.REALSXP    // real variables
-	CPLXSXP    Type = C.CPLXSXP    // complex variables
-	STRSXP     Type = C.STRSXP     // string vectors
-	DOTSXP     Type = C.DOTSXP     // dot-dot-dot object
-	ANYSXP     Type = C.ANYSXP     // make "any" args work
-	VECSXP     Type = C.VECSXP     // generic vectors
-	EXPRSXP    Type = C.EXPRSXP    // expressions vectors
-	BCODESXP   Type = C.BCODESXP   // byte code
-	EXTPTRSXP  Type = C.EXTPTRSXP  // external pointer
-	WEAKREFSXP Type = C.WEAKREFSXP // weak reference
-	RAWSXP     Type = C.RAWSXP     // raw bytes
-	S4SXP      Type = C.S4SXP      // S4 non-vector
-	NEWSXP     Type = C.NEWSXP     // fresh node created in new page
-	FREESXP    Type = C.FREESXP    // node released by GC
-	FUNSXP     Type = C.FUNSXP     // Closure or Builtin
-)
-
 var (
 	// NilValue is the R_NilValue as a *Value type. It must not be altered.
 	NilValue *Value = asValue(C.R_NilValue)

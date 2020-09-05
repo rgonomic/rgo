@@ -46,6 +46,11 @@ func (v *Integer) Unprotect() {
 	unprotect(1)
 }
 
+// Pointer returns an unsafe pointer to the SEXP value.
+func (v *Integer) Pointer() unsafe.Pointer {
+	return unsafe.Pointer(v)
+}
+
 // Len returns the number of elements in the vector.
 func (v *Integer) Len() int {
 	if v == nil {
@@ -115,6 +120,11 @@ func (v *Logical) Unprotect() {
 		panic("sexp: unprotecting a nil value")
 	}
 	unprotect(1)
+}
+
+// Pointer returns an unsafe pointer to the SEXP value.
+func (v *Logical) Pointer() unsafe.Pointer {
+	return unsafe.Pointer(v)
 }
 
 // Len returns the number of elements in the vector.
@@ -188,6 +198,11 @@ func (v *Real) Unprotect() {
 	unprotect(1)
 }
 
+// Pointer returns an unsafe pointer to the SEXP value.
+func (v *Real) Pointer() unsafe.Pointer {
+	return unsafe.Pointer(v)
+}
+
 // Len returns the number of elements in the vector.
 func (v *Real) Len() int {
 	if v == nil {
@@ -259,6 +274,11 @@ func (v *Complex) Unprotect() {
 	unprotect(1)
 }
 
+// Pointer returns an unsafe pointer to the SEXP value.
+func (v *Complex) Pointer() unsafe.Pointer {
+	return unsafe.Pointer(v)
+}
+
 // Len returns the number of elements in the vector.
 func (v *Complex) Len() int {
 	if v == nil {
@@ -328,6 +348,11 @@ func (v *String) Unprotect() {
 		panic("sexp: unprotecting a nil value")
 	}
 	unprotect(1)
+}
+
+// Pointer returns an unsafe pointer to the SEXP value.
+func (v *String) Pointer() unsafe.Pointer {
+	return unsafe.Pointer(v)
 }
 
 // Len returns the number of elements in the vector.
@@ -409,6 +434,11 @@ func (v *Character) Unprotect() {
 	unprotect(1)
 }
 
+// Pointer returns an unsafe pointer to the SEXP value.
+func (v *Character) Pointer() unsafe.Pointer {
+	return unsafe.Pointer(v)
+}
+
 // Len returns the number of elements in the vector.
 func (v *Character) Len() int {
 	if v == nil {
@@ -486,6 +516,11 @@ func (v *Raw) Unprotect() {
 	unprotect(1)
 }
 
+// Pointer returns an unsafe pointer to the SEXP value.
+func (v *Raw) Pointer() unsafe.Pointer {
+	return unsafe.Pointer(v)
+}
+
 // Len returns the number of elements in the vector.
 func (v *Raw) Len() int {
 	if v == nil {
@@ -557,6 +592,11 @@ func (v *Vector) Unprotect() {
 	unprotect(1)
 }
 
+// Pointer returns an unsafe pointer to the SEXP value.
+func (v *Vector) Pointer() unsafe.Pointer {
+	return unsafe.Pointer(v)
+}
+
 // Len returns the number of elements in the vector.
 func (v *Vector) Len() int {
 	if v == nil {
@@ -604,6 +644,11 @@ type Expression struct {
 	vector_sexprec
 }
 
+// Pointer returns an unsafe pointer to the SEXP value.
+func (v *Expression) Pointer() unsafe.Pointer {
+	return unsafe.Pointer(v)
+}
+
 // Len returns the number of elements in the vector.
 func (v *Expression) Len() int {
 	if v == nil {
@@ -649,6 +694,11 @@ func (v *Expression) Vector() []*Value {
 // WeakReference is an R weak reference.
 type WeakReference struct {
 	vector_sexprec
+}
+
+// Pointer returns an unsafe pointer to the SEXP value.
+func (v *WeakReference) Pointer() unsafe.Pointer {
+	return unsafe.Pointer(v)
 }
 
 // Len returns the number of elements in the vector.

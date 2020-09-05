@@ -225,7 +225,12 @@ func (v *{{.Type}}) Unprotect() {
 	unprotect(1)
 }
 
-{{end}}// Len returns the number of elements in the vector.
+{{end}}// Pointer returns an unsafe pointer to the SEXP value.
+func (v *{{.Type}}) Pointer() unsafe.Pointer {
+	return unsafe.Pointer(v)
+}
+
+// Len returns the number of elements in the vector.
 func (v *{{.Type}}) Len() int {
 	if v == nil {
 		return 0
@@ -341,7 +346,12 @@ func (v *{{.Type}}) Unprotect() {
 	unprotect(1)
 }
 
-{{end}}// Info returns the information field of the SEXP value.
+{{end}}// Pointer returns an unsafe pointer to the SEXP value.
+func (v *{{.Type}}) Pointer() unsafe.Pointer {
+	return unsafe.Pointer(v)
+}
+
+// Info returns the information field of the SEXP value.
 func (v *{{.Type}}) Info() Info {
 	if v == nil {
 		return NilValue.Info()
