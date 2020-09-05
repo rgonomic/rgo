@@ -16,6 +16,8 @@ type List struct {
 	list_sexprec
 }
 
+var _ Valuer = (*List)(nil)
+
 // NewList returns a list with length n.
 func NewList(n int) *List {
 	return (*List)(allocateList(n))
@@ -37,34 +39,9 @@ func (v *List) Unprotect() {
 	unprotect(1)
 }
 
-// Pointer returns an unsafe pointer to the SEXP value.
-func (v *List) Pointer() unsafe.Pointer {
-	return unsafe.Pointer(v)
-}
-
-// Info returns the information field of the SEXP value.
-func (v *List) Info() Info {
-	if v == nil {
-		return NilValue.Info()
-	}
-	return *(*Info)(unsafe.Pointer(&v.sxpinfo))
-}
-
 // Value returns the generic state of the SEXP value.
 func (v *List) Value() *Value {
 	return (*Value)(unsafe.Pointer(v))
-}
-
-// Attributes returns the attributes of the SEXP value.
-func (v *List) Attributes() *List {
-	if v == nil {
-		return nil
-	}
-	attr := (*List)(unsafe.Pointer(v.attrib))
-	if attr.Value().IsNull() {
-		return nil
-	}
-	return attr
 }
 
 // Head returns the first element of the list (CAR/lisp in R terminology).
@@ -110,12 +87,12 @@ func (v *List) Get(tag []byte) *Value {
 		t := curr.Tag()
 		if t != nil {
 			if bytes.Equal(t.Name().Bytes(), tag) {
-				return (*Value)(curr.Pointer())
+				return (*Value)(curr.Value().Pointer())
 			}
 		}
 		tail := curr.Tail()
 		if tail, ok := tail.Value().Interface().(*List); ok {
-			curr = (*List)(tail.Pointer())
+			curr = (*List)(tail.Value().Pointer())
 			continue
 		}
 		break
@@ -136,7 +113,7 @@ func (v *List) tags() []string {
 		}
 		tail := curr.Tail()
 		if tail, ok := tail.Value().Interface().(*List); ok {
-			curr = (*List)(tail.Pointer())
+			curr = (*List)(tail.Value().Pointer())
 			continue
 		}
 		break
@@ -149,34 +126,11 @@ type Lang struct {
 	list_sexprec
 }
 
-// Pointer returns an unsafe pointer to the SEXP value.
-func (v *Lang) Pointer() unsafe.Pointer {
-	return unsafe.Pointer(v)
-}
-
-// Info returns the information field of the SEXP value.
-func (v *Lang) Info() Info {
-	if v == nil {
-		return NilValue.Info()
-	}
-	return *(*Info)(unsafe.Pointer(&v.sxpinfo))
-}
+var _ Valuer = (*Lang)(nil)
 
 // Value returns the generic state of the SEXP value.
 func (v *Lang) Value() *Value {
 	return (*Value)(unsafe.Pointer(v))
-}
-
-// Attributes returns the attributes of the SEXP value.
-func (v *Lang) Attributes() *List {
-	if v == nil {
-		return nil
-	}
-	attr := (*List)(unsafe.Pointer(v.attrib))
-	if attr.Value().IsNull() {
-		return nil
-	}
-	return attr
 }
 
 // Head returns the first element of the list (CAR/lisp in R terminology).
@@ -220,34 +174,11 @@ type Dot struct {
 	list_sexprec
 }
 
-// Pointer returns an unsafe pointer to the SEXP value.
-func (v *Dot) Pointer() unsafe.Pointer {
-	return unsafe.Pointer(v)
-}
-
-// Info returns the information field of the SEXP value.
-func (v *Dot) Info() Info {
-	if v == nil {
-		return NilValue.Info()
-	}
-	return *(*Info)(unsafe.Pointer(&v.sxpinfo))
-}
+var _ Valuer = (*Dot)(nil)
 
 // Value returns the generic state of the SEXP value.
 func (v *Dot) Value() *Value {
 	return (*Value)(unsafe.Pointer(v))
-}
-
-// Attributes returns the attributes of the SEXP value.
-func (v *Dot) Attributes() *List {
-	if v == nil {
-		return nil
-	}
-	attr := (*List)(unsafe.Pointer(v.attrib))
-	if attr.Value().IsNull() {
-		return nil
-	}
-	return attr
 }
 
 // Head returns the first element of the list (CAR/lisp in R terminology).
@@ -291,34 +222,11 @@ type Symbol struct {
 	sym_sexprec
 }
 
-// Pointer returns an unsafe pointer to the SEXP value.
-func (v *Symbol) Pointer() unsafe.Pointer {
-	return unsafe.Pointer(v)
-}
-
-// Info returns the information field of the SEXP value.
-func (v *Symbol) Info() Info {
-	if v == nil {
-		return NilValue.Info()
-	}
-	return *(*Info)(unsafe.Pointer(&v.sxpinfo))
-}
+var _ Valuer = (*Symbol)(nil)
 
 // Value returns the generic state of the SEXP value.
 func (v *Symbol) Value() *Value {
 	return (*Value)(unsafe.Pointer(v))
-}
-
-// Attributes returns the attributes of the SEXP value.
-func (v *Symbol) Attributes() *List {
-	if v == nil {
-		return nil
-	}
-	attr := (*List)(unsafe.Pointer(v.attrib))
-	if attr.Value().IsNull() {
-		return nil
-	}
-	return attr
 }
 
 // Value returns the value of the symbol.

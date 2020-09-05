@@ -108,3 +108,11 @@ func protect(sexp unsafe.Pointer) unsafe.Pointer {
 func unprotect(n int) {
 	C.Rf_unprotect(C.int(n))
 }
+
+func setAttribute(sexp, attrName, attr unsafe.Pointer) {
+	C.setAttrib((C.SEXP)(sexp), (C.SEXP)(attrName), (C.SEXP)(attr))
+}
+
+func setNames(sexp, names unsafe.Pointer) {
+	C.setAttrib((C.SEXP)(sexp), C.R_NamesSymbol, (C.SEXP)(names))
+}

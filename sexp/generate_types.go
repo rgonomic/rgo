@@ -201,6 +201,8 @@ type {{.Type}} struct {
 	{{.RType}}
 }
 
+var _ Valuer = (*{{.Type}})(nil)
+
 {{if .Allocator}}{{$t := .}}{{range .Allocator}}// New{{$t.Type}}{{.NewSuffix}} returns {{.NewDoc}}.
 //
 // The allocation is made by the R runtime. The returned value may need to
@@ -225,12 +227,7 @@ func (v *{{.Type}}) Unprotect() {
 	unprotect(1)
 }
 
-{{end}}// Pointer returns an unsafe pointer to the SEXP value.
-func (v *{{.Type}}) Pointer() unsafe.Pointer {
-	return unsafe.Pointer(v)
-}
-
-// Len returns the number of elements in the vector.
+{{end}}// Len returns the number of elements in the vector.
 func (v *{{.Type}}) Len() int {
 	if v == nil {
 		return 0
@@ -238,29 +235,9 @@ func (v *{{.Type}}) Len() int {
 	return int(v.vecsxp.length)
 }
 
-// Info returns the information field of the SEXP value.
-func (v *{{.Type}}) Info() Info {
-	if v == nil {
-		return NilValue.Info()
-	}
-	return *(*Info)(unsafe.Pointer(&v.sxpinfo))
-}
-
 // Value returns the generic state of the SEXP value.
 func (v *{{.Type}}) Value() *Value {
 	return (*Value)(unsafe.Pointer(v))
-}
-
-// Attributes returns the attributes of the SEXP value.
-func (v *{{.Type}}) Attributes() *List {
-	if v == nil {
-		return nil
-	}
-	attr := (*List)(unsafe.Pointer(v.attrib))
-	if attr.Value().IsNull() {
-		return nil
-	}
-	return attr
 }
 
 // {{with .VectorDoc}}{{.}}{{else}}Vector returns a slice corresponding to the R vector{{end}}.
@@ -325,6 +302,8 @@ type {{.Type}} struct {
 	{{.RType}}
 }
 
+var _ Valuer = (*{{.Type}})(nil)
+
 {{if .Allocator}}// New{{.Type}} returns {{.NewDoc}}.
 func New{{.Type}}(n int) *{{.Type}} {
 	return (*{{.Type}})(allocate{{.Allocator}}(n))
@@ -346,34 +325,9 @@ func (v *{{.Type}}) Unprotect() {
 	unprotect(1)
 }
 
-{{end}}// Pointer returns an unsafe pointer to the SEXP value.
-func (v *{{.Type}}) Pointer() unsafe.Pointer {
-	return unsafe.Pointer(v)
-}
-
-// Info returns the information field of the SEXP value.
-func (v *{{.Type}}) Info() Info {
-	if v == nil {
-		return NilValue.Info()
-	}
-	return *(*Info)(unsafe.Pointer(&v.sxpinfo))
-}
-
-// Value returns the generic state of the SEXP value.
+{{end}}// Value returns the generic state of the SEXP value.
 func (v *{{.Type}}) Value() *Value {
 	return (*Value)(unsafe.Pointer(v))
-}
-
-// Attributes returns the attributes of the SEXP value.
-func (v *{{.Type}}) Attributes() *List {
-	if v == nil {
-		return nil
-	}
-	attr := (*List)(unsafe.Pointer(v.attrib))
-	if attr.Value().IsNull() {
-		return nil
-	}
-	return attr
 }
 
 {{if eq .RType "list_sexprec"}}// Head returns the first element of the list (CAR/lisp in R terminology).
@@ -419,12 +373,12 @@ func (v *{{.Type}}) Get(tag []byte) *Value {
 		t := curr.Tag()
 		if t != nil {
 			if bytes.Equal(t.Name().Bytes(), tag) {
-				return (*Value)(curr.Pointer())
+				return (*Value)(curr.Value().Pointer())
 			}
 		}
 		tail := curr.Tail()
 		if tail, ok := tail.Value().Interface().(*{{.Type}}); ok {
-			curr = (*{{.Type}})(tail.Pointer())
+			curr = (*{{.Type}})(tail.Value().Pointer())
 			continue
 		}
 		break
@@ -445,7 +399,7 @@ func (v *{{.Type}}) tags() []string {
 		}
 		tail := curr.Tail()
 		if tail, ok := tail.Value().Interface().(*{{.Type}}); ok {
-			curr = (*{{.Type}})(tail.Pointer())
+			curr = (*{{.Type}})(tail.Value().Pointer())
 			continue
 		}
 		break
@@ -560,30 +514,13 @@ type {{.Type}} struct {
 	{{.RType}}
 }
 
-// Info returns the information field of the SEXP value.
-func (v *{{.Type}}) Info() Info {
-	if v == nil {
-		return NilValue.Info()
-	}
-	return *(*Info)(unsafe.Pointer(&v.sxpinfo))
-}
+var _ Valuer = (*{{.Type}})(nil)
 
 // Value returns the generic state of the SEXP value.
 func (v *{{.Type}}) Value() *Value {
 	return (*Value)(unsafe.Pointer(v))
 }
 
-// Attributes returns the attributes of the SEXP value.
-func (v *{{.Type}}) Attributes() *List {
-	if v == nil {
-		return nil
-	}
-	attr := (*List)(unsafe.Pointer(v.attrib))
-	if attr.Value().IsNull() {
-		return nil
-	}
-	return attr
-}
 {{with .Accessors}}{{range .}}
 // {{.Name}} returns {{.Doc}}.
 func (v *{{$t.Type}}) {{.Name}}() *Value {

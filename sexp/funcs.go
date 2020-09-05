@@ -13,30 +13,13 @@ type Promise struct {
 	prom_sexprec
 }
 
-// Info returns the information field of the SEXP value.
-func (v *Promise) Info() Info {
-	if v == nil {
-		return NilValue.Info()
-	}
-	return *(*Info)(unsafe.Pointer(&v.sxpinfo))
-}
+var _ Valuer = (*Promise)(nil)
 
 // Value returns the generic state of the SEXP value.
 func (v *Promise) Value() *Value {
 	return (*Value)(unsafe.Pointer(v))
 }
 
-// Attributes returns the attributes of the SEXP value.
-func (v *Promise) Attributes() *List {
-	if v == nil {
-		return nil
-	}
-	attr := (*List)(unsafe.Pointer(v.attrib))
-	if attr.Value().IsNull() {
-		return nil
-	}
-	return attr
-}
 
 // PromiseValue returns the value of the promise.
 func (v *Promise) PromiseValue() *Value {
@@ -79,30 +62,13 @@ type Closure struct {
 	clo_sexprec
 }
 
-// Info returns the information field of the SEXP value.
-func (v *Closure) Info() Info {
-	if v == nil {
-		return NilValue.Info()
-	}
-	return *(*Info)(unsafe.Pointer(&v.sxpinfo))
-}
+var _ Valuer = (*Closure)(nil)
 
 // Value returns the generic state of the SEXP value.
 func (v *Closure) Value() *Value {
 	return (*Value)(unsafe.Pointer(v))
 }
 
-// Attributes returns the attributes of the SEXP value.
-func (v *Closure) Attributes() *List {
-	if v == nil {
-		return nil
-	}
-	attr := (*List)(unsafe.Pointer(v.attrib))
-	if attr.Value().IsNull() {
-		return nil
-	}
-	return attr
-}
 
 // Formals returns the formal arguments of the function.
 func (v *Closure) Formals() *Value {
@@ -145,30 +111,13 @@ type Environment struct {
 	env_sexprec
 }
 
-// Info returns the information field of the SEXP value.
-func (v *Environment) Info() Info {
-	if v == nil {
-		return NilValue.Info()
-	}
-	return *(*Info)(unsafe.Pointer(&v.sxpinfo))
-}
+var _ Valuer = (*Environment)(nil)
 
 // Value returns the generic state of the SEXP value.
 func (v *Environment) Value() *Value {
 	return (*Value)(unsafe.Pointer(v))
 }
 
-// Attributes returns the attributes of the SEXP value.
-func (v *Environment) Attributes() *List {
-	if v == nil {
-		return nil
-	}
-	attr := (*List)(unsafe.Pointer(v.attrib))
-	if attr.Value().IsNull() {
-		return nil
-	}
-	return attr
-}
 
 // Frame returns the current frame.
 func (v *Environment) Frame() *Value {
@@ -211,30 +160,13 @@ type Builtin struct {
 	prim_sexprec
 }
 
-// Info returns the information field of the SEXP value.
-func (v *Builtin) Info() Info {
-	if v == nil {
-		return NilValue.Info()
-	}
-	return *(*Info)(unsafe.Pointer(&v.sxpinfo))
-}
+var _ Valuer = (*Builtin)(nil)
 
 // Value returns the generic state of the SEXP value.
 func (v *Builtin) Value() *Value {
 	return (*Value)(unsafe.Pointer(v))
 }
 
-// Attributes returns the attributes of the SEXP value.
-func (v *Builtin) Attributes() *List {
-	if v == nil {
-		return nil
-	}
-	attr := (*List)(unsafe.Pointer(v.attrib))
-	if attr.Value().IsNull() {
-		return nil
-	}
-	return attr
-}
 
 // Offset returns the offset into the table of language primitives.
 func (v *Builtin) Offset() int32 {
@@ -246,30 +178,13 @@ type Special struct {
 	prim_sexprec
 }
 
-// Info returns the information field of the SEXP value.
-func (v *Special) Info() Info {
-	if v == nil {
-		return NilValue.Info()
-	}
-	return *(*Info)(unsafe.Pointer(&v.sxpinfo))
-}
+var _ Valuer = (*Special)(nil)
 
 // Value returns the generic state of the SEXP value.
 func (v *Special) Value() *Value {
 	return (*Value)(unsafe.Pointer(v))
 }
 
-// Attributes returns the attributes of the SEXP value.
-func (v *Special) Attributes() *List {
-	if v == nil {
-		return nil
-	}
-	attr := (*List)(unsafe.Pointer(v.attrib))
-	if attr.Value().IsNull() {
-		return nil
-	}
-	return attr
-}
 
 // Offset returns the offset into the table of language primitives.
 func (v *Special) Offset() int32 {

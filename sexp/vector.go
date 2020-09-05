@@ -22,6 +22,8 @@ type Integer struct {
 	vector_sexprec
 }
 
+var _ Valuer = (*Integer)(nil)
+
 // NewInteger returns an integer vector with length n.
 //
 // The allocation is made by the R runtime. The returned value may need to
@@ -46,11 +48,6 @@ func (v *Integer) Unprotect() {
 	unprotect(1)
 }
 
-// Pointer returns an unsafe pointer to the SEXP value.
-func (v *Integer) Pointer() unsafe.Pointer {
-	return unsafe.Pointer(v)
-}
-
 // Len returns the number of elements in the vector.
 func (v *Integer) Len() int {
 	if v == nil {
@@ -59,29 +56,9 @@ func (v *Integer) Len() int {
 	return int(v.vecsxp.length)
 }
 
-// Info returns the information field of the SEXP value.
-func (v *Integer) Info() Info {
-	if v == nil {
-		return NilValue.Info()
-	}
-	return *(*Info)(unsafe.Pointer(&v.sxpinfo))
-}
-
 // Value returns the generic state of the SEXP value.
 func (v *Integer) Value() *Value {
 	return (*Value)(unsafe.Pointer(v))
-}
-
-// Attributes returns the attributes of the SEXP value.
-func (v *Integer) Attributes() *List {
-	if v == nil {
-		return nil
-	}
-	attr := (*List)(unsafe.Pointer(v.attrib))
-	if attr.Value().IsNull() {
-		return nil
-	}
-	return attr
 }
 
 // Vector returns a slice corresponding to the R vector.
@@ -97,6 +74,8 @@ func (v *Integer) Vector() []int32 {
 type Logical struct {
 	vector_sexprec
 }
+
+var _ Valuer = (*Logical)(nil)
 
 // NewLogical returns a logical vector with length n.
 //
@@ -122,11 +101,6 @@ func (v *Logical) Unprotect() {
 	unprotect(1)
 }
 
-// Pointer returns an unsafe pointer to the SEXP value.
-func (v *Logical) Pointer() unsafe.Pointer {
-	return unsafe.Pointer(v)
-}
-
 // Len returns the number of elements in the vector.
 func (v *Logical) Len() int {
 	if v == nil {
@@ -135,29 +109,9 @@ func (v *Logical) Len() int {
 	return int(v.vecsxp.length)
 }
 
-// Info returns the information field of the SEXP value.
-func (v *Logical) Info() Info {
-	if v == nil {
-		return NilValue.Info()
-	}
-	return *(*Info)(unsafe.Pointer(&v.sxpinfo))
-}
-
 // Value returns the generic state of the SEXP value.
 func (v *Logical) Value() *Value {
 	return (*Value)(unsafe.Pointer(v))
-}
-
-// Attributes returns the attributes of the SEXP value.
-func (v *Logical) Attributes() *List {
-	if v == nil {
-		return nil
-	}
-	attr := (*List)(unsafe.Pointer(v.attrib))
-	if attr.Value().IsNull() {
-		return nil
-	}
-	return attr
 }
 
 // Vector returns a slice corresponding to the R vector.
@@ -173,6 +127,8 @@ func (v *Logical) Vector() []int32 {
 type Real struct {
 	vector_sexprec
 }
+
+var _ Valuer = (*Real)(nil)
 
 // NewReal returns a real vector with length n.
 //
@@ -198,11 +154,6 @@ func (v *Real) Unprotect() {
 	unprotect(1)
 }
 
-// Pointer returns an unsafe pointer to the SEXP value.
-func (v *Real) Pointer() unsafe.Pointer {
-	return unsafe.Pointer(v)
-}
-
 // Len returns the number of elements in the vector.
 func (v *Real) Len() int {
 	if v == nil {
@@ -211,29 +162,9 @@ func (v *Real) Len() int {
 	return int(v.vecsxp.length)
 }
 
-// Info returns the information field of the SEXP value.
-func (v *Real) Info() Info {
-	if v == nil {
-		return NilValue.Info()
-	}
-	return *(*Info)(unsafe.Pointer(&v.sxpinfo))
-}
-
 // Value returns the generic state of the SEXP value.
 func (v *Real) Value() *Value {
 	return (*Value)(unsafe.Pointer(v))
-}
-
-// Attributes returns the attributes of the SEXP value.
-func (v *Real) Attributes() *List {
-	if v == nil {
-		return nil
-	}
-	attr := (*List)(unsafe.Pointer(v.attrib))
-	if attr.Value().IsNull() {
-		return nil
-	}
-	return attr
 }
 
 // Vector returns a slice corresponding to the R vector.
@@ -249,6 +180,8 @@ func (v *Real) Vector() []float64 {
 type Complex struct {
 	vector_sexprec
 }
+
+var _ Valuer = (*Complex)(nil)
 
 // NewComplex returns a complex vector with length n.
 //
@@ -274,11 +207,6 @@ func (v *Complex) Unprotect() {
 	unprotect(1)
 }
 
-// Pointer returns an unsafe pointer to the SEXP value.
-func (v *Complex) Pointer() unsafe.Pointer {
-	return unsafe.Pointer(v)
-}
-
 // Len returns the number of elements in the vector.
 func (v *Complex) Len() int {
 	if v == nil {
@@ -287,29 +215,9 @@ func (v *Complex) Len() int {
 	return int(v.vecsxp.length)
 }
 
-// Info returns the information field of the SEXP value.
-func (v *Complex) Info() Info {
-	if v == nil {
-		return NilValue.Info()
-	}
-	return *(*Info)(unsafe.Pointer(&v.sxpinfo))
-}
-
 // Value returns the generic state of the SEXP value.
 func (v *Complex) Value() *Value {
 	return (*Value)(unsafe.Pointer(v))
-}
-
-// Attributes returns the attributes of the SEXP value.
-func (v *Complex) Attributes() *List {
-	if v == nil {
-		return nil
-	}
-	attr := (*List)(unsafe.Pointer(v.attrib))
-	if attr.Value().IsNull() {
-		return nil
-	}
-	return attr
 }
 
 // Vector returns a slice corresponding to the R vector.
@@ -325,6 +233,8 @@ func (v *Complex) Vector() []complex128 {
 type String struct {
 	vector_sexprec
 }
+
+var _ Valuer = (*String)(nil)
 
 // NewString returns a character vector with length n.
 //
@@ -350,11 +260,6 @@ func (v *String) Unprotect() {
 	unprotect(1)
 }
 
-// Pointer returns an unsafe pointer to the SEXP value.
-func (v *String) Pointer() unsafe.Pointer {
-	return unsafe.Pointer(v)
-}
-
 // Len returns the number of elements in the vector.
 func (v *String) Len() int {
 	if v == nil {
@@ -363,29 +268,9 @@ func (v *String) Len() int {
 	return int(v.vecsxp.length)
 }
 
-// Info returns the information field of the SEXP value.
-func (v *String) Info() Info {
-	if v == nil {
-		return NilValue.Info()
-	}
-	return *(*Info)(unsafe.Pointer(&v.sxpinfo))
-}
-
 // Value returns the generic state of the SEXP value.
 func (v *String) Value() *Value {
 	return (*Value)(unsafe.Pointer(v))
-}
-
-// Attributes returns the attributes of the SEXP value.
-func (v *String) Attributes() *List {
-	if v == nil {
-		return nil
-	}
-	attr := (*List)(unsafe.Pointer(v.attrib))
-	if attr.Value().IsNull() {
-		return nil
-	}
-	return attr
 }
 
 // Vector returns a slice corresponding to the R vector.
@@ -401,6 +286,8 @@ func (v *String) Vector() []*Character {
 type Character struct {
 	vector_sexprec
 }
+
+var _ Valuer = (*Character)(nil)
 
 // NewCharacter returns a scalar string corresponding to s.
 //
@@ -434,11 +321,6 @@ func (v *Character) Unprotect() {
 	unprotect(1)
 }
 
-// Pointer returns an unsafe pointer to the SEXP value.
-func (v *Character) Pointer() unsafe.Pointer {
-	return unsafe.Pointer(v)
-}
-
 // Len returns the number of elements in the vector.
 func (v *Character) Len() int {
 	if v == nil {
@@ -447,29 +329,9 @@ func (v *Character) Len() int {
 	return int(v.vecsxp.length)
 }
 
-// Info returns the information field of the SEXP value.
-func (v *Character) Info() Info {
-	if v == nil {
-		return NilValue.Info()
-	}
-	return *(*Info)(unsafe.Pointer(&v.sxpinfo))
-}
-
 // Value returns the generic state of the SEXP value.
 func (v *Character) Value() *Value {
 	return (*Value)(unsafe.Pointer(v))
-}
-
-// Attributes returns the attributes of the SEXP value.
-func (v *Character) Attributes() *List {
-	if v == nil {
-		return nil
-	}
-	attr := (*List)(unsafe.Pointer(v.attrib))
-	if attr.Value().IsNull() {
-		return nil
-	}
-	return attr
 }
 
 // Bytes returns the bytes held by the R SEXP value.
@@ -491,6 +353,8 @@ func (v *Character) String() string {
 type Raw struct {
 	vector_sexprec
 }
+
+var _ Valuer = (*Raw)(nil)
 
 // NewRaw returns a raw vector with length n.
 //
@@ -516,11 +380,6 @@ func (v *Raw) Unprotect() {
 	unprotect(1)
 }
 
-// Pointer returns an unsafe pointer to the SEXP value.
-func (v *Raw) Pointer() unsafe.Pointer {
-	return unsafe.Pointer(v)
-}
-
 // Len returns the number of elements in the vector.
 func (v *Raw) Len() int {
 	if v == nil {
@@ -529,29 +388,9 @@ func (v *Raw) Len() int {
 	return int(v.vecsxp.length)
 }
 
-// Info returns the information field of the SEXP value.
-func (v *Raw) Info() Info {
-	if v == nil {
-		return NilValue.Info()
-	}
-	return *(*Info)(unsafe.Pointer(&v.sxpinfo))
-}
-
 // Value returns the generic state of the SEXP value.
 func (v *Raw) Value() *Value {
 	return (*Value)(unsafe.Pointer(v))
-}
-
-// Attributes returns the attributes of the SEXP value.
-func (v *Raw) Attributes() *List {
-	if v == nil {
-		return nil
-	}
-	attr := (*List)(unsafe.Pointer(v.attrib))
-	if attr.Value().IsNull() {
-		return nil
-	}
-	return attr
 }
 
 // Bytes returns the bytes held by the R SEXP value.
@@ -567,6 +406,8 @@ func (v *Raw) Bytes() []byte {
 type Vector struct {
 	vector_sexprec
 }
+
+var _ Valuer = (*Vector)(nil)
 
 // NewVector returns a generic vector with length n.
 //
@@ -592,11 +433,6 @@ func (v *Vector) Unprotect() {
 	unprotect(1)
 }
 
-// Pointer returns an unsafe pointer to the SEXP value.
-func (v *Vector) Pointer() unsafe.Pointer {
-	return unsafe.Pointer(v)
-}
-
 // Len returns the number of elements in the vector.
 func (v *Vector) Len() int {
 	if v == nil {
@@ -605,29 +441,9 @@ func (v *Vector) Len() int {
 	return int(v.vecsxp.length)
 }
 
-// Info returns the information field of the SEXP value.
-func (v *Vector) Info() Info {
-	if v == nil {
-		return NilValue.Info()
-	}
-	return *(*Info)(unsafe.Pointer(&v.sxpinfo))
-}
-
 // Value returns the generic state of the SEXP value.
 func (v *Vector) Value() *Value {
 	return (*Value)(unsafe.Pointer(v))
-}
-
-// Attributes returns the attributes of the SEXP value.
-func (v *Vector) Attributes() *List {
-	if v == nil {
-		return nil
-	}
-	attr := (*List)(unsafe.Pointer(v.attrib))
-	if attr.Value().IsNull() {
-		return nil
-	}
-	return attr
 }
 
 // Vector returns a slice corresponding to the R vector.
@@ -644,10 +460,7 @@ type Expression struct {
 	vector_sexprec
 }
 
-// Pointer returns an unsafe pointer to the SEXP value.
-func (v *Expression) Pointer() unsafe.Pointer {
-	return unsafe.Pointer(v)
-}
+var _ Valuer = (*Expression)(nil)
 
 // Len returns the number of elements in the vector.
 func (v *Expression) Len() int {
@@ -657,29 +470,9 @@ func (v *Expression) Len() int {
 	return int(v.vecsxp.length)
 }
 
-// Info returns the information field of the SEXP value.
-func (v *Expression) Info() Info {
-	if v == nil {
-		return NilValue.Info()
-	}
-	return *(*Info)(unsafe.Pointer(&v.sxpinfo))
-}
-
 // Value returns the generic state of the SEXP value.
 func (v *Expression) Value() *Value {
 	return (*Value)(unsafe.Pointer(v))
-}
-
-// Attributes returns the attributes of the SEXP value.
-func (v *Expression) Attributes() *List {
-	if v == nil {
-		return nil
-	}
-	attr := (*List)(unsafe.Pointer(v.attrib))
-	if attr.Value().IsNull() {
-		return nil
-	}
-	return attr
 }
 
 // Vector returns a slice corresponding to the R expression.
@@ -696,10 +489,7 @@ type WeakReference struct {
 	vector_sexprec
 }
 
-// Pointer returns an unsafe pointer to the SEXP value.
-func (v *WeakReference) Pointer() unsafe.Pointer {
-	return unsafe.Pointer(v)
-}
+var _ Valuer = (*WeakReference)(nil)
 
 // Len returns the number of elements in the vector.
 func (v *WeakReference) Len() int {
@@ -709,29 +499,9 @@ func (v *WeakReference) Len() int {
 	return int(v.vecsxp.length)
 }
 
-// Info returns the information field of the SEXP value.
-func (v *WeakReference) Info() Info {
-	if v == nil {
-		return NilValue.Info()
-	}
-	return *(*Info)(unsafe.Pointer(&v.sxpinfo))
-}
-
 // Value returns the generic state of the SEXP value.
 func (v *WeakReference) Value() *Value {
 	return (*Value)(unsafe.Pointer(v))
-}
-
-// Attributes returns the attributes of the SEXP value.
-func (v *WeakReference) Attributes() *List {
-	if v == nil {
-		return nil
-	}
-	attr := (*List)(unsafe.Pointer(v.attrib))
-	if attr.Value().IsNull() {
-		return nil
-	}
-	return attr
 }
 
 // Vector returns the four elements of an R weak reference.

@@ -10,6 +10,12 @@ import (
 	"unsafe"
 )
 
+// Valuer is the general data type interchange interface. All SEXP types
+// satisfy the Valuer interface.
+type Valuer interface {
+	Value() *Value
+}
+
 // IsRealNA returns whether f is an NA value.
 func IsRealNA(f float64) bool {
 	payload, ok := naNPayload(f)
@@ -82,6 +88,8 @@ type Value struct {
 	sexprec
 }
 
+var _ Valuer = (*Value)(nil)
+
 // Info returns the information field of the SEXP value.
 func (v *Value) Info() Info {
 	if v == nil {
@@ -95,6 +103,43 @@ func (v *Value) Value() *Value {
 	return v
 }
 
+// Names returns the names of the Value.
+func (v *Value) Names() *String {
+	if v, ok := v.Interface().(*List); ok {
+		tags := v.tags()
+		c := NewString(len(tags)).Protect()
+		defer c.Unprotect()
+		vec := c.Vector()
+		for i := range vec {
+			vec[i] = NewCharacter(tags[i])
+		}
+		return c
+	}
+
+	attr := v.Attributes()
+	if attr == nil {
+		return nil
+	}
+	names := attr.Get([]byte("names"))
+	found, ok := names.Interface().(*List)
+	if !ok {
+		return nil
+	}
+	return found.Head().Interface().(*String)
+}
+
+// SetAttribute sets the names attribute of the SEXP value to names.
+func (v *Value) SetNames(names *String) {
+	if v == nil || v.Value().IsNull() {
+		panic("sexp: attempted to set names of nil value")
+	}
+	if names == nil {
+		setNames(v.Pointer(), NilValue.Pointer())
+	} else {
+		setNames(v.Pointer(), names.Value().Pointer())
+	}
+}
+
 // Attributes returns the attributes of the SEXP value.
 func (v *Value) Attributes() *List {
 	if v == nil {
@@ -105,6 +150,17 @@ func (v *Value) Attributes() *List {
 		return nil
 	}
 	return attr
+}
+
+// SetAttribute sets the given attribute of the SEXP value to attr.
+func (v *Value) SetAttribute(name []byte, attr *Value) {
+	if v == nil || v.IsNull() {
+		panic("sexp: setting attribute of nil value")
+	}
+	if attr == nil {
+		attr = NilValue
+	}
+	setAttribute(v.Pointer(), NewCharacterFromBytes(name).Value().Pointer(), attr.Pointer())
 }
 
 // Pointer returns an unsafe pointer to the SEXP value.
@@ -191,29 +247,4 @@ func (v *Value) Interface() interface{} {
 	default:
 		panic(fmt.Sprintf("unhandled SEXPTYPE: 0x%x", typ))
 	}
-}
-
-// Names returns the names of the Value.
-func (v *Value) Names() *String {
-	if v, ok := v.Interface().(*List); ok {
-		tags := v.tags()
-		c := NewString(len(tags)).Protect()
-		defer c.Unprotect()
-		vec := c.Vector()
-		for i := range vec {
-			vec[i] = NewCharacter(tags[i])
-		}
-		return c
-	}
-
-	attr := v.Attributes()
-	if attr == nil {
-		return nil
-	}
-	names := attr.Get([]byte("names"))
-	found, ok := names.Interface().(*List)
-	if !ok {
-		return nil
-	}
-	return found.Head().Interface().(*String)
 }
