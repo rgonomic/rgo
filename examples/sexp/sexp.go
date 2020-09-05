@@ -13,7 +13,7 @@ import (
 func PrintSEXP(p unsafe.Pointer) unsafe.Pointer {
 	sxp := (*sexp.Value)(p)
 	info := sxp.Info()
-	switch sxp := sxp.Interface().(type) {
+	switch sxp := sxp.Valuer().(type) {
 	case *sexp.Integer:
 		fmt.Printf("%s values:%#v", info, sxp.Vector())
 	case *sexp.Logical:

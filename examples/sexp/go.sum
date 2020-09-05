@@ -7,6 +7,8 @@ github.com/rgonomic/rgo v0.0.0-20200905141624-d5c4601c3221 h1:VWI+jhUIuwsJJC9105
 github.com/rgonomic/rgo v0.0.0-20200905141624-d5c4601c3221/go.mod h1:wUkm6JrGFhy4Ck5HSeevf0LuVutHUyCsC8YIGcFF5vs=
 github.com/rgonomic/rgo v0.0.0-20200905230226-b646fa253ff9 h1:tDHEVor6RteUZNXuHZW3xAlhesgYze8MGwBErmI7tJk=
 github.com/rgonomic/rgo v0.0.0-20200905230226-b646fa253ff9/go.mod h1:wUkm6JrGFhy4Ck5HSeevf0LuVutHUyCsC8YIGcFF5vs=
+github.com/rgonomic/rgo v0.0.0-20200905234602-9e7716608771 h1:CRDz+KeAk/72RCnG3dW1ASLO6k0IhNP3GdxrvJ8xqsg=
+github.com/rgonomic/rgo v0.0.0-20200905234602-9e7716608771/go.mod h1:wUkm6JrGFhy4Ck5HSeevf0LuVutHUyCsC8YIGcFF5vs=
 github.com/sergi/go-diff v1.0.0/go.mod h1:0CfEIISq7TuYL3j771MWULgwwjU+GofnZX9QAmXWZgo=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.4.0/go.mod h1:j7eGeouHqKxXV5pUuKE4zz7dFj8WfuZ+81PSLYec5m4=
