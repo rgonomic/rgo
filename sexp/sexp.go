@@ -10,26 +10,26 @@ import (
 	"unsafe"
 )
 
-// IsNA returns whether f is an NA value.
-func IsNA(f float64) bool {
+// IsRealNA returns whether f is an NA value.
+func IsRealNA(f float64) bool {
 	payload, ok := naNPayload(f)
 	return ok && payload == 1954
 }
 
-// NA returns the R real NA value.
-func NA() float64 {
+// RealNA returns the R real NA value.
+func RealNA() float64 {
 	return naNWith(1954)
 }
 
 // IsComplexNA returns whether c is an NA value. This is true if either
 // of the parts of c is NA.
 func IsComplexNA(c complex128) bool {
-	return IsNA(real(c)) || IsNA(imag(c))
+	return IsRealNA(real(c)) || IsRealNA(imag(c))
 }
 
 // ComplexNA returns the R complex NA value. The value returned is NA+0i.
 func ComplexNA() complex128 {
-	return complex(NA(), 0)
+	return complex(RealNA(), 0)
 }
 
 const (
