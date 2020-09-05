@@ -377,7 +377,7 @@ func (v *{{.Type}}) Get(tag []byte) *Value {
 			}
 		}
 		tail := curr.Tail()
-		if tail, ok := tail.Value().Interface().(*{{.Type}}); ok {
+		if tail, ok := tail.Value().Valuer().(*{{.Type}}); ok {
 			curr = (*{{.Type}})(tail.Value().Pointer())
 			continue
 		}
@@ -398,7 +398,7 @@ func (v *{{.Type}}) tags() []string {
 			tags = append(tags, tag)
 		}
 		tail := curr.Tail()
-		if tail, ok := tail.Value().Interface().(*{{.Type}}); ok {
+		if tail, ok := tail.Value().Valuer().(*{{.Type}}); ok {
 			curr = (*{{.Type}})(tail.Value().Pointer())
 			continue
 		}

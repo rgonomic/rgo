@@ -105,7 +105,7 @@ func (v *Value) Value() *Value {
 
 // Names returns the names of the Value.
 func (v *Value) Names() *String {
-	if v, ok := v.Interface().(*List); ok {
+	if v, ok := v.Valuer().(*List); ok {
 		tags := v.tags()
 		c := NewString(len(tags)).Protect()
 		defer c.Unprotect()
@@ -121,11 +121,11 @@ func (v *Value) Names() *String {
 		return nil
 	}
 	names := attr.Get([]byte("names"))
-	found, ok := names.Interface().(*List)
+	found, ok := names.Valuer().(*List)
 	if !ok {
 		return nil
 	}
-	return found.Head().Interface().(*String)
+	return found.Head().Valuer().(*String)
 }
 
 // SetAttribute sets the names attribute of the SEXP value to names.
@@ -182,10 +182,10 @@ func (v *Value) IsNull() bool {
 	return v.Info().Type() == NILSXP
 }
 
-// Interface returns a Go value corresponding to the SEXP type specified
+// Valuer returns a Go value corresponding to the SEXP type specified
 // in the SEXP info field. If the receiver is nil, the R NilValue will be
 // returned.
-func (v *Value) Interface() interface{} {
+func (v *Value) Valuer() Valuer {
 	if v == nil {
 		return NilValue
 	}

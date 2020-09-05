@@ -91,7 +91,7 @@ func (v *List) Get(tag []byte) *Value {
 			}
 		}
 		tail := curr.Tail()
-		if tail, ok := tail.Value().Interface().(*List); ok {
+		if tail, ok := tail.Value().Valuer().(*List); ok {
 			curr = (*List)(tail.Value().Pointer())
 			continue
 		}
@@ -112,7 +112,7 @@ func (v *List) tags() []string {
 			tags = append(tags, tag)
 		}
 		tail := curr.Tail()
-		if tail, ok := tail.Value().Interface().(*List); ok {
+		if tail, ok := tail.Value().Valuer().(*List); ok {
 			curr = (*List)(tail.Value().Pointer())
 			continue
 		}
