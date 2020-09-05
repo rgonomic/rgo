@@ -121,6 +121,12 @@ func allocateString(s string) unsafe.Pointer {
 	return unsafe.Pointer(C.Rf_mkCharLenCE(C._GoStringPtr(s), C.int(len(s)), C.CE_UTF8))
 }
 
+func allocateStringFromBytes(b []byte) unsafe.Pointer {
+	// This makes use of the pointer being the first field of the slice header.
+	p := *(**C.char)(unsafe.Pointer(&b))
+	return unsafe.Pointer(C.Rf_mkCharLenCE(p, C.int(len(b)), C.CE_UTF8))
+}
+
 func allocateVector(typ Type, n int) unsafe.Pointer {
 	return unsafe.Pointer(C.Rf_allocVector(C.SEXPTYPE(typ), C.R_xlen_t(n)))
 }

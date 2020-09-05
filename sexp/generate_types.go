@@ -36,11 +36,18 @@ var generators = []struct {
 	{file: "funcs.go", template: funcsTemplate, details: funcs},
 }
 
+type allocator struct {
+	NewSuffix    string
+	NewDoc       string
+	ParamName    string
+	ParamType    string
+	HelperSuffix string
+}
+
 var vectors = []struct {
 	Type      string
 	TypeDoc   string
-	NewDoc    string
-	Allocator string
+	Allocator []allocator
 	RType     string
 	RTypeSpec string
 	ElemType  string
@@ -49,37 +56,79 @@ var vectors = []struct {
 }{
 	{
 		Type: "Integer", TypeDoc: "an R integer vector",
-		NewDoc: "an integer vector with length n", Allocator: "Vector",
+		Allocator: []allocator{
+			{
+				NewDoc:    "an integer vector with length n",
+				ParamName: "n", ParamType: "int",
+				HelperSuffix: "Vector",
+			},
+		},
 		RType: "vector_sexprec", RTypeSpec: "INTSXP",
 		ElemType: "int32",
 	},
 	{
 		Type: "Logical", TypeDoc: "an R logical vector",
-		NewDoc: "a logical vector with length n", Allocator: "Vector",
+		Allocator: []allocator{
+			{
+				NewDoc:    "a logical vector with length n",
+				ParamName: "n", ParamType: "int",
+				HelperSuffix: "Vector",
+			},
+		},
 		RType: "vector_sexprec", RTypeSpec: "LGLSXP",
 		ElemType: "int32",
 	},
 	{
 		Type: "Real", TypeDoc: "an R real vector",
-		NewDoc: "a real vector with length n", Allocator: "Vector",
+		Allocator: []allocator{
+			{
+				NewDoc:    "a real vector with length n",
+				ParamName: "n", ParamType: "int",
+				HelperSuffix: "Vector",
+			},
+		},
 		RType: "vector_sexprec", RTypeSpec: "REALSXP",
 		ElemType: "float64",
 	},
 	{
 		Type: "Complex", TypeDoc: "an R complex vector",
-		NewDoc: "a complex vector with length n", Allocator: "Vector",
+		Allocator: []allocator{
+			{
+				NewDoc:    "a complex vector with length n",
+				ParamName: "n", ParamType: "int",
+				HelperSuffix: "Vector",
+			},
+		},
 		RType: "vector_sexprec", RTypeSpec: "CPLXSXP",
 		ElemType: "complex128",
 	},
 	{
 		Type: "String", TypeDoc: "an R character vector",
-		NewDoc: "a character vector with length n", Allocator: "Vector",
+		Allocator: []allocator{
+			{
+				NewDoc:    "a character vector with length n",
+				ParamName: "n", ParamType: "int",
+				HelperSuffix: "Vector",
+			},
+		},
 		RType: "vector_sexprec", RTypeSpec: "STRSXP",
 		ElemType: "*Character",
 	},
 	{
 		Type: "Character", TypeDoc: "the R representation of a string",
-		NewDoc: "a scalar string corresponding to s", Allocator: "String",
+		Allocator: []allocator{
+			{
+				NewDoc:    "a scalar string corresponding to s",
+				ParamName: "s", ParamType: "string",
+				HelperSuffix: "String",
+			},
+			{
+				NewDoc:    "a scalar string corresponding to b",
+				NewSuffix: "FromBytes",
+				ParamName: "b", ParamType: "[]byte",
+				HelperSuffix: "StringFromBytes",
+			},
+		},
 		RType: "vector_sexprec", RTypeSpec: "STRSXP",
 		ElemType: "byte",
 		Stringer: `// String returns a Go string corresponding the the R characters.
@@ -91,14 +140,26 @@ func (v *Character) String() string {
 	},
 	{
 		Type: "Raw", TypeDoc: "an R raw vector",
-		NewDoc: "a raw vector with length n", Allocator: "Vector",
+		Allocator: []allocator{
+			{
+				NewDoc:    "a raw vector with length n",
+				ParamName: "n", ParamType: "int",
+				HelperSuffix: "Vector",
+			},
+		},
 		RType: "vector_sexprec", RTypeSpec: "RAWSXP",
 		ElemType:  "byte",
 		VectorDoc: "Bytes returns the bytes held by the R SEXP value",
 	},
 	{
 		Type: "Vector", TypeDoc: "a generic R vector",
-		NewDoc: "a generic vector with length n", Allocator: "Vector",
+		Allocator: []allocator{
+			{
+				NewDoc:    "a generic vector with length n",
+				ParamName: "n", ParamType: "int",
+				HelperSuffix: "Vector",
+			},
+		},
 		RType: "vector_sexprec", RTypeSpec: "VECSXP",
 		ElemType: "*Value",
 	},
@@ -140,15 +201,15 @@ type {{.Type}} struct {
 	{{.RType}}
 }
 
-{{if .Allocator}}// New{{.Type}} returns {{.NewDoc}}.
+{{if .Allocator}}{{$t := .}}{{range .Allocator}}// New{{$t.Type}}{{.NewSuffix}} returns {{.NewDoc}}.
 //
 // The allocation is made by the R runtime. The returned value may need to
 // call its Protect method.
-func New{{.Type}}({{if eq .Allocator "String"}}s string{{else}}n int{{end}}) *{{.Type}} {
-	return (*{{.Type}})(allocate{{.Allocator}}({{if eq .Allocator "String"}}s{{else}}{{.RTypeSpec}}, n{{end}}))
+func New{{$t.Type}}{{.NewSuffix}}({{.ParamName}} {{.ParamType}}) *{{$t.Type}} {
+	return (*{{$t.Type}})(allocate{{.HelperSuffix}}({{if eq .ParamType "int"}}{{$t.RTypeSpec}}, {{end}}{{.ParamName}}))
 }
 
-// Protect protects the SEXP value and returns it.
+{{end}}// Protect protects the SEXP value and returns it.
 func (v *{{.Type}}) Protect() *{{.Type}} {
 	if v == nil {
 		return nil

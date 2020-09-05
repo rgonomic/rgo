@@ -385,6 +385,14 @@ func NewCharacter(s string) *Character {
 	return (*Character)(allocateString(s))
 }
 
+// NewCharacterFromBytes returns a scalar string corresponding to b.
+//
+// The allocation is made by the R runtime. The returned value may need to
+// call its Protect method.
+func NewCharacterFromBytes(b []byte) *Character {
+	return (*Character)(allocateStringFromBytes(b))
+}
+
 // Protect protects the SEXP value and returns it.
 func (v *Character) Protect() *Character {
 	if v == nil {
