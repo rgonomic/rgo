@@ -49,7 +49,7 @@ func packSEXP_ReadFile(p0 []uint8, p1 error) C.SEXP {
 	C.SET_VECTOR_ELT(r, 0, packSEXP_types_Slice___uint8(p0))
 	C.SET_STRING_ELT(names, 1, C.Rf_mkCharLenCE(C._GoStringPtr("r1"), 2, C.CE_UTF8))
 	C.SET_VECTOR_ELT(r, 1, packSEXP_types_Named_error(p1))
-	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
+	C.setAttrib(r, C.R_NamesSymbol, names)
 	return r
 }
 

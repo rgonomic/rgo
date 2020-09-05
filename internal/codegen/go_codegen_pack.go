@@ -129,7 +129,7 @@ func packMap(buf *bytes.Buffer, typ *types.Map) {
 		s[i] = int32(v)
 		i++
 	}
-	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
+	C.setAttrib(r, C.R_NamesSymbol, names)
 	return r
 `, rTypeLabelFor(elem), len(&a{}))
 			return
@@ -151,7 +151,7 @@ func packMap(buf *bytes.Buffer, typ *types.Map) {
 		i++
 	}
 	copy(s, p)
-	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
+	C.setAttrib(r, C.R_NamesSymbol, names)
 	return r
 `, rTypeLabelFor(elem), len(&a{}), pkg.Mangle(elem))
 			return
@@ -173,7 +173,7 @@ func packMap(buf *bytes.Buffer, typ *types.Map) {
 		s[i] = float64(v)
 		i++
 	}
-	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
+	C.setAttrib(r, C.R_NamesSymbol, names)
 	return r
 `, rTypeLabelFor(elem), len(&a{}))
 			return
@@ -195,7 +195,7 @@ func packMap(buf *bytes.Buffer, typ *types.Map) {
 		s[i] = complex128(v)
 		i++
 	}
-	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
+	C.setAttrib(r, C.R_NamesSymbol, names)
 	return r
 `, rTypeLabelFor(elem), len(&a{}))
 			return
@@ -214,7 +214,7 @@ func packMap(buf *bytes.Buffer, typ *types.Map) {
 		C.SET_STRING_ELT(r, i, packSEXP%s(v))
 		i++
 	}
-	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
+	C.setAttrib(r, C.R_NamesSymbol, names)
 	return r
 `, rTypeLabelFor(elem), pkg.Mangle(elem))
 			return
@@ -247,7 +247,7 @@ func packMap(buf *bytes.Buffer, typ *types.Map) {
 		}
 		i++
 	}
-	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
+	C.setAttrib(r, C.R_NamesSymbol, names)
 	return r
 `, len(&a{}))
 			return
@@ -273,7 +273,7 @@ func packMap(buf *bytes.Buffer, typ *types.Map) {
 		}
 		i++
 	}
-	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
+	C.setAttrib(r, C.R_NamesSymbol, names)
 	return r
 `, rTypeLabelFor(elem), pkg.Mangle(elem))
 
@@ -291,7 +291,7 @@ func packMap(buf *bytes.Buffer, typ *types.Map) {
 		C.SET_VECTOR_ELT(r, i, packSEXP%s(v))
 		i++
 	}
-	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
+	C.setAttrib(r, C.R_NamesSymbol, names)
 	return r
 `, pkg.Mangle(elem))
 	}
@@ -480,7 +480,7 @@ func packStruct(buf *bytes.Buffer, typ *types.Struct) {
 	C.SET_VECTOR_ELT(r, %[1]d, packSEXP%[4]s(p.%[5]s))
 `, i, rName, len(rName), pkg.Mangle(elem), f.Name())
 	}
-	fmt.Fprintln(buf, `	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
+	fmt.Fprintln(buf, `	C.setAttrib(r, C.R_NamesSymbol, names)
 	return r`)
 }
 

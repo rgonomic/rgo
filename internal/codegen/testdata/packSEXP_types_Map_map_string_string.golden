@@ -15,6 +15,6 @@ func packSEXP_types_Map_map_string_string(p map[string]string) C.SEXP {
 		C.SET_STRING_ELT(r, i, packSEXP_types_Basic_string(v))
 		i++
 	}
-	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
+	C.setAttrib(r, C.R_NamesSymbol, names)
 	return r
 }

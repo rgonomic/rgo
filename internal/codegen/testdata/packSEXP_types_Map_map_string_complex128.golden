@@ -16,6 +16,6 @@ func packSEXP_types_Map_map_string_complex128(p map[string]complex128) C.SEXP {
 		s[i] = complex128(v)
 		i++
 	}
-	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
+	C.setAttrib(r, C.R_NamesSymbol, names)
 	return r
 }

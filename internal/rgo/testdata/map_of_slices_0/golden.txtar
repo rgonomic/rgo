@@ -187,7 +187,7 @@ func packSEXP_types_Map_map_string___float64(p map[string][]float64) C.SEXP {
 		C.SET_VECTOR_ELT(r, i, packSEXP_types_Slice___float64(v))
 		i++
 	}
-	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
+	C.setAttrib(r, C.R_NamesSymbol, names)
 	return r
 }
 

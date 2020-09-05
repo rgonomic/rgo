@@ -225,7 +225,7 @@ func packSEXP_Test0(p0 int, p1 int) C.SEXP {
 	C.SET_VECTOR_ELT(r, 0, packSEXP_types_Basic_int(p0))
 	C.SET_STRING_ELT(names, 1, C.Rf_mkCharLenCE(C._GoStringPtr("r1"), 2, C.CE_UTF8))
 	C.SET_VECTOR_ELT(r, 1, packSEXP_types_Basic_int(p1))
-	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
+	C.setAttrib(r, C.R_NamesSymbol, names)
 	return r
 }
 
@@ -256,7 +256,7 @@ func packSEXP_Test1(res0 float64, res1 int) C.SEXP {
 	C.SET_VECTOR_ELT(r, 0, packSEXP_types_Basic_float64(res0))
 	C.SET_STRING_ELT(names, 1, C.Rf_mkCharLenCE(C._GoStringPtr("res1"), 4, C.CE_UTF8))
 	C.SET_VECTOR_ELT(r, 1, packSEXP_types_Basic_int(res1))
-	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
+	C.setAttrib(r, C.R_NamesSymbol, names)
 	return r
 }
 

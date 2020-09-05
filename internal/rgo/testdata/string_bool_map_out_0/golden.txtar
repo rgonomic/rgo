@@ -166,7 +166,7 @@ func packSEXP_types_Map_map_string_bool(p map[string]bool) C.SEXP {
 		}
 		i++
 	}
-	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
+	C.setAttrib(r, C.R_NamesSymbol, names)
 	return r
 }
 

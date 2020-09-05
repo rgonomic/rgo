@@ -275,7 +275,7 @@ func packSEXP_types_Map_map_string_github_com_rgonomic_rgo_examples_wordcount_Wo
 		C.SET_VECTOR_ELT(r, i, packSEXP_types_Named_github_com_rgonomic_rgo_examples_wordcount_WordStats(v))
 		i++
 	}
-	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
+	C.setAttrib(r, C.R_NamesSymbol, names)
 	return r
 }
 
@@ -297,7 +297,7 @@ func packSEXP_types_Map_map_string_int(p map[string]int) C.SEXP {
 		s[i] = int32(v)
 		i++
 	}
-	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
+	C.setAttrib(r, C.R_NamesSymbol, names)
 	return r
 }
 
@@ -348,7 +348,7 @@ func packSEXP_types_Struct_struct_Count_int__rgo___count_____Length_int__rgo___l
 	C.SET_VECTOR_ELT(r, 0, packSEXP_types_Basic_int(p.Count))
 	C.SET_STRING_ELT(names, 1, C.Rf_mkCharLenCE(C._GoStringPtr("length"), 6, C.CE_UTF8))
 	C.SET_VECTOR_ELT(r, 1, packSEXP_types_Basic_int(p.Length))
-	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
+	C.setAttrib(r, C.R_NamesSymbol, names)
 	return r
 }
 
@@ -363,7 +363,7 @@ func packSEXP_types_Struct_struct_Text_string__rgo___word_____Length_int__rgo___
 	C.SET_VECTOR_ELT(r, 0, packSEXP_types_Basic_string(p.Text))
 	C.SET_STRING_ELT(names, 1, C.Rf_mkCharLenCE(C._GoStringPtr("length"), 6, C.CE_UTF8))
 	C.SET_VECTOR_ELT(r, 1, packSEXP_types_Basic_int(p.Length))
-	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
+	C.setAttrib(r, C.R_NamesSymbol, names)
 	return r
 }
 

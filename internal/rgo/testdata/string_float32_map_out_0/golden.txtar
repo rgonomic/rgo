@@ -158,7 +158,7 @@ func packSEXP_types_Map_map_string_float32(p map[string]float32) C.SEXP {
 		s[i] = float64(v)
 		i++
 	}
-	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
+	C.setAttrib(r, C.R_NamesSymbol, names)
 	return r
 }
 

@@ -61,7 +61,7 @@ func packSEXP_CCA(ccors []float64, pVecs blas64.GeneralCols, qVecs blas64.Genera
 	C.SET_VECTOR_ELT(r, 4, packSEXP_types_Named_gonum_org_v1_gonum_blas_blas64_GeneralCols(psiVs))
 	C.SET_STRING_ELT(names, 5, C.Rf_mkCharLenCE(C._GoStringPtr("err"), 3, C.CE_UTF8))
 	C.SET_VECTOR_ELT(r, 5, packSEXP_types_Named_error(err))
-	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
+	C.setAttrib(r, C.R_NamesSymbol, names)
 	return r
 }
 
@@ -170,7 +170,7 @@ func packSEXP_types_Struct_struct_Rows_int__Cols_int__Data___float64__Stride_int
 	C.SET_VECTOR_ELT(r, 2, packSEXP_types_Slice___float64(p.Data))
 	C.SET_STRING_ELT(names, 3, C.Rf_mkCharLenCE(C._GoStringPtr("Stride"), 6, C.CE_UTF8))
 	C.SET_VECTOR_ELT(r, 3, packSEXP_types_Basic_int(p.Stride))
-	C.setAttrib(r, packSEXP_types_Basic_string("names"), names)
+	C.setAttrib(r, C.R_NamesSymbol, names)
 	return r
 }
 
