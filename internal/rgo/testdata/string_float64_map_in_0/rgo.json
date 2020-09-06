@@ -1,6 +1,7 @@
 {
 	"PkgPath": ".",
 	"AllowedFuncs": "",
+	"Exported": "",
 	"Words": null,
 	"LicenseDir": "LICENSE",
 	"LicensePattern": "(LICEN[SC]E|COPYING)(\\.(txt|md))?$"
