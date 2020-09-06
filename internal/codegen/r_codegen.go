@@ -18,10 +18,11 @@ import (
 // TODO(kortchak): Check input types for validity before making .Call.
 
 // rCall is the template for R .Call function file generation.
-func RCallTemplate(words []string) *template.Template {
+func RCallTemplate(words []string, exported func(string) bool) *template.Template {
 	return template.Must(template.New("R .Call").Funcs(template.FuncMap{
 		"base":      path.Base,
 		"snake":     snake(words),
+		"exported":  exported,
 		"varsOf":    varsOf,
 		"names":     names,
 		"doc":       doc,
@@ -38,8 +39,9 @@ func RCallTemplate(words []string) *template.Template {
 #' {{replace $func.FuncDecl.Doc.Text "\n" "\n#' "}}
 {{range $p := $params}}{{doc $p}}
 {{end}}{{returns $func.Signature.Results}}{{seelso $pkg $func.Func}}
-#' @export
-{{snake $func.Func.Name}} <- function({{names false $params}}) {
+{{if exported $func.Func.Name}}#' @export
+{{end -}}
+{{- snake $func.Func.Name}} <- function({{names false $params}}) {
 {{range $p := $params}}{{typecheck $p -}}
 {{- end}}	.Call("{{snake $func.Func.Name}}"{{names true $params}}, PACKAGE = "{{base $pkg.Path}}")
 }{{end}}

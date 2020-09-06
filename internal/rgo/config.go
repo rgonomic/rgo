@@ -16,6 +16,11 @@ type Config struct {
 	// is empty all wrappable functions are wrapped.
 	AllowedFuncs string
 
+	// Exported is a pattern matching the Go names of
+	// functions that will be exported. If Exported is
+	// empty all wrapped functions are exported.
+	Exported string
+
 	// Words is a set of known words that can be provided
 	// to ensure camel-case to snake case breaks words
 	// correctly. If words is nil, "NaN" and "NA" are

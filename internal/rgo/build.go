@@ -82,6 +82,10 @@ func (b *build) Run(ctx context.Context, args ...string) error {
 		log.Println("no functions to wrap")
 		return nil
 	}
+	exported, err := regexp.Compile(b.Exported)
+	if err != nil {
+		return fmt.Errorf("failed to parse exported function pattern: %w", err)
+	}
 
 	if b.app.Verbose {
 		log.Println("need C.SEXP->Go for:")
@@ -115,8 +119,8 @@ func (b *build) Run(ctx context.Context, args ...string) error {
 		b.Config.Words = []string{"NaN", "NA"}
 	}
 	templates := map[string]*template.Template{
-		"NAMESPACE":     codegen.NamespaceTemplate(b.Config.Words),
-		"R/%s.R":        codegen.RCallTemplate(b.Config.Words),
+		"NAMESPACE":     codegen.NamespaceTemplate(b.Config.Words, exported.MatchString),
+		"R/%s.R":        codegen.RCallTemplate(b.Config.Words, exported.MatchString),
 		"src/rgo/%s.c":  codegen.CFuncTemplate(b.Config.Words),
 		"src/rgo/%s.go": codegen.GoFuncTemplate(),
 		"src/Makevars":  codegen.MakevarsTemplate(),
