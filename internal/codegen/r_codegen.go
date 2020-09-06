@@ -97,10 +97,11 @@ func rDocFor(typ types.Type) string {
 	case *types.Struct:
 		return fmt.Sprintf("%s corresponding to %s", rtyp, typ)
 	default:
-		if rtyp == "list" {
-			return rtyp
-		}
 		switch {
+		case rtyp == "list":
+			return rtyp
+		case rtyp == "SEXP":
+			return "arbitrary value"
 		case length <= 0:
 			if rtyp == "vector" {
 				return rtyp

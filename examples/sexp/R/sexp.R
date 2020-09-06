@@ -8,8 +8,8 @@
 #' and returns it unaltered. If the value is an atomic vector, its contents
 #' are printed.
 #' 
-#' @param p is a scalar SEXP
-#' @return A scalar SEXP
+#' @param p is an arbitrary value
+#' @return An arbitrary value
 #' @seelso <https://godoc.org/github.com/rgonomic/rgo/examples/sexp#PrintSEXP>
 #' @export
 print_sexp <- function(p) {
@@ -21,7 +21,7 @@ print_sexp <- function(p) {
 #' Gophers returns n gophers with name attributes.
 #' 
 #' @param n is a scalar integer
-#' @return A scalar SEXP
+#' @return An arbitrary value
 #' @seelso <https://godoc.org/github.com/rgonomic/rgo/examples/sexp#Gophers>
 #' @export
 gophers <- function(n) {
