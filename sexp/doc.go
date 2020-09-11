@@ -8,7 +8,7 @@
 // Here be dragons
 //
 // The API provided by the sexp package only minimally interacts with
-// the R runtime, so deviations from behavior expect by the R runtime
+// the R runtime, so deviations from behavior expected by the R runtime
 // are possible. This package should be used with caution and client
 // packages should ensure correct behavior with adequate testing from
 // the R side.
