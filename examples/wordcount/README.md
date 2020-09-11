@@ -121,26 +121,26 @@ The `*_with_length` functions return lists.
 > wordcount::count_with_length(a)
 $one
 $one$count
-[1] 3
+[1] 1
 
 $one$length
-[1] 1
+[1] 3
 
 
 $two
 $two$count
-[1] 3
+[1] 2
 
 $two$length
-[1] 2
+[1] 3
 
 
 $three
 $three$count
-[1] 5
+[1] 1
 
 $three$length
-[1] 1
+[1] 5
 
 
 > typeof(wordcount::unique_with_length(a))
@@ -192,16 +192,16 @@ NULL
 > print_count_with_length(count_with_length(a))
 map[string]wordcount.WordStats{
  string("one"): wordcount.WordStats{
-  Count: int(3),
-  Length: int(1),
+  Count: int(1),
+  Length: int(3),
  },
  string("two"): wordcount.WordStats{
-  Count: int(3),
-  Length: int(2),
+  Count: int(2),
+  Length: int(3),
  },
  string("three"): wordcount.WordStats{
-  Count: int(5),
-  Length: int(1),
+  Count: int(1),
+  Length: int(5),
  },
 }
 NULL
