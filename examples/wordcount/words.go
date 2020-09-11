@@ -26,8 +26,8 @@ func CountWithLength(words []string) map[string]WordStats {
 	m := make(map[string]WordStats)
 	for _, w := range words {
 		s := m[w]
-		s.Count = len(w)
-		s.Length++
+		s.Count++
+		s.Length = len(w)
 		m[w] = s
 	}
 	return m
