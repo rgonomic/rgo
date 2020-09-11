@@ -1,4 +1,4 @@
-# rgo
+# rgo [![Build Status](https://www.travis-ci.org/rgonomic/rgo.svg?branch=master)](https://www.travis-ci.org/rgonomic/rgo/branches)
 
 ![[Paper nautilus](https://archive.org/details/icefalopodiviven00jatt)](Argonauta_argo.png)
 
