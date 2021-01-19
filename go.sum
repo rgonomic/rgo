@@ -3,6 +3,8 @@ github.com/google/licensecheck v0.0.0-20200805042302-c54f297c3b57 h1:kLtE8FMtHRs
 github.com/google/licensecheck v0.0.0-20200805042302-c54f297c3b57/go.mod h1:ORkR35t/JjW+emNKtfJDII0zlciG9JgbT7SmsohlHmY=
 github.com/pkg/diff v0.0.0-20200101054644-e8890afd1f15 h1:9/klRRuH2xpc5x/CJbIu2KCwMcK6jufkXL4sTGclKto=
 github.com/pkg/diff v0.0.0-20200101054644-e8890afd1f15/go.mod h1:zO8QMzTeZd5cpnIkz/Gn6iK0jDfGicM1nynOkkPIl28=
+github.com/pkg/diff v0.0.0-20200914180035-5b29258ca4f7 h1:+/+DxvQaYifJ+grD4klzrS5y+KJXldn/2YTl5JG+vZ8=
+github.com/pkg/diff v0.0.0-20200914180035-5b29258ca4f7/go.mod h1:zO8QMzTeZd5cpnIkz/Gn6iK0jDfGicM1nynOkkPIl28=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/sergi/go-diff v1.0.0/go.mod h1:0CfEIISq7TuYL3j771MWULgwwjU+GofnZX9QAmXWZgo=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
