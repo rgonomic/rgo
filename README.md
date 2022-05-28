@@ -125,7 +125,6 @@ $ R CMD INSTALL .
 | `list`                          | `struct{...}`                                                                      |
 | `raw`                           | `[]int8`, `[]uint8`/`[]byte`                                                       |
 | fixed length `raw`              | `[n]int8`, `[n]uint8`/`[n]byte`                                                    |
-| internal `SEXP` value           | `unsafe.Pointer`                                                                   |
 
 The Go `A` types correspond to R `atomic` types.
 
