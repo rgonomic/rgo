@@ -54,60 +54,60 @@ search_strings <- function(a, x) {
 
 #' float64s
 #'
-#' Float64s sorts a slice of float64s in increasing order
-#' (not-a-number values are treated as less than other values).
+#' Float64s sorts a slice of float64s in increasing order.
+#' Not-a-number (NaN) values are ordered before other values.
 #' 
-#' @param a is a double vector
+#' @param x is a double vector
 #' @seelso <https://godoc.org/sort#Float64s>
 #' @export
-float64s <- function(a) {
-	if (!is.double(a) && !is.null(a)) {
-		stop("Argument 'a' must be of type 'double' or NULL.")
+float64s <- function(x) {
+	if (!is.double(x) && !is.null(x)) {
+		stop("Argument 'x' must be of type 'double' or NULL.")
 	}
-	.Call("float64s", a, PACKAGE = "sort")
+	.Call("float64s", x, PACKAGE = "sort")
 }
 
 #' strings
 #'
 #' Strings sorts a slice of strings in increasing order.
 #' 
-#' @param a is a character vector
+#' @param x is a character vector
 #' @seelso <https://godoc.org/sort#Strings>
 #' @export
-strings <- function(a) {
-	if (!is.character(a) && !is.null(a)) {
-		stop("Argument 'a' must be of type 'character' or NULL.")
+strings <- function(x) {
+	if (!is.character(x) && !is.null(x)) {
+		stop("Argument 'x' must be of type 'character' or NULL.")
 	}
-	.Call("strings", a, PACKAGE = "sort")
+	.Call("strings", x, PACKAGE = "sort")
 }
 
 #' float64s_are_sorted
 #'
-#' Float64sAreSorted tests whether a slice of float64s is sorted in increasing order
-#' (not-a-number values are treated as less than other values).
+#' Float64sAreSorted reports whether the slice x is sorted in increasing order,
+#' with not-a-number (NaN) values before any other values.
 #' 
-#' @param a is a double vector
+#' @param x is a double vector
 #' @return A scalar logical
 #' @seelso <https://godoc.org/sort#Float64sAreSorted>
 #' @export
-float64s_are_sorted <- function(a) {
-	if (!is.double(a) && !is.null(a)) {
-		stop("Argument 'a' must be of type 'double' or NULL.")
+float64s_are_sorted <- function(x) {
+	if (!is.double(x) && !is.null(x)) {
+		stop("Argument 'x' must be of type 'double' or NULL.")
 	}
-	.Call("float64s_are_sorted", a, PACKAGE = "sort")
+	.Call("float64s_are_sorted", x, PACKAGE = "sort")
 }
 
 #' strings_are_sorted
 #'
-#' StringsAreSorted tests whether a slice of strings is sorted in increasing order.
+#' StringsAreSorted reports whether the slice x is sorted in increasing order.
 #' 
-#' @param a is a character vector
+#' @param x is a character vector
 #' @return A scalar logical
 #' @seelso <https://godoc.org/sort#StringsAreSorted>
 #' @export
-strings_are_sorted <- function(a) {
-	if (!is.character(a) && !is.null(a)) {
-		stop("Argument 'a' must be of type 'character' or NULL.")
+strings_are_sorted <- function(x) {
+	if (!is.character(x) && !is.null(x)) {
+		stop("Argument 'x' must be of type 'character' or NULL.")
 	}
-	.Call("strings_are_sorted", a, PACKAGE = "sort")
+	.Call("strings_are_sorted", x, PACKAGE = "sort")
 }
