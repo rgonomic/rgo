@@ -9,6 +9,8 @@
 #' reads the whole file, it does not treat an EOF from Read as an error
 #' to be reported.
 #' 
+#' As of Go 1.16, this function simply calls os.ReadFile.
+#' 
 #' @param filename is a scalar character
 #' @return A structured value containing:
 #' @return - a raw vector, $r0

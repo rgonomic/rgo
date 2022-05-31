@@ -65,7 +65,7 @@ func packSEXP_SearchStrings(p0 int) C.SEXP {
 }
 
 //export Wrapped_Float64s
-func Wrapped_Float64s(_R_a C.SEXP) C.SEXP {
+func Wrapped_Float64s(_R_x C.SEXP) C.SEXP {
 	defer func() {
 		r := recover()
 		if r != nil {
@@ -75,14 +75,14 @@ func Wrapped_Float64s(_R_a C.SEXP) C.SEXP {
 		}
 	}()
 
-	_p0 := unpackSEXP_types_Slice___float64(_R_a)
+	_p0 := unpackSEXP_types_Slice___float64(_R_x)
 	sort.Float64s(_p0)
 	return C.R_NilValue
 }
 
 
 //export Wrapped_Strings
-func Wrapped_Strings(_R_a C.SEXP) C.SEXP {
+func Wrapped_Strings(_R_x C.SEXP) C.SEXP {
 	defer func() {
 		r := recover()
 		if r != nil {
@@ -92,14 +92,14 @@ func Wrapped_Strings(_R_a C.SEXP) C.SEXP {
 		}
 	}()
 
-	_p0 := unpackSEXP_types_Slice___string(_R_a)
+	_p0 := unpackSEXP_types_Slice___string(_R_x)
 	sort.Strings(_p0)
 	return C.R_NilValue
 }
 
 
 //export Wrapped_Float64sAreSorted
-func Wrapped_Float64sAreSorted(_R_a C.SEXP) C.SEXP {
+func Wrapped_Float64sAreSorted(_R_x C.SEXP) C.SEXP {
 	defer func() {
 		r := recover()
 		if r != nil {
@@ -109,7 +109,7 @@ func Wrapped_Float64sAreSorted(_R_a C.SEXP) C.SEXP {
 		}
 	}()
 
-	_p0 := unpackSEXP_types_Slice___float64(_R_a)
+	_p0 := unpackSEXP_types_Slice___float64(_R_x)
 	_r0 := sort.Float64sAreSorted(_p0)
 	return packSEXP_Float64sAreSorted(_r0)
 }
@@ -119,7 +119,7 @@ func packSEXP_Float64sAreSorted(p0 bool) C.SEXP {
 }
 
 //export Wrapped_StringsAreSorted
-func Wrapped_StringsAreSorted(_R_a C.SEXP) C.SEXP {
+func Wrapped_StringsAreSorted(_R_x C.SEXP) C.SEXP {
 	defer func() {
 		r := recover()
 		if r != nil {
@@ -129,7 +129,7 @@ func Wrapped_StringsAreSorted(_R_a C.SEXP) C.SEXP {
 		}
 	}()
 
-	_p0 := unpackSEXP_types_Slice___string(_R_a)
+	_p0 := unpackSEXP_types_Slice___string(_R_x)
 	_r0 := sort.StringsAreSorted(_p0)
 	return packSEXP_StringsAreSorted(_r0)
 }

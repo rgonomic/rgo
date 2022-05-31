@@ -14,7 +14,7 @@ void R_error(char* s) {
 // Needed for unpacking SEXP character.
 GoString R_gostring(SEXP x, R_xlen_t i) {
 	SEXP _s = STRING_ELT(x, i);
-	GoString s = {(char*)CHAR(_s), STDVEC_LENGTH(_s)};
+	GoString s = {(char*)CHAR(_s), LENGTH(_s)};
 	return s;
 }
 
@@ -42,18 +42,18 @@ SEXP search_strings(SEXP a, SEXP x) {
 	return Wrapped_SearchStrings(a, x);
 }
 
-SEXP float64s(SEXP a) {
-	return Wrapped_Float64s(a);
+SEXP float64s(SEXP x) {
+	return Wrapped_Float64s(x);
 }
 
-SEXP strings(SEXP a) {
-	return Wrapped_Strings(a);
+SEXP strings(SEXP x) {
+	return Wrapped_Strings(x);
 }
 
-SEXP float64s_are_sorted(SEXP a) {
-	return Wrapped_Float64sAreSorted(a);
+SEXP float64s_are_sorted(SEXP x) {
+	return Wrapped_Float64sAreSorted(x);
 }
 
-SEXP strings_are_sorted(SEXP a) {
-	return Wrapped_StringsAreSorted(a);
+SEXP strings_are_sorted(SEXP x) {
+	return Wrapped_StringsAreSorted(x);
 }
