@@ -7,7 +7,7 @@
 Install the `rgo` executable.
 
 ```
-$ go install github.com/rgnonomic/rgo@latest
+$ go install github.com/rgonomic/rgo@latest
 ```
 
 ## Workflow
